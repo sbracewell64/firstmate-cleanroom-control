@@ -1,0 +1,30 @@
+# Private-mode semantics, measured. The NEGATIVE CONTROL is the drvfs mount the
+# runtime is leaving: the same chmod calls are issued on both filesystems, so a
+# 'modes hold' result on ext4 is a discrimination and not an untested assumption.
+# Measured 2026-09-02T21:41:30Z
+
+--- NEGATIVE CONTROL (drvfs / v9fs, the old home): /mnt/e/FirstMate-Cleanroom/runtime/firstmate
+    fs: v9fs  device: 73
+    file  chmod 0600 -> 777   NOT HELD
+    file  chmod 0700 -> 777   NOT HELD
+    file  chmod 0640 -> 777   NOT HELD
+    file  chmod 0400 -> 555   NOT HELD
+    dir   chmod 0700 -> 777   NOT HELD
+    dir   chmod 0755 -> 777   NOT HELD
+    links=1 symlink=no regular=yes
+
+--- ext4 (the new home): /home/OPERATOR/.firstmate-cleanroom
+    fs: ext2/ext3  device: 2096
+    file  chmod 0600 -> 600   HELD
+    file  chmod 0700 -> 700   HELD
+    file  chmod 0640 -> 640   HELD
+    file  chmod 0400 -> 400   HELD
+    dir   chmod 0700 -> 700   HELD
+    dir   chmod 0755 -> 755   HELD
+    links=1 symlink=no regular=yes
+
+# Filesystem type, from the mount table rather than from the superblock magic.
+# stat -f reports 'ext2/ext3' for ext4 because they share magic 0xEF53; the mount
+# table is the authority, so both readings are recorded rather than one asserted.
+/dev/sdd ext4 /
+E:\ 9p /mnt/e

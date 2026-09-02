@@ -1,0 +1,47 @@
+# Listener venue exclusivity and refusal behaviour, generation 2
+# Recorded 2026-09-02T21:47:37Z. Every case runs THE REGISTERED SCRIPT.
+#
+# Silence means 'polled, nothing to report'. A CNO line means the configuration
+# could not be resolved and NOTHING WAS POLLED - never a fallback to a remembered
+# venue, and never a silent exit, which would be indistinguishable from a clean poll.
+
+
+--- LIVE REACH: a fixture live request against the real closed issue #1
+    exit=0
+    | fsc2 ruling candidate for fscr2-c7757a2672c0e0bde1b905fe86d7ef64 on sbracewell64/firstmate-cleanroom-control#1
+    ^ the ONLY venue it named is the one the canonical configuration resolves.
+
+--- BY CONFIGURATION: the configuration is edited to name the RETIRED venue
+    exit=0
+    | fsc2 CNO: venue isolation denied the resolved venue; nothing was polled
+    ^ isolation denied it. The retired venue is unreachable by construction, not by prose.
+
+--- BY CONFIGURATION: the retired PROTOCOL
+    exit=0
+    | fsc2 CNO: control configuration did not resolve control.repository; nothing was polled
+
+--- UNREADABLE configuration
+    exit=0
+    | fsc2 CNO: control configuration did not resolve control.repository; nothing was polled
+
+--- MALFORMED configuration
+    exit=0
+    | fsc2 CNO: control configuration did not resolve control.repository; nothing was polled
+
+--- configuration with no listener section
+    exit=0
+    | fsc2 CNO: control configuration did not resolve control.repository; nothing was polled
+
+--- fixture removed: nothing live to poll
+    exit=0
+    | (silence: polled, nothing to report)
+
+## RESIDUAL DEFECT RD-1, disclosed
+   The last four cases above all print the SAME message. The underlying causes are
+   different - absent file, malformed YAML, schema-invalid configuration - and the
+   resolver distinguishes them precisely (CONFIG_UNREADABLE / CONFIG_MALFORMED /
+   CONFIG_INVALID), but the generated check script discards that stderr. Different
+   facts with different repairs are collapsed into one message. Every one of them
+   still REFUSES and polls nothing, so the safety property holds; what is lost is
+   diagnostic precision. Repair belongs in a later generation because
+   gen2/bin/fsc2-listener.py is frozen.

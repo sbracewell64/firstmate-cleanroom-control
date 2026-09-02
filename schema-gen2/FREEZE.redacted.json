@@ -1,0 +1,86 @@
+{
+  "artifacts": {
+    "consumer": {
+      "bytes": 26693,
+      "path": "artifacts/control/gen2/bin/fsc2-consume.py",
+      "sha256": "02aad67e80679626f91597d2aa348a4e2c41282a2af2ffe66b3d31a5695c2851"
+    },
+    "emitter": {
+      "bytes": 6068,
+      "path": "artifacts/control/gen2/bin/fsc2-emit-request.py",
+      "sha256": "4883f0bcbcf5a83ed7c40a6c1dd6194db6632c89f75c2afa86566f1ae50a4e08"
+    },
+    "listener_tool": {
+      "bytes": 9756,
+      "path": "artifacts/control/gen2/bin/fsc2-listener.py",
+      "sha256": "261994f1ec6c393b7b19228a352fd180c1500d542b67749bf7df6cebd3a91bfd"
+    },
+    "redactor": {
+      "bytes": 6249,
+      "path": "artifacts/control/gen2/bin/fsc2-redact.py",
+      "sha256": "373aa3537521467475a6de763a10905bb3e4fa4b8d8e791279e58a6b9e5c7cf5"
+    },
+    "renderer": {
+      "bytes": 11533,
+      "path": "artifacts/control/gen2/bin/fsc2.py",
+      "sha256": "09fc2d0f8dfbf0717ecbf0352507f5a8ffc14d0bc3498aa8906d60db496f0642"
+    },
+    "reply_contract_receipt": {
+      "bytes": 4466,
+      "path": "artifacts/control/gen2/schema/reply-contract.receipt.txt",
+      "sha256": "cc77349afec84ad321aa7ee212eef5043e0d7bd79cf802fef941f2d3a30402af"
+    },
+    "reply_contract_request": {
+      "bytes": 10347,
+      "path": "artifacts/control/gen2/schema/reply-contract.request.txt",
+      "sha256": "23455c198d9cbd1f2dffc7a4db86b262befdb69d256de224e5fc4ead3bdc4402"
+    },
+    "reply_contract_ruling": {
+      "bytes": 6285,
+      "path": "artifacts/control/gen2/schema/reply-contract.ruling.txt",
+      "sha256": "6fec16aba4cdb96c3ec63085165bee34c7bc1142445f0bad4a6ceb6147112671"
+    },
+    "resolver": {
+      "bytes": 8613,
+      "path": "artifacts/control/gen2/bin/fsc2_config.py",
+      "sha256": "f12a623d61e72aaf0d5e264c08006a8454bba64011e59e44a79d4fd1cdcdc918"
+    },
+    "schema": {
+      "bytes": 60409,
+      "path": "artifacts/control/gen2/schema/fm-sol-control-v2.schema.json",
+      "sha256": "bbe6ce89744ef03901cd5823a75670db86293bdc1f55bff4f4095b0ced446908"
+    },
+    "schema_builder": {
+      "bytes": 21227,
+      "path": "artifacts/control/gen2/bin/build-gen2-schema.py",
+      "sha256": "62dfb6d7dfe8fef0359154dd185a9552e8de4cdc74a957e226f81e345ee87d19"
+    },
+    "watched_reds": {
+      "bytes": 26047,
+      "path": "artifacts/control/gen2/reds/watched-reds.py",
+      "sha256": "00a100d92d996ebc72c392fde627ee238e9a3eec614a72780270eae64da18bc5"
+    }
+  },
+  "control_config_generation_snapshot": {
+    "binding": "NON-BINDING SNAPSHOT",
+    "digest": "912f6238d94dfdf8afd672bc7f28a445b66138c14a5a08fa266a77837346c2aa",
+    "note": "Recorded so a reader can see which configuration was in force at the freeze, and NOT as a freeze constraint. The control-config generation is designed to move -- a repository, routing or listener change MUST move it -- so treating a changed config digest as schema drift would be a wrong-subject error. The freeze verifier deliberately does not check it.",
+    "owner_path": "/home/OPERATOR/.firstmate-cleanroom/config/control-plane.yaml",
+    "resolver_digest": "f12a623d61e72aaf0d5e264c08006a8454bba64011e59e44a79d4fd1cdcdc918"
+  },
+  "enforcement": "The generation 2 artifacts live on the same drvfs mount as generation 1, which does not carry file modes, so write-once cannot be enforced by permission here either. Enforcement is DIGEST COMPARISON ONLY -- detective, not preventive -- through bin/fsc2-verify-freeze.sh, which re-hashes every artifact above and refuses on any drift. This is a real limit, recorded rather than assumed away. The one thing that DID move to a filesystem with real modes is the private mutable runtime home, because the upstream listener registrar requires an exact 0700.",
+  "freeze_ordering": "FROZEN BEFORE any generation 2 envelope was compiled or emitted. No fm-sol-control/v2 generation 2 request exists: emitting one is a separately authorized lane and the emitter refuses without that lane's token. The watched-red harness was run against these exact frozen bytes AFTER this record was written; the authoring iterations that preceded the freeze are pre-freeze churn, not mutation of a frozen artifact.",
+  "frozen_at": "2026-09-02T21:40:14Z",
+  "protocol": "fm-sol-control/v2",
+  "record": "fm-sol-control-v2-schema-freeze/v2",
+  "schema_generation": 2,
+  "superseded_by": null,
+  "supersedes": {
+    "disposition": "Generation 1 stays frozen, published and untouched. The completed NO_ANSWER transaction on issue #1 was emitted under it and is never revalidated under generation 2: an immutable historical record is not a defect to retrofit.",
+    "freeze_record": "artifacts/control/schema/FREEZE.json",
+    "path": "artifacts/control/schema/fm-sol-control-v2.schema.json",
+    "schema_generation": 1,
+    "schema_sha256": "23e828b27d5c8d44e7c23ac67ddfe74ab3ba71783726f5e67304dd7c58fafbd3"
+  },
+  "write_once": true
+}

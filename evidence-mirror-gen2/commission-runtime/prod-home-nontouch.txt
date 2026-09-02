@@ -1,0 +1,74 @@
+# Production home ~/kun-agent-workspace: what changed during this commission's window
+# Window opened epoch 1788384853 (2026-09-02T21:34:13Z), closed 2026-09-02T21:45:51Z.
+#
+# The captain's requirement was that this commission not write into the production
+# home. TWO writes there are MANDATED by the task brief itself and are therefore
+# declared rather than hidden:
+#   state/cleanroom-v2-gen2-runtime.status   - the supervision channel (brief rule 4)
+#   data/cleanroom-v2-gen2-runtime/report.md - the deliverable (brief definition of done)
+# Everything else below is the live fleet's own concurrent activity for OTHER tasks;
+# this home runs a watcher and several other lanes, so an unchanged tree was never
+# an available observation and claiming one would be false.
+
+## non-touch targets: baseline vs now
+PATH                                                       BASELINE_MTIME NOW_MTIME    VERDICT
+/home/OPERATOR/kun-agent-workspace                            1788289528   1788289528   UNCHANGED
+state                                                      1788384813   1788385550   changed (see classification below)
+config                                                     1787773825   1787773825   UNCHANGED
+data                                                       1788384179   1788384179   UNCHANGED
+.git                                                       1788355366   1788355366   UNCHANGED
+state/.lock                                                (not in baseline) 1787608589   changed (see classification below)
+state/.wake-queue                                          1788384176   1788385550   changed (see classification below)
+state/.wake-queue.seq                                      1788381369   1788385550   changed (see classification below)
+
+## every regular file in the production home modified inside the window
+## classified: MINE = written by this commission, FLEET = another lane or the watcher
+      1 MINE   state/cleanroom-v2-gen2-runtime.status
+      1 FLEET  state/production-commit-provenance-binding.childcpu
+      1 FLEET  state/planning-graph-validator-hardening.childcpu
+      1 FLEET  state/no-mistakes-attestation-provenance-recurrence-owner.childcpu
+      1 FLEET  state/landing-authorization-concurrent-mint-flake.childcpu
+      1 FLEET  state/landing-auth-store-attestation-class-readable.childcpu
+      1 FLEET  state/dead-predicate-mark-verification.childcpu
+      1 FLEET  state/cleanroom-v2-gen2-runtime.childcpu
+      1 FLEET  state/cleanroom-exchange-projection.turn-ended
+      1 FLEET  state/cleanroom-exchange-projection.status
+      1 FLEET  state/cleanroom-exchange-projection.meta
+      1 FLEET  state/cleanroom-exchange-projection.childcpu
+      1 FLEET  state/cleanroom-exchange-projection.busy-state
+      1 FLEET  state/ae-xp1-registered-external-target.blockers
+      1 FLEET  state/.watch-triage.log
+      1 FLEET  state/.watch-deliveries.log
+      1 FLEET  state/.watch-cycle-exits.log
+      1 FLEET  state/.wake-queue.seq
+      1 FLEET  state/.wake-queue
+      1 FLEET  state/.stale-default_wEJ_p2
+      1 FLEET  state/.stale-default_w8A_p2
+      1 FLEET  state/.sol-control-fails
+      1 FLEET  state/.seen-cleanroom-v2-gen2-runtime_status
+      1 FLEET  state/.seen-cleanroom-exchange-projection_turn-ended
+      1 FLEET  state/.seen-cleanroom-exchange-projection_status
+      1 FLEET  state/.paused-resurfaced-default_wEJ_p2
+      1 FLEET  state/.paused-resurfaced-default_w8A_p2
+      1 FLEET  state/.paused-rechecked-default_w8A_p2
+      1 FLEET  state/.paused-default_wEJ_p2
+      1 FLEET  state/.paused-default_w8A_p2
+      1 FLEET  state/.last-watcher-beat
+      1 FLEET  state/.last-heartbeat
+      1 FLEET  state/.last-check
+      1 FLEET  state/.heartbeat-streak
+      1 FLEET  state/.hb-surfaced-cleanroom-exchange-projection
+      1 FLEET  state/.hash-default_wFC_p2
+      1 FLEET  state/.hash-default_wFB_p2
+      1 FLEET  state/.count-default_wFC_p2
+      1 FLEET  state/.count-default_wFB_p2
+      1 FLEET  state/.count-default_wET_p2
+      1 FLEET  state/.count-default_wER_p2
+      1 FLEET  state/.count-default_wEP_p2
+      1 FLEET  state/.count-default_wEK_p2
+      1 FLEET  state/.count-default_wEJ_p2
+      1 FLEET  state/.count-default_wE4_p2
+      1 FLEET  state/.count-default_w8A_p2
+      1 FLEET  state/.claude-autoarm-epoch
+      1 FLEET  data/wake-ledger.tsv
+      1 FLEET  data/cleanroom-exchange-projection/report.md

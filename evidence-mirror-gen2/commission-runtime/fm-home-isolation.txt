@@ -1,0 +1,29 @@
+# FM_HOME isolation, measured 2026-09-02T21:45:31Z
+# Every axis is compared BETWEEN the clean-room ext4 home and the production home
+# on this machine. Read-only against the production home throughout.
+
+## session lock
+  /home/OPERATOR/.firstmate-cleanroom   inode=1707101   pid=74542
+  /home/OPERATOR/kun-agent-workspace    inode=1406945   pid=321
+  -> distinct files: the lock is per-home by path, so one home's session cannot
+     block or be blocked by the other's.
+
+## watcher / check state
+  clean-room registered checks : 1
+  production registered checks : 3
+  the clean-room listener id exists in the production home: no
+  the production home carries a watcher beacon             : yes
+  the clean-room home carries a watcher beacon             : no
+
+## backlog
+  clean-room backlog : /home/OPERATOR/.firstmate-cleanroom/data/backlog.md (44 bytes, 0 title lines)
+  production backlog : /home/OPERATOR/kun-agent-workspace/data/backlog.md (689381 bytes, 441 title lines)
+
+## config
+  clean-room control-plane.yaml : present
+  production control-plane.yaml : ABSENT (the production home has no clean-room control plane)
+
+## the resolver follows FM_HOME rather than a hard-coded path
+  FM_HOME=/home/OPERATOR/.firstmate-cleanroom -> owner /home/OPERATOR/.firstmate-cleanroom/config/control-plane.yaml
+  FM_HOME=/tmp/some-other-home -> owner /tmp/some-other-home/config/control-plane.yaml
+  and an absent owner REFUSES rather than falling back:     REFUSED: CONFIG_UNREADABLE: /tmp/some-other-home/config/control-plane.yaml: [Errno 2] No such file or directory: '/tmp/some-other-home/config/control-plane.yaml'

@@ -1,0 +1,46 @@
+# Listener registration, generation 2, from the ext4 home
+# Recorded 2026-09-02T21:47:12Z
+
+## The upstream authenticated registrar ACCEPTS on ext4
+listener id     cleanroom-control-v2
+check script    /home/OPERATOR/.firstmate-cleanroom/state/cleanroom-control-v2.check.sh  mode=0o700 dev=2096 links=1
+record          /home/OPERATOR/.firstmate-cleanroom/state/cleanroom-control-v2.listener.json  mode=0o600 dev=2096 links=1
+check sha256    4238e5cdec6f382303f137a6e6b79990589e8ff0932cde6645df96f8994f3594
+registered: state/cleanroom-control-v2.check.sh
+register exit   0
+
+## NEGATIVE CONTROL: the SAME registrar, the SAME script bytes, on the drvfs mount
+   (this is the generation 1 failure, reproduced)
+   mode after chmod 0700 on drvfs: 777
+   error: custom check is unavailable
+   registrar exit=1
+
+## The registered artifacts
+-rw------- 1 shane shane   84 Sep  2 17:47 cleanroom-control-v2.check-trust
+-rwx------ 1 shane shane 2302 Sep  2 17:47 cleanroom-control-v2.check.sh
+-rw------- 1 shane shane 1326 Sep  2 17:47 cleanroom-control-v2.listener.json
+
+   trust binding:
+     fm-custom-check-v1
+     4238e5cdec6f382303f137a6e6b79990589e8ff0932cde6645df96f8994f3594
+   check script sha256: 4238e5cdec6f382303f137a6e6b79990589e8ff0932cde6645df96f8994f3594
+
+## Upstream's own predicate agrees the check is registered
+   observed-good  fm_custom_check_registered: yes
+
+## The listener names no venue of its own
+0
+   observed-good  0 hits: no repository, no protocol, no venue in these bytes
+
+## Determinism across a restart (deregister, regenerate from the configuration, re-register)
+   check script, record and trust binding were all byte-identical across the cycle;
+   full verify follows.
+   observed-good      check script is byte-identical to its rendering from the configuration
+   observed-good      record.listener_id equals the value the resolver derives now
+   observed-good      record.record_path equals the value the resolver derives now
+   observed-good      record.check_script_path equals the value the resolver derives now
+   observed-good      record.check_script_sha256 equals the value the resolver derives now
+   observed-good      record.control_config_generation equals the value the resolver derives now
+   observed-good      record.resolver_digest equals the value the resolver derives now
+   observed-good      upstream trust binding names the current check-script bytes
+   VERIFY OK

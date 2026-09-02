@@ -1,0 +1,6 @@
+# Pristine upstream checkout, at Part C window open
+HEAD=41d0ab3910ece4e90db0194f756437b3abe8ab8f
+DESCRIBE=41d0ab3 fix: surface inbound Relay media to responding agents (#3442)
+--- git status --porcelain (empty means clean) ---
+--- end (exit 0) ---
+PORCELAIN_LINES=0

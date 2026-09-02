@@ -1,0 +1,87 @@
+Required fields (13):
+  - schema: exactly "fm-sol-control/v2"
+  - kind: exactly "ruling"
+  - ruling_id: string matching ^[A-Za-z0-9][A-Za-z0-9._:/-]{7,127}$
+  - in_reply_to: string matching ^fscr2-[0-9a-f]{32}$
+  - correlation_id: string matching ^fsc2-[0-9a-f]{32}$
+  - vocabulary_digest: string matching ^[0-9a-f]{64}$
+  - control_config_generation_digest: string matching ^[0-9a-f]{64}$
+  - ruled_at: string matching ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$
+  - ruler: object with 3 required fields
+      - login: string
+      - kind: one of: "human" | "agent" | "automation"
+      - provenance_class: one of: "self_asserted_descriptor" | "forge_recorded_binding"
+      - optional: forge_binding, session_ref
+  - applies_to: object with 8 required fields
+      - venue: object with 3 required fields
+          - owner: string matching ^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$
+          - name: string matching ^[A-Za-z0-9._-]{1,100}$
+          - url: string matching ^https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+$
+          - optional: node_id
+      - repo: object with 3 required fields
+          - owner: string matching ^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$
+          - name: string matching ^[A-Za-z0-9._-]{1,100}$
+          - url: string matching ^https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+$
+          - optional: node_id
+      - work_id: string
+      - work_generation: integer >=1
+      - request_generation: integer >=1
+      - subject_identity_line: string
+      - policy_digest: string matching ^[0-9a-f]{64}$
+      - evidence_digest: string matching ^[0-9a-f]{64}$
+      - optional: head_sha, tree_sha
+  - inspection: object with 2 required fields
+      - evidence_refs_inspected: array of object
+          - kind: one of: "blob" | "commit" | "diff" | "check_run" | "pull_request" | "workflow_run" | "file" | "api_capture"
+          - locator: either string matching ^https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/(blob|raw|tree)/[0-9a-f]{40}/\S+$  OR  string matching ^https://raw\.githubusercontent\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/[0-9a-f]{40}/\S+$  OR  string matching ^https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/commit/[0-9a-f]{40}(\.patch|\.diff)?$  OR  string matching ^https://github\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/(issues|pull)/[0-9]+(#issuecomment-[0-9]+)?$  OR  string matching ^https://api\.github\.com/\S+$  OR  string matching ^[0-9]{1,20}$  OR  string matching ^file:\S+$
+          - sha256: string matching ^[0-9a-f]{64}$
+          - optional: bytes, digest_basis
+      - observations: array of object
+          - predicate: string
+          - value: one of: "observed-good" | "observed-bad" | "could-not-observe"
+          - optional: evidence_ref, measured, narrowed_from, narrowing_binding, narrowing_evidence_class, narrowing_reason, read
+  - directive: one of: "ADOPT_OPTION" | "REJECT_ALL_WITH_CONSTRAINT" | "INSUFFICIENT_EVIDENCE" | "OUT_OF_SCOPE_CAPTAIN_RESERVED"
+  - single_writer_assertion: exactly true
+
+Conditional companion fields:
+  - when directive == "ADOPT_OPTION":                   option_id is REQUIRED
+  - when directive == "REJECT_ALL_WITH_CONSTRAINT":     constraint is REQUIRED
+  - when directive == "INSUFFICIENT_EVIDENCE":          missing_evidence is REQUIRED
+  - when directive == "OUT_OF_SCOPE_CAPTAIN_RESERVED":  reserved_reason is REQUIRED
+
+Optional fields (7): confidence, constraint, missing_evidence, option_id, rationale, reserved_reason, supersedes
+
+Rules the consumer enforces mechanically (a violation is refused, never repaired):
+  - additionalProperties is false on every object: an unknown or misspelled field
+    name is REFUSED_MALFORMED and the refusal names the field.
+  - schema: Compared by EXACT STRING EQUALITY, never by substring or prefix. 'fm-sol-control/v2'
+      contains 'fm-sol-control', so a consumer matching on word overlap would consume
+      retired-venue v1 traffic. See venue_isolation.match_rule in the canonical control config.
+  - ruling_id: EXPLICIT AND UNIQUE, assigned by the ruler and unique across the ruler's whole
+      lineage. Not derived by us: it is the ruler's own handle for its ruling, and
+      supersedes/in_reply_to chains are built from it. Two rulings sharing one ruling_id are a
+      lineage fork.
+  - in_reply_to: MUST equal the request's request_id, by exact string equality. This is the
+      explicit parentage: a ruling that does not name its parent request is not a ruling about
+      it, however plausible its prose.
+  - correlation_id: Derived; inputs and order owned by $defs.id_derivation. Venue unit is one
+      issue per correlation_id, which bounds the comment universe so the completeness predicate
+      is cheap and always satisfiable.
+  - applies_to: EXACT RULING APPLICABILITY. Every field is copied from the request and compared
+      by identity, never by ancestry, containment or plausibility. A disagreement on the subject
+      is RULING_SUBJECT_MISMATCH; a disagreement on the policy digest is RULING_SUPERSEDED; a
+      disagreement on the control config generation is REFUSED_STALE_CONFIG. The three never
+      share a code, because they have three different repairs.
+  - inspection: The ruler records WHICH evidence locators it actually resolved and read, and its
+      own observations three-valued INCLUDING anything it could not observe. Under-claiming here
+      is the honest shape; a ruling claiming every ref is the shape a fabricated ruling has.
+  - directive: Closed and total over the reachable answers. THERE IS NO FIELD FOR A THIRD
+      OPTION: the only way to reject every offered option is REJECT_ALL_WITH_CONSTRAINT, which
+      produces no change and hands the constraint back. INSUFFICIENT_EVIDENCE is the ruler's
+      could-not-observe and OUT_OF_SCOPE_CAPTAIN_RESERVED is the ruler correcting our boundary
+      predicate; both are SUCCESSFUL round trips.
+  - single_writer_assertion: The ruler asserting it is the only writer for this correlation id.
+      A second ruling then contradicts an explicit claim rather than merely existing. An
+      intentional replacement names the prior ruling_id in supersedes; two rulings that do not
+      name each other are a LINEAGE FORK, which is a CNO: neither is consumed, both are
+      preserved, and explicit supersession is required.

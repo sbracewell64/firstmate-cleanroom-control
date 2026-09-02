@@ -1,0 +1,83 @@
+red	arm	expected	observed	verdict	measured
+RB1	NO_ANSWER + fabricated consumption record	FAIL	FAIL	observed-good	1: at <root>: False schema does not allow {'key': 'fscx2-44444444444444444444444444444444', 'first_consumed_at': '2026-09-02T13:12:41Z', 'consumption_count': 1, 'durable_record': '/state/consumed/fscx2-4444.json'}
+RB1	REFUSED_STALE + fabricated consumption record	FAIL	FAIL	observed-good	1: at <root>: False schema does not allow {'key': 'fscx2-44444444444444444444444444444444', 'first_consumed_at': '2026-09-02T13:12:41Z', 'consumption_count': 1, 'durable_record': '/state/consumed/fscx2-4444.json'}
+RB1	CNO_TOOL_UNREACHABLE + fabricated consumption record	FAIL	FAIL	observed-good	1: at <root>: False schema does not allow {'key': 'fscx2-44444444444444444444444444444444', 'first_consumed_at': '2026-09-02T13:12:41Z', 'consumption_count': 1, 'durable_record': '/state/consumed/fscx2-4444.json'}
+RB1	WITHDRAWN + fabricated consumption record	FAIL	FAIL	observed-good	1: at <root>: False schema does not allow {'key': 'fscx2-44444444444444444444444444444444', 'first_consumed_at': '2026-09-02T13:12:41Z', 'consumption_count': 1, 'durable_record': '/state/consumed/fscx2-4444.json'}
+RB1	the POSTED generation-1 NO_ANSWER receipt	FAIL	FAIL	observed-good	1: at <root>: False schema does not allow {'consumption_count': 1, 'durable_record': '/mnt/e/FirstMate-Cleanroom/artifacts/control/state/consumed/fscx2-0a0b6bc723c6bda49b1ee71eee81f088.json', 'first_consumed_at': '2026-09-02T13:12:41Z', 'key': 'fscx2-0a0b6bc723c6bda49b1ee71eee81f088'} | outcome=NO_ANSWER claims consumption_count=1 durable_record=fscx2-0a0b6bc723c6bda49b1ee71eee81f088.json
+RB1	that receipt's durable_record exists on disk	ABSENT	ABSENT	observed-good	path=/mnt/e/FirstMate-Cleanroom/artifacts/control/state/consumed/fscx2-0a0b6bc723c6bda49b1ee71eee81f088.json
+RB2	NO_ANSWER with no consumption identity	PASS	PASS	observed-good	0 errors
+RB2	REFUSED_MALFORMED with no consumption identity	PASS	PASS	observed-good	0 errors
+RB2	REFUSED_STALE_CONFIG with no consumption identity	PASS	PASS	observed-good	0 errors
+RB2	CNO_INCOMPLETE_UNIVERSE with no consumption identity	PASS	PASS	observed-good	0 errors
+RB2	CNO_TRUNCATED_RESPONSE with no consumption identity	PASS	PASS	observed-good	0 errors
+RB2	WITHDRAWN with no consumption identity	PASS	PASS	observed-good	0 errors
+RB2	NO_ANSWER carrying applied	FAIL	FAIL	observed-good	1: at <root>: False schema does not allow {'directive': 'ADOPT_OPTION', 'option_id': 'A', 'action_id': 'record-adoption', 'applied_bytes_identity': {'predicate': 'bytes', 'value': 'observed-good', 'measured': 'sha256=...'}}
+RB2	NO_ANSWER carrying replay_check	FAIL	FAIL	observed-good	1: at <root>: False schema does not allow {'second_consumption_attempted': True, 'actions_performed_on_replay': 0, 'outcome_identical': True, 'evidence': 'second consumption performed 0 actions'}
+RB3	well-formed CONSUMED receipt (positive control)	PASS	PASS	observed-good	0 errors
+RB3	CONSUMED, consumption_identity absent	FAIL	FAIL	observed-good	1: at <root>: 'consumption_identity' is a required property
+RB3	CONSUMED, consumption_count = 0	FAIL	FAIL	observed-good	1: at consumption_identity/consumption_count: 0 is less than the minimum of 1
+RB3	CONSUMED, consumption_count = 2	FAIL	FAIL	observed-good	1: at consumption_identity/consumption_count: 2 is greater than the maximum of 1
+RB3	CONSUMED, durable_record empty	FAIL	FAIL	observed-good	1: at consumption_identity/durable_record: '' is too short
+RB3	CONSUMED, durable_record absent	FAIL	FAIL	observed-good	1: at consumption_identity: 'durable_record' is a required property
+RB3	CONSUMED, first_consumed_at absent	FAIL	FAIL	observed-good	1: at consumption_identity: 'first_consumed_at' is a required property
+RB3	CONSUMED, replay_check absent	FAIL	FAIL	observed-good	1: at <root>: 'replay_check' is a required property
+RB3	CONSUMED, applied absent	FAIL	FAIL	observed-good	1: at <root>: 'applied' is a required property
+RB3	CONSUMED, ruling_sha256 absent	FAIL	FAIL	observed-good	1: at <root>: 'ruling_sha256' is a required property
+RB4	replay reads the prior record and writes nothing	UNCHANGED	UNCHANGED	observed-good	store digest fd3ef39a83625246 before and after
+RB4	replay returns the prior receipt_id unchanged	fscp2-00000000000000000000000000000000	fscp2-00000000000000000000000000000000	observed-good	prior outcome=CONSUMED
+RB4	the replay guard and the durable record share one branch	COUPLED	COUPLED	observed-good	guard_conditional=True key_conditional=True
+RB5	the generation 2 request fixture validates (positive control)	PASS	PASS	observed-good	0 errors
+RB5	labels present at creation, created_at == updated_at	ATOMIC	ATOMIC	observed-good	 was never observed without its labels: created_at == updated_at created_at=2026-09-02T11:42:12Z updated_at=2026-09-02T11:42:12Z | ATOMIC OK
+RB5	one label missing from the creation response	REFUSED	REFUSED	observed-good	labels: created_at == updated_at created_at=2026-09-02T11:42:12Z updated_at=2026-09-02T11:42:12Z | REFUSED: 1 predicate(s) not observed-good
+RB5	no labels at creation, applied later (the generation 1 shape)	REFUSED	REFUSED	observed-good	labels: created_at == updated_at created_at=2026-09-02T11:42:12Z updated_at=2026-09-02T11:52:37Z | REFUSED: 2 predicate(s) not observed-good
+RB5	labels present but the item was edited after creation	REFUSED	REFUSED	observed-good	labels: created_at == updated_at created_at=2026-09-02T11:42:12Z updated_at=2026-09-02T11:52:37Z | REFUSED: 1 predicate(s) not observed-good
+RB5	routing_labels that disagree with the configuration are refused	REFUSED	REFUSED	observed-good	observed-bad       request.routing_labels equals the canonical configuration's routing labels config=['control/escalation', 'to/br
+RB5	the single creation call carries both labels as fields of the create	ONE_CALL	ONE_CALL	observed-good	gh api --method POST repos/sbracewell64/firstmate-cleanroom-control/issues -f title=Clean-room architecture package: is it sound enough to build the f
+RB5	post refuses without the authorizing lane token	REFUSED	REFUSED	observed-good	REFUSED: emitting a generation 2 request is a separately authorized lane.
+RB6	scanner detects posix_home	RESIDUE	RESIDUE	observed-good	HIT  posix_home                 /home/OPERATOR                              /tmp/fsc2-gen2-red-wpalvj12/posix_home.txt | residue_coun
+RB6	redactor clears posix_home	CLEAN	CLEAN	observed-good	checkout at /home/OPERATOR/kun-agent-workspace/bin
+RB6	scanner detects wsl_windows_userprofile	RESIDUE	RESIDUE	observed-good	HIT  wsl_windows_userprofile    /mnt/c/Users/OPERATOR/tmp/fsc2-gen2-red-wpalvj12/wsl_windows_userprofile.txt |
+RB6	redactor clears wsl_windows_userprofile	CLEAN	CLEAN	observed-good	npm at /mnt/c/Users/OPERATOR/AppData/Roaming/npm/codex
+RB6	scanner detects windows_userprofile	RESIDUE	RESIDUE	observed-good	HIT  windows_userprofile        C:\Users\OPERATOR/tmp/fsc2-gen2-red-wpalvj12/windows_userprofile.txt | res
+RB6	redactor clears windows_userprofile	CLEAN	CLEAN	observed-good	config at C:\Users\OPERATOR\.claude\settings.json
+RB6	scanner detects macos_home	RESIDUE	RESIDUE	observed-good	HIT  macos_home                 /Users/OPERATOR                             /tmp/fsc2-gen2-red-wpalvj12/macos_home.txt | residue_coun
+RB6	redactor clears macos_home	CLEAN	CLEAN	observed-good	cache at /Users/OPERATOR/Library/Caches
+RB6	scanner detects unc_wsl_home	RESIDUE	RESIDUE	observed-good	HIT  unc_wsl_home               \\wsl$\Ubuntu\home\OPERATOR                 /tmp/fsc2-gen2-red-wpalvj12/unc_wsl_home.txt | residue_co
+RB6	redactor clears unc_wsl_home	CLEAN	CLEAN	observed-good	share at \\wsl$\Ubuntu\home\OPERATOR\work
+RB6	already-redacted text is clean (negative control)	CLEAN	CLEAN	observed-good	residue_count 0
+RB6	an unreadable target is could-not-observe, never clean	CNO	CNO	observed-good	CNO  /tmp/fsc2-gen2-red-wpalvj12/does-not-exist.txt: [Errno 2] No such file or directory: '/tmp/fsc2-gen2-red-wpalvj12/does-not-ex
+RB7	commit ref declaring locator_identity	PASS	PASS	observed-good	0 errors
+RB7	blob ref declaring fetched_bytes with a byte count	PASS	PASS	observed-good	0 errors
+RB7	commit ref declaring fetched_bytes	FAIL	FAIL	observed-good	1: at digest_basis: 'locator_identity' was expected
+RB7	fetched_bytes with no byte count	FAIL	FAIL	observed-good	1: at <root>: 'bytes' is a required property
+RB7	request evidence ref with no digest_basis at all	FAIL	FAIL	observed-good	1: at <root>: 'digest_basis' is a required property
+RB7	changing only digest_basis moves evidence_digest	MOVED	MOVED	observed-good	65b48823c2ed8cc5 vs a5fdd7a480b2f5ba
+RB8	truncated read + could-not-observe	PASS	PASS	observed-good	0 errors
+RB8	truncated read + observed-good	FAIL	FAIL	observed-good	1: at value: 'could-not-observe' was expected
+RB8	truncated read + observed-bad	FAIL	FAIL	observed-good	1: at value: 'could-not-observe' was expected
+RB8	truncating surface + observed-good	FAIL	FAIL	observed-good	1: at value: 'could-not-observe' was expected
+RB8	truncating surface + could-not-observe	PASS	PASS	observed-good	0 errors
+RB8	complete read through gh api + observed-good	PASS	PASS	observed-good	0 errors
+RB9	the live configuration resolves	OK	OK	observed-good	912f6238d94dfdf8afd672bc7f28a445b66138c14a5a08fa266a77837346c2aa
+RB9	a comment-only edit does NOT move the generation (negative control)	912f6238d94dfdf8afd672bc7f28a445b66138c14a5a08fa266a77837346c2aa	912f6238d94dfdf8afd672bc7f28a445b66138c14a5a08fa266a77837346c2aa	observed-good	value-sensitive, format-insensitive
+RB9	a repository change MOVES the generation	MOVED	MOVED	observed-good	d55214b044040bdb7b618ab9132cc309
+RB9	a routing-metadata change MOVES the generation	MOVED	MOVED	observed-good	0ced701eb6796e1be8ca1d165750484a
+RB9	a LISTENER identity change MOVES the generation	MOVED	MOVED	observed-good	ebb49d47f0351fde3ecfb288953aee11
+RB9	a protocol change REFUSES outright	REFUSED	REFUSED	observed-good	REFUSED: CONFIG_INVALID: /tmp/fsc2-gen2-red-wpalvj12/cfg/proto.yaml   at control/protocol: 'fm-sol-control/v2' was expected
+RB9	a configuration with no listener section REFUSES	REFUSED	REFUSED	observed-good	REFUSED: CONFIG_INVALID: /tmp/fsc2-gen2-red-wpalvj12/cfg/nolistener.yaml   at <root>: 'listener' is a required property
+RB9	an ABSOLUTE listener path REFUSES rather than resolving	REFUSED	REFUSED	observed-good	REFUSED: CONFIG_INVALID: /tmp/fsc2-gen2-red-wpalvj12/cfg/abs.yaml   at listener/record_path: '/etc/cleanroom-control-v2.listener.j
+RB9	an UNREADABLE configuration REFUSES, never falls back	REFUSED	REFUSED	observed-good	REFUSED: CONFIG_UNREADABLE: /tmp/fsc2-gen2-red-wpalvj12/cfg/absent.yaml: [Errno 2] No such file or directory: '/tmp/fsc2-gen2-red-
+RB9	a MALFORMED configuration REFUSES, never falls back	REFUSED	REFUSED	observed-good	REFUSED: CONFIG_MALFORMED: /tmp/fsc2-gen2-red-wpalvj12/cfg/malformed.yaml: while parsing a flow sequence   in "<unicode string>", 
+RB10	the resolved clean-room venue	ADMIT	ADMIT	observed-good	ADMIT ADMITTED
+RB10	the retired venue, by repository	DENY	DENY	observed-good	DENY  DENIED_REPOSITORY: sbracewell64/firstmate-sol-control
+RB10	the retired protocol	DENY	DENY	observed-good	DENY  DENIED_PROTOCOL: fm-sol-control/v1
+RB10	the BARE PREFIX fm-sol-control	DENY	DENY	observed-good	DENY  NOT_THE_RESOLVED_PROTOCOL: fm-sol-control != fm-sol-control/v2
+RB10	an unrelated repository	DENY	DENY	observed-good	DENY  NOT_THE_RESOLVED_VENUE: sbracewell64/firstmate != sbracewell64/firstmate-cleanroom-control
+RB10	no generation 2 tool names the retired venue anywhere	NONE	NONE	observed-good	0 hits in /mnt/e/FirstMate-Cleanroom/artifacts/control/gen2/bin
+RB10	the retired venue IS named in the configuration's denial list (grep positive control)	PRESENT	PRESENT	observed-good	1 occurrence(s) in the canonical owner
+RB11	the consumer declares its read surface	PRESENT	PRESENT	observed-good	READ_SURFACE = os.environ.get("FSC2_READ_SURFACE", "gh_api_non_truncating")
+RB11	a truncating surface yields CNO_TRUNCATED_RESPONSE	PRESENT	PRESENT	observed-good	"CNO_TRUNCATED_RESPONSE",
+RB11	no candidate ruling survives a truncating surface	PRESENT	PRESENT	observed-good	    if truncating:
+RB11	truncation and unreachability never share a code	PRESENT	PRESENT	observed-good	code = ("CNO_TRUNCATED_RESPONSE" if str(exc).startswith("TRUNCATED_RESPONSE")
+RB11	a gh-axi truncation marker is detected in the payload	DETECTED	DETECTED	observed-good	declared_length=40306
+RB11	an untruncated payload is not falsely flagged (negative control)	CLEAN	CLEAN	observed-good	no marker present

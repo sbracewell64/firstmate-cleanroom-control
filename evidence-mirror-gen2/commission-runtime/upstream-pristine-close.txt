@@ -1,0 +1,7 @@
+# Pristine upstream checkout, at commission close 2026-09-02T21:46:51Z
+HEAD=41d0ab3910ece4e90db0194f756437b3abe8ab8f
+--- git status --porcelain ---
+PORCELAIN_LINES=0
+--- git status --porcelain --ignored=no --untracked-files=all ---
+ALL_LINES=0
+HEAD_UNCHANGED_SINCE_OPEN=yes
