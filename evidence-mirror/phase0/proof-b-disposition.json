@@ -1,0 +1,1517 @@
+{
+  "attempt": 1,
+  "attempt_budget": 3,
+  "candidate": {
+    "base_sha": "2ef121a978f006d43439fe7e46553e406bd56757",
+    "branch": "fm-proof-a/semver-compare",
+    "head_sha": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+    "tree_sha": "1d88a770c95ca23b26ab806c1aeef2ca52d4a23a"
+  },
+  "candidate_state": "ATTESTED",
+  "completed_at": "2026-09-02T00:04:55Z",
+  "control_plane": {
+    "issue": 47,
+    "issue_url": "https://github.com/sbracewell64/firstmate-sol-control/issues/47",
+    "venue_private": true,
+    "venue_repo": "sbracewell64/firstmate-sol-control"
+  },
+  "correlation_id": "fsc1-28adf42e612a169a203ae82c46fc6c92",
+  "d2_fired": [
+    {
+      "cognition_required": "Every observation was hand-graded. bin/fm-verify.sh --list declares five verifiers and none covers a control-plane round trip, so the actor formed each verdict instead of consuming one.",
+      "eliminating_machinery": "A declared `sol-roundtrip` verifier returning PASS/FAIL/NO_VERIFIER_RAN for a named stage id.",
+      "id": "D2-S1"
+    },
+    {
+      "cognition_required": "Authoring the catalog entry and the two option patches for a subject the catalog did not already contain.",
+      "eliminating_machinery": "A typed decision detector bound to the pipeline's own Findings objects, emitting question.key mechanically from (category, review_scope, action), so a novel subject is a catalog MISS that refuses rather than a judgement call.",
+      "id": "D2-B1"
+    },
+    {
+      "cognition_required": "Independence cannot be measured with one identity.",
+      "eliminating_machinery": "A second principal (a distinct GitHub identity or a GitHub App installation token) plus an actor register the validator reads, so distinctness is MEASURED rather than asserted.",
+      "id": "D2-B2"
+    }
+  ],
+  "deviations": [
+    {
+      "design_says": "proof-b 3.1: the venue is one issue in a NEW control repository sbracewell64/fm-cleanroom-control.",
+      "deviation": "The venue is ONE NEW issue on sbracewell64/firstmate-sol-control, titled with the required CLEANROOM-PROOF-B: prefix. Issues 2 and 19 are never touched and no retired-queue work item is referenced.",
+      "id": "DEV-B1",
+      "lost": "The venue is not a clean-room-only repository; it coexists with unrelated retired-fleet issues.",
+      "preserved": "One issue per correlation id; the comment universe of THIS issue is exactly ours and is completely observable, so the completeness predicate is unchanged.",
+      "reality": "Browser Sol demonstrably watches the EXISTING private repository sbracewell64/firstmate-sol-control and rules there autonomously; a brand-new repository has no known Sol watcher, so a request posted only there might never be inspected. The executor's authority bound permits one issue and its comments, not a repository.",
+      "stage": "B-S6"
+    },
+    {
+      "design_says": "proof-b 3.1/4.4/4.5: schema, renderer, catalog and the SemVer reference live in the control repository and are referenced by blob-at-commit URL.",
+      "deviation": "Those artifacts live in this attempt's pinned inputs/ and tools/. The exact schema-of-record bytes and the exact SemVer section 10 bytes are EMBEDDED in the issue body in fenced blocks, and reply_contract.schema_locator is an api_capture locator naming the posted issue body plus the schema sha256 - the treatment the design already prescribes for the mutable PR body (4.5).",
+      "id": "DEV-B2",
+      "lost": "Locator immutability: an issue body is editable. Mitigated by capturing the posted body via the API immediately after posting, recording its sha256, and never editing it.",
+      "preserved": "The ruler sees the exact bytes with no second fetch and can recompute vocabulary_digest.",
+      "reality": "No repository may be created and the reachable control repository is not ours to commit to.",
+      "stage": "B-S4/B-S6"
+    },
+    {
+      "design_says": "proof-b 4.5: read every evidence locator the way a third party would, unauthenticated.",
+      "deviation": "B-S5 probes the SUBJECT evidence locators unauthenticated, which is the property that matters (the ruler must inspect the subject). Control-plane anonymous readability is a declared property of the chosen venue, recorded as a decision, not measured as a CNO.",
+      "id": "DEV-B3",
+      "lost": "A ruler without repository access cannot read the request at all.",
+      "preserved": "Every byte the ruling rests on is third-party resolvable and content-addressed.",
+      "reality": "The reachable control repository is PRIVATE, so control-plane artifacts are not anonymously resolvable. The SUBJECT repository sbracewell64/fm-cleanroom-proof is public (archived, still publicly readable) and its locators ARE anonymously resolvable.",
+      "stage": "B-S5"
+    },
+    {
+      "design_says": "proof-b B-S2 prepares an OPEN, qualified candidate PR; BP6 accepts candidate_state in {STABLE_FOR_VALIDATION, VALIDATED_EXACT_HEAD}; L2 requires live PR state == \"open\".",
+      "deviation": "The subject candidate is Proof A's LANDED candidate (branch fm-proof-a/semver-compare, published head 281e15b2, PR #2, state closed/merged, candidate_state ATTESTED). BP6's accepted set gains ATTESTED. L2 becomes: live PR state EQUALS the state recorded at compile time.",
+      "id": "DEV-B5",
+      "lost": "The design's staging in which a ruling is consumed into a still-open candidate before it lands.",
+      "preserved": "Both remain identity checks against machine state. BP6's anti-MUTATING intent holds STRICTLY MORE strongly: an archived repository's candidate cannot mutate at all. L2 still refuses a candidate that has moved out of the state the request was compiled against.",
+      "reality": "sbracewell64/fm-cleanroom-proof is archived and read-only and its PR #2 is MERGED. The executor may not open a PR there and the brief prefers not unarchiving.",
+      "stage": "B-S3/B-S4/B-S10"
+    },
+    {
+      "design_says": "proof-b 10.1/11: an ADOPT_OPTION directive applies the option patch and lands it through Proof A's path.",
+      "deviation": "B-S11 applies the ruled patch in a local scratch clone of the archived repository and runs the 10.2 identity check there. Nothing is pushed, no PR is opened, the repository is never unarchived. B-S13 is out of scope (see stages_out_of_scope).",
+      "id": "DEV-B6",
+      "lost": "That the ruled change survives a qualification pipeline and lands under a fresh authorization.",
+      "preserved": "F7 - the design's terminal claim - is exactly the applied-bytes identity check, and it is run.",
+      "reality": "The subject repository is archived; the authority bound scopes application to a local scratch clone with the applied-bytes identity check and prefers not unarchiving.",
+      "stage": "B-S11/B-S13"
+    },
+    {
+      "design_says": "proof-b 12 bolds 'Every FAIL and every CNO stops the proof at that stage', while the same table's independence-CNO row states its consequence as a GRADE ('proof grades CNO_AT_B-S9'), unlike its neighbouring rows which say 'consume nothing' and 'stop'.",
+      "deviation": "PINNED RESOLUTION: V7's independence could-not-observe CAPS the terminal grade at CNO_AT_B-S9 and does not stop the proof. B-S10 through B-S12 still execute and are recorded, so F7's identity check is watched rather than skipped. The receipt carries V7's CNO verbatim in validation[] so no reader can mistake it for measured independence.",
+      "id": "DEV-B7",
+      "lost": "Nothing measurable; the change is that MORE evidence is produced at the SAME grade. The residual risk - consuming a ruling whose independence is unmeasured - is bounded because the application is a local scratch clone that is never pushed.",
+      "preserved": "The terminal grade is unchanged and cannot be inflated: CNO_AT_B-S9, explicitly not PROVED.",
+      "reality": "The two readings differ and the ambiguity must be resolved before the answer is in view.",
+      "stage": "B-S9"
+    },
+    {
+      "design_says": "proof-b 15: ten falsifiers, each watched red first; several post malformed or duplicate rulings to the live venue.",
+      "deviation": "Falsifiers run against the SAME ladder.py code path the live ruling passes through, using synthetic comment universes. Falsifier 6 also runs against the live fetch. Falsifiers 4 and 5's live halves (push a commit / change protection after the ruling) cannot run at all: the subject repository is archived and read-only, so their comparators are falsified with synthetic inputs and the live half is recorded in falsifier_limits.",
+      "id": "DEV-B8",
+      "lost": "The live-forge half of falsifiers 3, 4, 5 and 7.",
+      "preserved": "Every control that gates the live ruling is watched red for its own reason, with target and observed recorded and compared, before the first live observation.",
+      "reality": "Posting six malformed, duplicate and mention-only comments into the live Sol-watched issue would pollute the venue the round trip depends on and could confuse the real ruler.",
+      "stage": "B-S0b"
+    },
+    {
+      "design_says": "proof-b 4.3: expires_at := created_at + 72h; 7.3: the wait is code's job.",
+      "deviation": "expires_at stays created_at + 72h - it is the REQUEST's validity window and a ruling arriving at hour three is still valid. The EXECUTOR's poll bound is 90 minutes (18 attempts, 300s apart). The two are different facts and are recorded apart.",
+      "id": "DEV-B9",
+      "lost": "Nothing; the request outlives this executor's attention.",
+      "preserved": "A non-answer is a recorded terminal state rather than an indefinite wait.",
+      "reality": "This executor has a 90-minute bound.",
+      "stage": "B-S8"
+    },
+    {
+      "design_says": "proof-b 12: no ruling before expires_at yields a receipt and the issue closes.",
+      "deviation": "On executor-bound exhaustion a receipt comment is posted with outcome CNO_TRANSPORT and a note naming the 90-minute EXECUTOR bound (explicitly distinct from Sol answering INSUFFICIENT_EVIDENCE, and distinct from expiry), and the issue is LEFT OPEN.",
+      "id": "DEV-B10",
+      "lost": "The design's close-on-terminal; closing here would discard a still-valid answer.",
+      "preserved": "Every terminal state produces a receipt, so the request is never silently abandoned.",
+      "reality": "The executor's 90-minute bound expires long before the request's 72h window.",
+      "stage": "B-S12"
+    },
+    {
+      "design_says": "proofs-shared-contracts 1.1: Proof B's schema $refs the shared $defs block of Proof A's.",
+      "deviation": "tools/build_schema.py EXTRACTS the ten shared $defs programmatically from Proof A's schema file and embeds them, recording both digests. No definition is retyped.",
+      "id": "DEV-B11",
+      "lost": "Automatic propagation if Proof A's schema were later edited; the recorded source digest makes that detectable rather than silent.",
+      "preserved": "Exactly one AUTHORED definition of each shared type across both proofs.",
+      "reality": "A cross-file $ref is unresolvable for a third party validating the schema that travels inline.",
+      "stage": "B-S0"
+    }
+  ],
+  "deviations_discovered_during_execution": [
+    {
+      "decision": "Captured as context in raw/check-runs-at-head.json and NOT carried as an evidence_ref. This decision rests on the module, its tests, the candidate diff and the normative anchor. A limitation the proof could enforce but chose not to is a DECISION NOT TO ENFORCE, recorded as such, not a could-not-observe.",
+      "found": "before emission",
+      "id": "DEV-B12",
+      "what": "The design's 4.5 locator table lists the numeric check-run id at the candidate head as an evidence_ref. GitHub's check-runs API requires authentication even on a public repository, so it does not resolve for the unauthenticated third party B-S5 probes as."
+    }
+  ],
+  "environment": {
+    "gh_version": "2.96.0",
+    "git_version": "2.53.0",
+    "host": "WSL2 Linux 6.18.33.2-microsoft-standard-WSL2",
+    "jq_version": "jq-1.8.1",
+    "jsonschema_version": "4.19.2",
+    "python_version": "3.14.4"
+  },
+  "falsifier_limits": [
+    "No falsifier is posted to the live venue (DEV-B8), so the live-forge halves of falsifiers 3 and 7 are not run.",
+    "Falsifier 4's live half and falsifier 5's positive live half cannot be run at all: the subject repository is archived and read-only, so neither its head nor its protection can be moved. Their comparators are falsified with synthetic inputs; the end-to-end control is NOT watched red on the live forge."
+  ],
+  "falsifiers": [
+    {
+      "expect": "RULING_MALFORMED naming the field",
+      "form": "comparator-offline",
+      "input": "ruling with corelation_id (one letter dropped)",
+      "n": 1,
+      "target": "V2 schema validation"
+    },
+    {
+      "expect": "RULING_MALFORMED",
+      "form": "comparator-offline",
+      "input": "ruling whose vocabulary_digest is another schema generation",
+      "n": 2,
+      "target": "V3 vocabulary digest"
+    },
+    {
+      "expect": "RULING_LINEAGE_FORK; NEITHER consumed; the newer NOT picked",
+      "form": "comparator-offline",
+      "input": "two valid rulings, neither naming the other in supersedes",
+      "n": 3,
+      "target": "V1/V8 lineage fork"
+    },
+    {
+      "expect": "RULING_SUPERSEDED",
+      "form": "comparator-offline",
+      "input": "live head one commit later than valid_while.pr_head",
+      "live_half": "unavailable - subject repo archived and read-only",
+      "n": 4,
+      "target": "L1 exact-head applicability"
+    },
+    {
+      "expect": "changed context -> RULING_SUPERSEDED; unrelated main movement -> L3 stays observed-good",
+      "form": "comparator-offline + LIVE negative half",
+      "input": "one required context changed; AND the live half: unrelated main movement must NOT trip L3",
+      "live_half": "the negative half IS runnable and IS run: main already moved after protection was set",
+      "n": 5,
+      "target": "L3 policy generation"
+    },
+    {
+      "expect": "CNO_INCOMPLETE_UNIVERSE, not 'no ruling found'",
+      "form": "comparator-offline + LIVE",
+      "input": "fetched count capped below reported count",
+      "n": 6,
+      "target": "completeness predicate"
+    },
+    {
+      "expect": "ignored: neither counts as a ruling nor suppresses the real one",
+      "form": "comparator-offline",
+      "input": "a comment that merely mentions the correlation id in prose",
+      "n": 7,
+      "target": "selection by content"
+    },
+    {
+      "expect": "NOT observed-good",
+      "form": "comparator-offline",
+      "input": "ruler.login equal to a maker login",
+      "n": 8,
+      "target": "V7 independence"
+    },
+    {
+      "expect": "request validation refuses before emission",
+      "form": "comparator-offline",
+      "input": "an evidence locator that is a branch URL and a malformed sha256",
+      "n": 9,
+      "target": "schema evidence_ref"
+    },
+    {
+      "expect": "RULING_SUBJECT_MISMATCH",
+      "form": "comparator-offline",
+      "input": "ADOPT_OPTION with option_id not offered",
+      "n": 10,
+      "target": "V10 offered options"
+    }
+  ],
+  "fold_rule_defects": [],
+  "github_state_NOT_created": [
+    "no repository",
+    "no commit",
+    "no branch",
+    "no push",
+    "no pull request",
+    "no merge",
+    "no label, milestone, assignee or project",
+    "no edit or deletion of any existing issue or comment (issues 2 and 19 were never touched)",
+    "no unarchive of sbracewell64/fm-cleanroom-proof",
+    "no change to sbracewell64/firstmate"
+  ],
+  "github_state_created": [
+    {
+      "how_created": "gh issue create",
+      "locator": "https://github.com/sbracewell64/firstmate-sol-control/issues/47",
+      "n": 1,
+      "object": "One issue on sbracewell64/firstmate-sol-control",
+      "retained": true
+    },
+    {
+      "how_created": "gh issue comment",
+      "locator": "see receipt.json",
+      "n": 2,
+      "object": "One receipt comment on that issue",
+      "retained": true
+    }
+  ],
+  "independence": {
+    "d2": "D2-B2",
+    "reason": "One GitHub identity (sbracewell64) authored the candidate commits, the pull request, and every comment in the reachable control venue. The login proxy V7 measures cannot discriminate a distinct execution context from a maker, so independence is UNMEASURED. It is never narrowed into observed-good and never into observed-bad. The design pre-registers this as the one-identity case (proof-b 16 PR-B2) and grades it CNO_AT_B-S9.",
+    "value": "could-not-observe"
+  },
+  "instrument_defects_found_and_corrected": [
+    {
+      "found": "before emission",
+      "id": "INSTR-1",
+      "record_handling": "Nothing appended was edited. B-S4 was re-run in full; both compiles are in the trace.",
+      "stage": "B-S4",
+      "what": "candidate.base_sha was sourced from `git merge-base head origin/<default>`, but the default branch now CONTAINS the candidate, so it returned the head itself and the diff evidence locator would have resolved to an empty range.",
+      "why_it_matters": "The observation 'C:candidate.base_sha came from machine state' was TRUE and green while saying nothing about whether the field answered the right question - the wrong-subject failure. Two new gating predicates now check base != head and that the diff resolves non-empty."
+    },
+    {
+      "found": "before emission",
+      "id": "INSTR-2",
+      "record_handling": "Digests are now over raw bytes and locators are commit-pinned raw URLs; B-S4 re-run; all six locators then matched byte-for-byte.",
+      "stage": "B-S4",
+      "what": "Blob evidence digests were taken over git output that had been .strip()ped, so they could never equal the sha256 of the bytes an anonymous reader receives.",
+      "why_it_matters": "The B-S5 readiness probe would have refused on an instrument artifact rather than on genuine inspectability - a fail-closed refusal for the wrong reason is still a wrong answer."
+    },
+    {
+      "found": "before any live observation",
+      "id": "INSTR-3",
+      "record_handling": "V7 gained an explicit identities_distinct input and all three values; F8b and F8c watch both branches and F0b re-confirms the green path. The original F8 observation is retained unedited.",
+      "stage": "B-S0b",
+      "what": "ladder.validation_ladder's V7 had no observed-bad branch, so falsifier 8 could only ever watch the could-not-observe path. Crediting F8 with 'the ruler-is-a-maker refusal was watched red' would have been the wrong-subject failure."
+    }
+  ],
+  "observations": [
+    {
+      "measured": "276ccf45a7444e7e53c545ba6013064b61b28545edb3c2350f35333e3897814a vs 276ccf45a7444e7e53c545ba6013064b61b28545edb3c2350f35333e3897814a",
+      "predicate": "P0 PINNED.json still hashes to the digest recorded when it was frozen",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "2989b9b363d26d5c1c88e85e63ca398a2cfc2dd58e2c782f52c3f1f2c1b535b4 vs 2989b9b363d26d5c1c88e85e63ca398a2cfc2dd58e2c782f52c3f1f2c1b535b4",
+      "predicate": "P1 pinned input inputs/catalog/semver-build-metadata-precedence.json hashes to its pinned digest",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "3d1ed0b5e6aa35cc4cf2b855cb4f329f7f54544c3cec1b7055658bb396764be6 vs 3d1ed0b5e6aa35cc4cf2b855cb4f329f7f54544c3cec1b7055658bb396764be6",
+      "predicate": "P1 pinned input inputs/option-a.patch hashes to its pinned digest",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "ddf103379ead31ee741bae38b9ad3124c897b10cb55a44ffce25921b50644c96 vs ddf103379ead31ee741bae38b9ad3124c897b10cb55a44ffce25921b50644c96",
+      "predicate": "P1 pinned input inputs/option-b.patch hashes to its pinned digest",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "683f9e2920b262cfbd3a5884a1f3b81ca991e3e3af740f702ce8e1de696e8b8c vs 683f9e2920b262cfbd3a5884a1f3b81ca991e3e3af740f702ce8e1de696e8b8c",
+      "predicate": "P1 pinned input inputs/semver-2.0.0-section-10.txt hashes to its pinned digest",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "50575d7f042acd4ce6c560091bbf7d52bc172df6f1e6a56f7fdecbfc55125506 vs 50575d7f042acd4ce6c560091bbf7d52bc172df6f1e6a56f7fdecbfc55125506",
+      "predicate": "P1 pinned input proof_a_schema_source hashes to its pinned digest",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a vs 72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a",
+      "predicate": "P1 pinned input schemas/fm-sol-control-v1.schema.json hashes to its pinned digest",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "len=4455 sha256=e71f8727bf2ca2230b7bce20baa1c70c081216be5f4ba22ef305aecebb1b0897",
+      "predicate": "P2 renderer is deterministic: two renders are byte-identical",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "rendered=['schema', 'kind', 'vocabulary_digest', 'correlation_id', 'ruled_at', 'ruler', 'applies_to', 'inspection', 'directive', 'single_writer_assertion'] schema=['schema', 'kind', 'vocabulary_digest', 'correlation_id', 'ruled_at', 'ruler', 'applies_to', 'inspection', 'directive', 'single_writer_assertion']",
+      "predicate": "P3 rendered required-field list equals the schema's own required array",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "gh version 2.96.0 (2026-07-02)",
+      "predicate": "P4 gh is present and reports its version",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git version 2.53.0",
+      "predicate": "P4 git is present and reports its version",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "Python 3.14.4",
+      "predicate": "P4 python3 is present and reports its version",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "jq-1.8.1",
+      "predicate": "P4 jq is present and reports its version",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "jsonschema 4.19.2",
+      "predicate": "P5 a JSON-Schema validator library is importable (design PR-B4)",
+      "stage_id": "B-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "non_green=[] rulings=1",
+      "predicate": "F0 positive control: the unmutated ruling passes V1-V10 with an independent ruler",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=V1 observed=['V1'] expected_code=RULING_MALFORMED refusal_names_the_field=True malformed_candidates=1",
+      "predicate": "F1 control V1 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=V3 observed=['V3'] expected_code=RULING_MALFORMED ",
+      "predicate": "F2 control V3 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=V1 observed=['V1'] expected_code=RULING_LINEAGE_FORK consumed=none codes=['RULING_LINEAGE_FORK'] newer_not_picked=True",
+      "predicate": "F3 control V1 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=L1 observed=['L1'] expected_code=RULING_SUPERSEDED live half unavailable: subject repo archived",
+      "predicate": "F4 control L1 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=L3 observed=['L3'] expected_code=RULING_SUPERSEDED ",
+      "predicate": "F5a control L3 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "non_green=[]",
+      "predicate": "F5b L3 stays quiet when nothing in the policy generation changed (a control that fires on everything is not a control)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "capped=could-not-observe(fetched=30 reported=31) equal=observed-good(fetched=3 reported=3) code=CNO_INCOMPLETE_UNIVERSE",
+      "predicate": "F6 completeness predicate returns could-not-observe when fetched != reported, and observed-good when they agree",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "rulings=1 mentions=1 non_green=[]",
+      "predicate": "F7 a prose mention of the correlation id neither counts as a ruling nor suppresses the real one (containment is not identity)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=V7 observed=['V7'] expected_code=independence not observed-good v7_value=could-not-observe",
+      "predicate": "F8 control V7 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "valid=False errors=[\"evidence_refs/0/sha256: 'not-a-sha' does not match '^[0-9a-f]{64}$'\"]",
+      "predicate": "F9 a malformed evidence_ref refuses request validation before emission",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=V10 observed=['V10'] expected_code=RULING_SUBJECT_MISMATCH ",
+      "predicate": "F10 control V10 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "non_green=[] rulings=1",
+      "predicate": "F0 positive control: the unmutated ruling passes V1-V10 with an independent ruler",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=V1 observed=['V1'] expected_code=RULING_MALFORMED refusal_names_the_field=True malformed_candidates=1",
+      "predicate": "F1 control V1 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=V3 observed=['V3'] expected_code=RULING_MALFORMED ",
+      "predicate": "F2 control V3 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=V1 observed=['V1'] expected_code=RULING_LINEAGE_FORK consumed=none codes=['RULING_LINEAGE_FORK'] newer_not_picked=True",
+      "predicate": "F3 control V1 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=L1 observed=['L1'] expected_code=RULING_SUPERSEDED live half unavailable: subject repo archived",
+      "predicate": "F4 control L1 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=L3 observed=['L3'] expected_code=RULING_SUPERSEDED ",
+      "predicate": "F5a control L3 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "non_green=[]",
+      "predicate": "F5b L3 stays quiet when nothing in the policy generation changed (a control that fires on everything is not a control)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "capped=could-not-observe(fetched=30 reported=31) equal=observed-good(fetched=3 reported=3) code=CNO_INCOMPLETE_UNIVERSE",
+      "predicate": "F6 completeness predicate returns could-not-observe when fetched != reported, and observed-good when they agree",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "rulings=1 mentions=1 non_green=[]",
+      "predicate": "F7 a prose mention of the correlation id neither counts as a ruling nor suppresses the real one (containment is not identity)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=V7 observed=['V7'] expected_code=independence not observed-good v7_value=could-not-observe",
+      "predicate": "F8 control V7 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "valid=False errors=[\"evidence_refs/0/sha256: 'not-a-sha' does not match '^[0-9a-f]{64}$'\"]",
+      "predicate": "F9 a malformed evidence_ref refuses request validation before emission",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "target=V10 observed=['V10'] expected_code=RULING_SUBJECT_MISMATCH ",
+      "predicate": "F10 control V10 reddens for its own reason (target == observed)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "v7=observed-bad observed=['V7'] distinct=True",
+      "predicate": "F8b V7 returns observed-bad when the actor register establishes DISTINCT identities and the ruler login is a maker (the design's FAIL branch, unreachable in this attempt's one-identity world, watched red here)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "v7=could-not-observe observed=['V7']",
+      "predicate": "F8c V7 returns could-not-observe when ONE identity serves both parties (never narrowed into observed-good and never into observed-bad)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "non_green=[] rulings=1",
+      "predicate": "F0b positive control re-run against the corrected ladder: an independent ruler still passes V1-V10 green",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "/mnt/e/FirstMate-Cleanroom/artifacts/proofs/proof-b/attempt-1/inputs/catalog/semver-build-metadata-precedence.json",
+        "sha256": "2989b9b363d26d5c1c88e85e63ca398a2cfc2dd58e2c782f52c3f1f2c1b535b4"
+      },
+      "measured": "key=semver-build-metadata-precedence catalog_sha256=2989b9b363d26d5c1c88e85e63ca398a2cfc2dd58e2c782f52c3f1f2c1b535b4",
+      "predicate": "BP1 question.key is in the pre-registered catalog at its pinned digest",
+      "stage_id": "B-S3",
+      "value": "observed-good"
+    },
+    {
+      "measured": "options=['A', 'B'] classes=['single-commit revert', 'single-commit revert'] closed_set=['single-commit revert', 'single-file revert', 'irreversible']",
+      "predicate": "BP2 the entry declares >= 2 options, each with a reversibility class from the schema's closed set",
+      "stage_id": "B-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/bp3-reversibility.json",
+        "sha256": "3a764d96e148ac6f2527ade5335f53410f0d044359612d2c0788faca713ca3fa"
+      },
+      "measured": "{\"A\": {\"applied_tree_matches_pin\": true, \"reverted_to_base_tree\": true, \"apply_rc\": 0, \"revert_rc\": 0}, \"B\": {\"applied_tree_matches_pin\": true, \"reverted_to_base_tree\": true, \"apply_rc\": 0, \"revert_rc\": 0}}",
+      "predicate": "BP3 reversibility is EXECUTED: each option applies cleanly, reaches its pinned tree, and `git revert --no-commit` returns the tree to the base",
+      "stage_id": "B-S3",
+      "value": "observed-good"
+    },
+    {
+      "measured": "union=['fmproof/semver.py', 'tests/test_compare.py', 'tests/test_parse.py'] deny_hits=[] deny_globs=13",
+      "predicate": "BP4 the union of both options' patches touches no path on the captain-reserved deny list (.github/**, dependency manifests, LICENSE, credential paths)",
+      "stage_id": "B-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/bp5-authorship.json",
+        "sha256": "7c8bb2d24f4a2a71069120475a6ae1fa5cc1079f2f1aa5246ed49859595627cd"
+      },
+      "measured": "candidate authorship={\"commit_author_email\": \"sbracewell64@gmail.com\", \"commit_committer_email\": \"sbracewell64@gmail.com\", \"commit_author_name\": \"Shane Bracewell\", \"pr_author_login\": \"sbracewell64\"}; the only reachable ruling identity is the same account sbracewell64, so the login proxy cannot discriminate a distinct execution context from a maker (D2-B2)",
+      "predicate": "BP5 maker/checker independence is measurable from the actor register",
+      "stage_id": "B-S3",
+      "value": "could-not-observe"
+    },
+    {
+      "measured": "candidate_state=ATTESTED accepted=['ATTESTED', 'STABLE_FOR_VALIDATION', 'VALIDATED_EXACT_HEAD'] archived=True",
+      "predicate": "BP6 candidate_state is in the accepted set and is never MUTATING (DEV-B5: ATTESTED admitted; the repository is archived, so the candidate cannot mutate at all)",
+      "stage_id": "B-S3",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=https://github.com/sbracewell64/fm-cleanroom-proof.git source=git remote get-url origin",
+      "predicate": "C:repo.remote came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=main source=gh api repos/{o}/{r}",
+      "predicate": "C:repo.default_branch came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=281e15b292d0e604d7aac4c1f15413efaf8ee8ed source=git rev-parse origin/fm-proof-a/semver-compare",
+      "predicate": "C:candidate.head_sha came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=1d88a770c95ca23b26ab806c1aeef2ca52d4a23a source=git rev-parse HEAD^{tree}",
+      "predicate": "C:candidate.tree_sha came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=281e15b292d0e604d7aac4c1f15413efaf8ee8ed source=git merge-base fm-proof-a/semver-compare origin/main",
+      "predicate": "C:candidate.base_sha came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=281e15b292d0e604d7aac4c1f15413efaf8ee8ed source=gh pr api head.sha",
+      "predicate": "C:pull_request.head_sha came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git=281e15b292d0e604d7aac4c1f15413efaf8ee8ed forge=281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "predicate": "C:candidate head equals the pull request head",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=kunchenguid/no-mistakes/.github/actions/require-no-mistakes@0af0be6323bebd61edaf3a1a6170d82c5075e818 source=git show <head>:.github/workflows/no-mistakes-required.yml",
+      "predicate": "C:policy.action_ref came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/policy-generation-material.txt",
+        "sha256": "40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19"
+      },
+      "measured": "digest=40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19 contexts=['PR must be raised via no-mistakes', 'test'] action_ref=kunchenguid/no-mistakes/.github/actions/require-no-mistakes@0af0be6323bebd61edaf3a1a6170d82c5075e818",
+      "predicate": "C:policy_generation.digest is computed over the protection body, the sorted required contexts, the pinned action ref and the schema bytes - and NOT over the movement of the default branch",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git_blob=25555172b8a1a9e04cc19be6bacc55984db8f6c7 content_sha256=1781817579da720c163eae5b8c237f65430f46daa2187797785d4b40d8efec53",
+      "predicate": "C:evidence_ref for fmproof/semver.py is commit-pinned and content-addressed",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git_blob=697352e1da44b1f308101297932f63f07750ea3a content_sha256=416eea1da9be4ab9cfb759e1f4b26a19d4c593d9b0f76e13a40953fc81a3503f",
+      "predicate": "C:evidence_ref for tests/test_compare.py is commit-pinned and content-addressed",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git_blob=58ebc01763c419a6f0782d59118e5025efd9eb15 content_sha256=3eb9d66481ade72a433496cc22e533a23380e9462b086b130ca0413e203acfd5",
+      "predicate": "C:evidence_ref for tests/test_parse.py is commit-pinned and content-addressed",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/correlation-material.txt",
+        "sha256": "28adf42e612a169a203ae82c46fc6c923809c7c47e8ef6ab869e025ea06559bc"
+      },
+      "measured": "correlation_id=fsc1-28adf42e612a169a203ae82c46fc6c92",
+      "predicate": "C:correlation_id is DERIVED by hash over (protocol, repo, branch, head, question.key, policy_digest), never assigned",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "slots=['a_lines', 'b_lines', 'head_sha', 'repo_url', 'section10_sha256']",
+      "predicate": "C:every template slot is filled from a machine value",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "valid=True errors=[]",
+      "predicate": "C:the compiled request validates against the schema of record before emission",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=https://github.com/sbracewell64/fm-cleanroom-proof.git source=git remote get-url origin",
+      "predicate": "C:repo.remote came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=main source=gh api repos/{o}/{r}",
+      "predicate": "C:repo.default_branch came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=281e15b292d0e604d7aac4c1f15413efaf8ee8ed source=git rev-parse origin/fm-proof-a/semver-compare",
+      "predicate": "C:candidate.head_sha came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=1d88a770c95ca23b26ab806c1aeef2ca52d4a23a source=git rev-parse HEAD^{tree}",
+      "predicate": "C:candidate.tree_sha came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=2ef121a978f006d43439fe7e46553e406bd56757 source=git merge-base 281e15b292d0e604d7aac4c1f15413efaf8ee8ed <merge commit>^1  (the commit the candidate was cut from)",
+      "predicate": "C:candidate.base_sha came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "base=2ef121a978f006d43439fe7e46553e406bd56757 head=281e15b292d0e604d7aac4c1f15413efaf8ee8ed merge_commit=a7db5c360d57964a160f59a5c71a8c07a6f5c382",
+      "predicate": "C:candidate.base_sha is the contribution base the candidate was cut from, and is NOT the head itself (a diff locator that resolves to nothing is not decision-ready evidence)",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=281e15b292d0e604d7aac4c1f15413efaf8ee8ed source=gh pr api head.sha",
+      "predicate": "C:pull_request.head_sha came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git=281e15b292d0e604d7aac4c1f15413efaf8ee8ed forge=281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "predicate": "C:candidate head equals the pull request head",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=kunchenguid/no-mistakes/.github/actions/require-no-mistakes@0af0be6323bebd61edaf3a1a6170d82c5075e818 source=git show <head>:.github/workflows/no-mistakes-required.yml",
+      "predicate": "C:policy.action_ref came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/policy-generation-material.txt",
+        "sha256": "40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19"
+      },
+      "measured": "digest=40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19 contexts=['PR must be raised via no-mistakes', 'test'] action_ref=kunchenguid/no-mistakes/.github/actions/require-no-mistakes@0af0be6323bebd61edaf3a1a6170d82c5075e818",
+      "predicate": "C:policy_generation.digest is computed over the protection body, the sorted required contexts, the pinned action ref and the schema bytes - and NOT over the movement of the default branch",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git_blob=25555172b8a1a9e04cc19be6bacc55984db8f6c7 content_sha256=1781817579da720c163eae5b8c237f65430f46daa2187797785d4b40d8efec53",
+      "predicate": "C:evidence_ref for fmproof/semver.py is commit-pinned and content-addressed",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git_blob=697352e1da44b1f308101297932f63f07750ea3a content_sha256=416eea1da9be4ab9cfb759e1f4b26a19d4c593d9b0f76e13a40953fc81a3503f",
+      "predicate": "C:evidence_ref for tests/test_compare.py is commit-pinned and content-addressed",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git_blob=58ebc01763c419a6f0782d59118e5025efd9eb15 content_sha256=3eb9d66481ade72a433496cc22e533a23380e9462b086b130ca0413e203acfd5",
+      "predicate": "C:evidence_ref for tests/test_parse.py is commit-pinned and content-addressed",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "diff_lines=254 range=2ef121a978f006d43439fe7e46553e406bd56757...281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "predicate": "C:the diff evidence locator resolves to a non-empty change",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/correlation-material.txt",
+        "sha256": "28adf42e612a169a203ae82c46fc6c923809c7c47e8ef6ab869e025ea06559bc"
+      },
+      "measured": "correlation_id=fsc1-28adf42e612a169a203ae82c46fc6c92",
+      "predicate": "C:correlation_id is DERIVED by hash over (protocol, repo, branch, head, question.key, policy_digest), never assigned",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "slots=['a_lines', 'b_lines', 'head_sha', 'repo_url', 'section10_sha256']",
+      "predicate": "C:every template slot is filled from a machine value",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "valid=True errors=[]",
+      "predicate": "C:the compiled request validates against the schema of record before emission",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=https://github.com/sbracewell64/fm-cleanroom-proof.git source=git remote get-url origin",
+      "predicate": "C:repo.remote came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=main source=gh api repos/{o}/{r}",
+      "predicate": "C:repo.default_branch came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=281e15b292d0e604d7aac4c1f15413efaf8ee8ed source=git rev-parse origin/fm-proof-a/semver-compare",
+      "predicate": "C:candidate.head_sha came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=1d88a770c95ca23b26ab806c1aeef2ca52d4a23a source=git rev-parse HEAD^{tree}",
+      "predicate": "C:candidate.tree_sha came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=2ef121a978f006d43439fe7e46553e406bd56757 source=git merge-base 281e15b292d0e604d7aac4c1f15413efaf8ee8ed <merge commit>^1  (the commit the candidate was cut from)",
+      "predicate": "C:candidate.base_sha came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "base=2ef121a978f006d43439fe7e46553e406bd56757 head=281e15b292d0e604d7aac4c1f15413efaf8ee8ed merge_commit=a7db5c360d57964a160f59a5c71a8c07a6f5c382",
+      "predicate": "C:candidate.base_sha is the contribution base the candidate was cut from, and is NOT the head itself (a diff locator that resolves to nothing is not decision-ready evidence)",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=281e15b292d0e604d7aac4c1f15413efaf8ee8ed source=gh pr api head.sha",
+      "predicate": "C:pull_request.head_sha came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git=281e15b292d0e604d7aac4c1f15413efaf8ee8ed forge=281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "predicate": "C:candidate head equals the pull request head",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "value=kunchenguid/no-mistakes/.github/actions/require-no-mistakes@0af0be6323bebd61edaf3a1a6170d82c5075e818 source=git show <head>:.github/workflows/no-mistakes-required.yml",
+      "predicate": "C:policy.action_ref came from machine state, not from prose or memory",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/policy-generation-material.txt",
+        "sha256": "40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19"
+      },
+      "measured": "digest=40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19 contexts=['PR must be raised via no-mistakes', 'test'] action_ref=kunchenguid/no-mistakes/.github/actions/require-no-mistakes@0af0be6323bebd61edaf3a1a6170d82c5075e818",
+      "predicate": "C:policy_generation.digest is computed over the protection body, the sorted required contexts, the pinned action ref and the schema bytes - and NOT over the movement of the default branch",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git_blob=25555172b8a1a9e04cc19be6bacc55984db8f6c7 content_sha256=f24d5657961327c74b492819193b3e94dd1be17d6ae628df5c04f20a99f94641 bytes=5897",
+      "predicate": "C:evidence_ref for fmproof/semver.py is commit-pinned, content-addressed, and its digest is over the exact bytes an anonymous reader receives",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git_blob=697352e1da44b1f308101297932f63f07750ea3a content_sha256=c1bef37b378bbe5e8ac2b0b9b92b3a09358fd2c6f6a8e891a3fc6db0412cce7d bytes=4483",
+      "predicate": "C:evidence_ref for tests/test_compare.py is commit-pinned, content-addressed, and its digest is over the exact bytes an anonymous reader receives",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "git_blob=58ebc01763c419a6f0782d59118e5025efd9eb15 content_sha256=09087611fb4414f032417a9b26d39a0693f7e5270a6f4622b08047ae47d4da83 bytes=3012",
+      "predicate": "C:evidence_ref for tests/test_parse.py is commit-pinned, content-addressed, and its digest is over the exact bytes an anonymous reader receives",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "url=https://github.com/sbracewell64/fm-cleanroom-proof/compare/2ef121a978f006d43439fe7e46553e406bd56757...281e15b292d0e604d7aac4c1f15413efaf8ee8ed.diff http=200 bytes=9722",
+      "predicate": "C:the diff locator is anonymously fetchable at compile time",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "url=https://github.com/sbracewell64/fm-cleanroom-proof/commit/281e15b292d0e604d7aac4c1f15413efaf8ee8ed.patch http=200 bytes=16557",
+      "predicate": "C:the commit locator is anonymously fetchable at compile time",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "local_diff_lines=254 range=2ef121a978f006d43439fe7e46553e406bd56757...281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "predicate": "C:the candidate diff is a non-empty change",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "{\"runs\": [{\"conclusion\": \"success\", \"id\": 100058519182, \"name\": \"PR must be raised via no-mistakes\"}, {\"conclusion\": \"success\", \"id\": 100058518762, \"name\": \"test\"}], \"total_count\": 2}",
+      "predicate": "C:the required check runs at the candidate head are captured as context (DEV-B12: NOT carried as an evidence_ref, because a check-run id is not anonymously resolvable and this decision does not rest on it)",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/correlation-material.txt",
+        "sha256": "28adf42e612a169a203ae82c46fc6c923809c7c47e8ef6ab869e025ea06559bc"
+      },
+      "measured": "correlation_id=fsc1-28adf42e612a169a203ae82c46fc6c92",
+      "predicate": "C:correlation_id is DERIVED by hash over (protocol, repo, branch, head, question.key, policy_digest), never assigned",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "slots=['a_lines', 'b_lines', 'head_sha', 'repo_url', 'section10_sha256']",
+      "predicate": "C:every template slot is filled from a machine value",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "valid=True errors=[]",
+      "predicate": "C:the compiled request validates against the schema of record before emission",
+      "stage_id": "B-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "blob",
+        "locator": "https://raw.githubusercontent.com/sbracewell64/fm-cleanroom-proof/281e15b292d0e604d7aac4c1f15413efaf8ee8ed/fmproof/semver.py",
+        "sha256": "f24d5657961327c74b492819193b3e94dd1be17d6ae628df5c04f20a99f94641"
+      },
+      "measured": "http=200 fetched_sha256=f24d5657961327c74b492819193b3e94dd1be17d6ae628df5c04f20a99f94641 recorded_sha256=f24d5657961327c74b492819193b3e94dd1be17d6ae628df5c04f20a99f94641 match=True",
+      "predicate": "BP7 evidence locator resolves for an unauthenticated third party and its bytes are the recorded bytes: blob semver.py",
+      "stage_id": "B-S5",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "blob",
+        "locator": "https://raw.githubusercontent.com/sbracewell64/fm-cleanroom-proof/281e15b292d0e604d7aac4c1f15413efaf8ee8ed/tests/test_compare.py",
+        "sha256": "c1bef37b378bbe5e8ac2b0b9b92b3a09358fd2c6f6a8e891a3fc6db0412cce7d"
+      },
+      "measured": "http=200 fetched_sha256=c1bef37b378bbe5e8ac2b0b9b92b3a09358fd2c6f6a8e891a3fc6db0412cce7d recorded_sha256=c1bef37b378bbe5e8ac2b0b9b92b3a09358fd2c6f6a8e891a3fc6db0412cce7d match=True",
+      "predicate": "BP7 evidence locator resolves for an unauthenticated third party and its bytes are the recorded bytes: blob test_compare.py",
+      "stage_id": "B-S5",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "blob",
+        "locator": "https://raw.githubusercontent.com/sbracewell64/fm-cleanroom-proof/281e15b292d0e604d7aac4c1f15413efaf8ee8ed/tests/test_parse.py",
+        "sha256": "09087611fb4414f032417a9b26d39a0693f7e5270a6f4622b08047ae47d4da83"
+      },
+      "measured": "http=200 fetched_sha256=09087611fb4414f032417a9b26d39a0693f7e5270a6f4622b08047ae47d4da83 recorded_sha256=09087611fb4414f032417a9b26d39a0693f7e5270a6f4622b08047ae47d4da83 match=True",
+      "predicate": "BP7 evidence locator resolves for an unauthenticated third party and its bytes are the recorded bytes: blob test_parse.py",
+      "stage_id": "B-S5",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "diff",
+        "locator": "https://github.com/sbracewell64/fm-cleanroom-proof/compare/2ef121a978f006d43439fe7e46553e406bd56757...281e15b292d0e604d7aac4c1f15413efaf8ee8ed.diff",
+        "sha256": "6b99528b1006df24658715567f91cd5d5e55e3adcc16942cb0a61ab929d7e610"
+      },
+      "measured": "http=200 fetched_sha256=6b99528b1006df24658715567f91cd5d5e55e3adcc16942cb0a61ab929d7e610 recorded_sha256=6b99528b1006df24658715567f91cd5d5e55e3adcc16942cb0a61ab929d7e610 match=True",
+      "predicate": "BP7 evidence locator resolves for an unauthenticated third party and its bytes are the recorded bytes: diff 2ef121a978f006d43439fe7e46553e406bd56757...281e15b292d0e604d",
+      "stage_id": "B-S5",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "commit",
+        "locator": "https://github.com/sbracewell64/fm-cleanroom-proof/commit/281e15b292d0e604d7aac4c1f15413efaf8ee8ed.patch",
+        "sha256": "1314e176917d2456a0cf29893401c3a43ee30c9eb9c23cf8f6fca8fe99eddca6"
+      },
+      "measured": "http=200 fetched_sha256=1314e176917d2456a0cf29893401c3a43ee30c9eb9c23cf8f6fca8fe99eddca6 recorded_sha256=1314e176917d2456a0cf29893401c3a43ee30c9eb9c23cf8f6fca8fe99eddca6 match=True",
+      "predicate": "BP7 evidence locator resolves for an unauthenticated third party and its bytes are the recorded bytes: commit 281e15b292d0e604d7aac4c1f15413efaf8ee8ed.patch",
+      "stage_id": "B-S5",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "https://semver.org/spec/v2.0.0.html#spec-item-10 - the verbatim section 10 bytes are also EMBEDDED in this issue body under NORMATIVE ANCHOR",
+        "sha256": "683f9e2920b262cfbd3a5884a1f3b81ca991e3e3af740f702ce8e1de696e8b8c"
+      },
+      "measured": "http=200 anchor_sentence_present=True fetched_sha256=f9d4b8b1a5e9a0de6621dbbc70d69fdf05310b7a737509317b94a7bddfb9409e",
+      "predicate": "BP7 evidence locator resolves for an unauthenticated third party and its bytes are the recorded bytes: file v2.0.0.html#spec-item-10",
+      "stage_id": "B-S5",
+      "value": "observed-good"
+    },
+    {
+      "measured": "resolved=6/6 failures=[]",
+      "predicate": "BP7 EVERY evidence locator is third-party inspectable (a decision nobody can inspect is not decision-ready)",
+      "stage_id": "B-S5",
+      "value": "observed-good"
+    },
+    {
+      "measured": "valid=True errors=[]",
+      "predicate": "E1 the envelope still validates immediately before emission",
+      "stage_id": "B-S6",
+      "value": "observed-good"
+    },
+    {
+      "measured": "chars=40307",
+      "predicate": "E2 the assembled issue body is within GitHub's 65536-character limit",
+      "stage_id": "B-S6",
+      "value": "observed-good"
+    },
+    {
+      "measured": "valid=True errors=[]",
+      "predicate": "E1 the envelope still validates immediately before emission",
+      "stage_id": "B-S6",
+      "value": "observed-good"
+    },
+    {
+      "measured": "chars=40307",
+      "predicate": "E2 the assembled issue body is within GitHub's 65536-character limit",
+      "stage_id": "B-S6",
+      "value": "observed-good"
+    },
+    {
+      "measured": "scanned=46 matches=[]",
+      "predicate": "E3 no issue in the venue already carries this correlation id (one issue per correlation id; idempotent recompilation)",
+      "stage_id": "B-S6",
+      "value": "observed-good"
+    },
+    {
+      "measured": "rc=0 url=https://github.com/sbracewell64/firstmate-sol-control/issues/47",
+      "predicate": "E4 the request exists in the control plane: one issue created",
+      "stage_id": "B-S6",
+      "value": "observed-good"
+    },
+    {
+      "measured": "identical=True posted_sha256=3aa883cd8da0cc1926f9d22c960164db15442a91a019b6e0218a19d5a994775e assembled_sha256=3aa883cd8da0cc1926f9d22c960164db15442a91a019b6e0218a19d5a994775e",
+      "predicate": "E5 the posted issue body is byte-identical to the assembled body, and the schema of record inside it hashes to the request's vocabulary_digest",
+      "stage_id": "B-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/consumer-qualification.json",
+        "sha256": "35a320751b0d06e64cb34bc31bc5fd5adc3f3a49cbde83bcc353f31b02b4c783"
+      },
+      "measured": "[{\"case\": \"good - one valid ruling, ADOPT_OPTION/A\", \"outcome\": \"CONSUMED\", \"applied\": \"ACT-A-IGNORE-BUILD-METADATA\"}, {\"case\": \"wronghead - applies_to.head_sha is not the candidate head\", \"outcome\": \"REFUSED_MISMATCH\", \"applied\": null}, {\"case\": \"malformed - one letter dropped from a required field name\", \"outcome\": \"REFUSED_MALFORMED\", \"applied\": null}, {\"case\": \"twofork - two valid rulings, neither naming the other in supersedes\", \"outcome\": \"REFUSED_AMBIGUOUS\", \"applied\": null}, {\"case\": \"mention - a prose mention of the correlation id alongside one valid ruling\", \"outcome\": \"CONSUMED\", \"applied\": \"ACT-A-IGNORE-BUILD-METADATA\"}, {\"case\": \"noruling - an empty but completely observed comment universe\", \"outcome\": \"CNO_TRANSPORT\", \"applied\": null}]",
+      "predicate": "F11 the consumer refuses on every non-green ladder result except the pinned V7 independence CNO, and consumes ONLY a single valid applicable ruling (six synthetic universes: good, wrong head, malformed, lineage fork, prose mention, no ruling)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "measured": "two valid rulings, neither naming the other in supersedes -> REFUSED_AMBIGUOUS, applied=null",
+      "predicate": "F12 a lineage fork is consumed by NEITHER ruling and the newer is not picked (the defect INSTR-4 introduced and this control now watches red)",
+      "stage_id": "B-S0b",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/poll-summary.json",
+        "sha256": "73ef6ec81b562392bf13876f92c5f60b5dc5e7cb80c84a8b02977bb2397ea7e9"
+      },
+      "measured": "{\"attempts_made\": 5, \"bound\": \"18x300s\", \"terminated_because\": {\"why\": \"ruling-candidate-present\", \"attempt\": 5, \"rulings\": 1, \"malformed\": 0}, \"last_fetched\": 1, \"last_reported\": 1, \"rulings\": 1, \"mentions\": 0, \"malformed_ruling_blocks\": 0}",
+      "predicate": "S8 a ruling candidate for this correlation id is present in a COMPLETELY observed comment universe",
+      "stage_id": "B-S8",
+      "value": "observed-good"
+    },
+    {
+      "measured": "fetched=1 reported=1",
+      "predicate": "S8b the completeness predicate held on the final read (a negative claim requires a completely observed universe)",
+      "stage_id": "B-S8",
+      "value": "observed-good"
+    },
+    {
+      "measured": "comments=1 valid_rulings=1 prose_mentions_or_other_cid=0 malformed_blocks=0",
+      "predicate": "S9a selection is by VALIDATED CONTENT, never by containment: a prose mention neither counts as a ruling nor suppresses one",
+      "stage_id": "B-S9",
+      "value": "observed-good"
+    },
+    {
+      "measured": "count=1",
+      "predicate": "V1 exactly one valid ruling for this correlation_id",
+      "stage_id": "B-S9",
+      "value": "observed-good"
+    },
+    {
+      "measured": "comment_id=5502255519",
+      "predicate": "V2 the comment body validates against the schema",
+      "stage_id": "B-S9",
+      "value": "observed-good"
+    },
+    {
+      "measured": "72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a vs 72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a",
+      "predicate": "V3 ruling.vocabulary_digest == request.vocabulary_digest",
+      "stage_id": "B-S9",
+      "value": "observed-good"
+    },
+    {
+      "measured": "fsc1-28adf42e612a169a203ae82c46fc6c92 vs fsc1-28adf42e612a169a203ae82c46fc6c92",
+      "predicate": "V4 ruling.correlation_id == request.correlation_id",
+      "stage_id": "B-S9",
+      "value": "observed-good"
+    },
+    {
+      "measured": "{\"repo.owner\": {\"ruling\": \"sbracewell64\", \"request\": \"sbracewell64\"}, \"repo.name\": {\"ruling\": \"fm-cleanroom-proof\", \"request\": \"fm-cleanroom-proof\"}, \"head_sha\": {\"ruling\": \"281e15b292d0e604d7aac4c1f15413efaf8ee8ed\", \"request\": \"281e15b292d0e604d7aac4c1f15413efaf8ee8ed\"}, \"tree_sha\": {\"ruling\": \"1d88a770c95ca23b26ab806c1aeef2ca52d4a23a\", \"request\": \"1d88a770c95ca23b26ab806c1aeef2ca52d4a23a\"}}",
+      "predicate": "V5 applies_to repo/head_sha/tree_sha equal the request candidate",
+      "stage_id": "B-S9",
+      "value": "observed-good"
+    },
+    {
+      "measured": "40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19 vs 40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19",
+      "predicate": "V6 applies_to.policy_digest == request.policy_generation.digest",
+      "stage_id": "B-S9",
+      "value": "observed-good"
+    },
+    {
+      "measured": "ruler=sbracewell64 makers=['sbracewell64'] identities_distinct=False (one GitHub identity serves both parties; the login proxy cannot discriminate a distinct execution context from a maker, so independence is UNMEASURED - D2-B2)",
+      "predicate": "V7 ruler.login not in {commit author, committer, PR author}",
+      "stage_id": "B-S9",
+      "value": "could-not-observe"
+    },
+    {
+      "measured": "single_writer_assertion=True supersedes=None",
+      "predicate": "V8 single_writer_assertion is true and supersedes is null or a prior id",
+      "stage_id": "B-S9",
+      "value": "observed-good"
+    },
+    {
+      "measured": "directive=ADOPT_OPTION requires=option_id present=True",
+      "predicate": "V9 the directive's required companion field is present",
+      "stage_id": "B-S9",
+      "value": "observed-good"
+    },
+    {
+      "measured": "option_id=A offered=['A', 'B']",
+      "predicate": "V10 option_id is among the offered options",
+      "stage_id": "B-S9",
+      "value": "observed-good"
+    },
+    {
+      "measured": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed vs 281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "predicate": "L1 live PR head EQUALS valid_while.pr_head (identity, not ancestry)",
+      "stage_id": "B-S10",
+      "value": "observed-good"
+    },
+    {
+      "measured": "closed vs closed",
+      "predicate": "L2 live PR state EQUALS the state recorded at compile time",
+      "stage_id": "B-S10",
+      "value": "observed-good"
+    },
+    {
+      "measured": "40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19 vs 40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19",
+      "predicate": "L3 recomputed policy_generation.digest EQUALS valid_while.policy_digest",
+      "stage_id": "B-S10",
+      "value": "observed-good"
+    },
+    {
+      "measured": "72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a vs 72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a",
+      "predicate": "L4 the schema of record still hashes to valid_while.vocabulary_digest",
+      "stage_id": "B-S10",
+      "value": "observed-good"
+    },
+    {
+      "measured": "now=2026-09-02T00:04:28Z expires_at=2026-09-04T23:40:00Z",
+      "predicate": "L5 now < expires_at",
+      "stage_id": "B-S10",
+      "value": "observed-good"
+    },
+    {
+      "measured": "key=ADOPT_OPTION:A action=ACT-A-IGNORE-BUILD-METADATA",
+      "predicate": "S11a the directive maps to exactly one PRE-REGISTERED action through a total map with no default branch and no fallback",
+      "stage_id": "B-S11",
+      "value": "observed-good"
+    },
+    {
+      "measured": "3d1ed0b5e6aa35cc4cf2b855cb4f329f7f54544c3cec1b7055658bb396764be6 vs 3d1ed0b5e6aa35cc4cf2b855cb4f329f7f54544c3cec1b7055658bb396764be6",
+      "predicate": "S11b the action's patch file still hashes to its pinned digest",
+      "stage_id": "B-S11",
+      "value": "observed-good"
+    },
+    {
+      "measured": "diff_bytes_identical=True tree=0c0c0cf503f49d2d36ed69bf5fea01b63f1c868c pinned_tree=0c0c0cf503f49d2d36ed69bf5fea01b63f1c868c tree_match=True paths=['fmproof/semver.py', 'tests/test_compare.py', 'tests/test_parse.py'] paths_subset=True apply_rc=0",
+      "predicate": "10.2 applied-bytes identity: produced diff == pinned patch bytes; resulting tree == pinned tree; changed paths subset of the declared set",
+      "stage_id": "B-S11",
+      "value": "observed-good"
+    },
+    {
+      "measured": "OK",
+      "predicate": "S11c the ruled change's own tests pass at the applied tree",
+      "stage_id": "B-S11",
+      "value": "observed-good"
+    },
+    {
+      "measured": "scratch_worktree=/tmp/consume-5ra4gfic pushed=False unarchived=False",
+      "predicate": "S11d nothing was pushed and the archived subject repository was never unarchived (DEV-B6: application is scoped to a local scratch clone)",
+      "stage_id": "B-S11",
+      "value": "observed-good"
+    },
+    {
+      "measured": "valid=True errors=[]",
+      "predicate": "S12a the receipt validates against the schema of record before posting",
+      "stage_id": "B-S12",
+      "value": "observed-good"
+    },
+    {
+      "measured": "rc=0 https://github.com/sbracewell64/firstmate-sol-control/issues/47#issuecomment-5502291831",
+      "predicate": "S12b the receipt is posted to the control plane, so no terminal state is a silently abandoned request",
+      "stage_id": "B-S12",
+      "value": "observed-good"
+    },
+    {
+      "measured": "{\"comments\": 2, \"state\": \"closed\"}",
+      "predicate": "S12c the control plane holds exactly one issue and two comments for this correlation id, and the issue is closed",
+      "stage_id": "B-S12",
+      "value": "observed-good"
+    }
+  ],
+  "observer": {
+    "independence": "could-not-observe",
+    "note": "An independent observer task watches this run and writes only to its own area, which this actor neither reads nor writes. This trace is the ACTOR's, so observer independence for THIS record is could-not-observe, not observed-good.",
+    "trace_written_by": "actor"
+  },
+  "outcome": "CNO_AT_B-S3",
+  "outcome_fold": {
+    "counts": {
+      "boundary_predicates_evaluated": 6,
+      "could_not_observe": 2,
+      "evidence_locators_probed_anonymously": 6,
+      "falsifiers_watched_red": 14,
+      "observations": 141,
+      "observed_bad": 0,
+      "observed_good": 139,
+      "seq_gaps": [],
+      "stages_covered": [
+        "B-S0",
+        "B-S0b",
+        "B-S10",
+        "B-S11",
+        "B-S12",
+        "B-S3",
+        "B-S4",
+        "B-S5",
+        "B-S6",
+        "B-S8",
+        "B-S9"
+      ],
+      "stages_not_entered_because_the_proof_stopped_earlier": [],
+      "trace_lines": 197,
+      "validation_predicates_evaluated": 16
+    },
+    "earliest_could_not_observe": "B-S3",
+    "earliest_observed_bad": null,
+    "non_gating_observations": 0,
+    "pinned_file_sha256": "276ccf45a7444e7e53c545ba6013064b61b28545edb3c2350f35333e3897814a",
+    "pre_registered_expectation": "Design proof-b 12 and 16 (PR-B2) already state that with ONE ruling identity V7 is unmeasurable, independence is could-not-observe, and Proof B grades CNO_AT_B-S9. Every issue and every ruling in the reachable control venue is authored by the single account sbracewell64, which is also the candidate's commit author and PR author. So the EXPECTED terminal outcome of this attempt, pinned here before execution, is CNO_AT_B-S9. PROVED is not reachable in this attempt and is not being aimed at.",
+    "pre_registered_expectation_vs_actual": {
+      "actual": "CNO_AT_B-S3",
+      "consequence": "None for the verdict's meaning. Both stages name the same unmeasured fact. B-S3 is the more accurate answer to 'what is the earliest thing this proof could not observe?'.",
+      "expected": "CNO_AT_B-S9",
+      "match": false,
+      "why_they_differ": "The pre-registered expectation named B-S9 because the design's own accounting (proof-b 12 and 16 PR-B2) attaches the one-identity independence grade to V7. But the SAME independence fact is first measured one stage earlier, at BP5 in B-S3, which records could-not-observe before the request is even compiled. The pinned fold rule grades at the EARLIEST could-not-observe in stage order, so it returns B-S3. The rule was NOT moved to make the expectation come true: an imprecise expectation is a miss in the expectation, not a defect in the rule, and the cause named by the expectation (independence, D2-B2) is exactly the cause the rule found."
+    },
+    "reproducible_from_record": "re-run tools/s14_disposition.py against observations.jsonl",
+    "rule_amended_during_run": false,
+    "rule_id": "PROOF-B-FOLD-1",
+    "rule_pinned_at": "2026-09-01T23:35:00Z",
+    "rule_pinned_before_first_observation": true,
+    "superseded_observations": 0
+  },
+  "policy_generation": {
+    "digest": "40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19",
+    "inputs": [
+      "branch-protection.json",
+      "sorted-required-contexts",
+      "pinned-require-no-mistakes-action-ref",
+      "fm-sol-control-v1.schema.json"
+    ]
+  },
+  "proof_id": "proof-b",
+  "receipt": {
+    "applied": {
+      "action_id": "ACT-A-IGNORE-BUILD-METADATA",
+      "applied_bytes_identity": {
+        "measured": "diff_bytes_identical=True tree=0c0c0cf503f49d2d36ed69bf5fea01b63f1c868c pinned_tree=0c0c0cf503f49d2d36ed69bf5fea01b63f1c868c tree_match=True paths=['fmproof/semver.py', 'tests/test_compare.py', 'tests/test_parse.py'] paths_subset=True apply_rc=0",
+        "predicate": "10.2 applied-bytes identity: produced diff == pinned patch bytes; resulting tree == pinned tree; changed paths subset of the declared set",
+        "value": "observed-good"
+      },
+      "directive": "ADOPT_OPTION",
+      "option_id": "A"
+    },
+    "consumed_at": "2026-09-02T00:04:28Z",
+    "consumer": {
+      "kind": "agent",
+      "login": "sbracewell64",
+      "session_ref": "clean-room Proof B executor"
+    },
+    "correlation_id": "fsc1-28adf42e612a169a203ae82c46fc6c92",
+    "kind": "receipt",
+    "note": "Independence (V7) is could-not-observe: one GitHub identity serves both the maker and the ruler, so the login proxy cannot discriminate. It is NOT claimed. This proof's terminal grade is capped at CNO_AT_B-S9 accordingly, pre-registered in inputs/PINNED.json before execution.",
+    "outcome": "CONSUMED",
+    "resulting": {
+      "pull_request": null,
+      "scope": "local scratch clone only; not pushed, no PR, repo left archived",
+      "tree_sha": "0c0c0cf503f49d2d36ed69bf5fea01b63f1c868c"
+    },
+    "ruling_comment_id": 5502255519,
+    "ruling_sha256": "6172a00990603ef701390dc5efc0b4e3d328d3a5f112c48f4da0e48d0ced840e",
+    "schema": "fm-sol-control/v1",
+    "validation": [
+      {
+        "measured": "count=1",
+        "predicate": "V1 exactly one valid ruling for this correlation_id",
+        "value": "observed-good"
+      },
+      {
+        "measured": "comment_id=5502255519",
+        "predicate": "V2 the comment body validates against the schema",
+        "value": "observed-good"
+      },
+      {
+        "measured": "72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a vs 72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a",
+        "predicate": "V3 ruling.vocabulary_digest == request.vocabulary_digest",
+        "value": "observed-good"
+      },
+      {
+        "measured": "fsc1-28adf42e612a169a203ae82c46fc6c92 vs fsc1-28adf42e612a169a203ae82c46fc6c92",
+        "predicate": "V4 ruling.correlation_id == request.correlation_id",
+        "value": "observed-good"
+      },
+      {
+        "measured": "{\"repo.owner\": {\"ruling\": \"sbracewell64\", \"request\": \"sbracewell64\"}, \"repo.name\": {\"ruling\": \"fm-cleanroom-proof\", \"request\": \"fm-cleanroom-proof\"}, \"head_sha\": {\"ruling\": \"281e15b292d0e604d7aac4c1f15413efaf8ee8ed\", \"request\": \"281e15b292d0e604d7aac4c1f15413efaf8ee8ed\"}, \"tree_sha\": {\"ruling\": \"1d88a770c95ca23b26ab806c1aeef2ca52d4a23a\", \"request\": \"1d88a770c95ca23b26ab806c1aeef2ca52d4a23a\"}}",
+        "predicate": "V5 applies_to repo/head_sha/tree_sha equal the request candidate",
+        "value": "observed-good"
+      },
+      {
+        "measured": "40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19 vs 40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19",
+        "predicate": "V6 applies_to.policy_digest == request.policy_generation.digest",
+        "value": "observed-good"
+      },
+      {
+        "measured": "ruler=sbracewell64 makers=['sbracewell64'] identities_distinct=False (one GitHub identity serves both parties; the login proxy cannot discriminate a distinct execution context from a maker, so independence is UNMEASURED - D2-B2)",
+        "predicate": "V7 ruler.login not in {commit author, committer, PR author}",
+        "value": "could-not-observe"
+      },
+      {
+        "measured": "single_writer_assertion=True supersedes=None",
+        "predicate": "V8 single_writer_assertion is true and supersedes is null or a prior id",
+        "value": "observed-good"
+      },
+      {
+        "measured": "directive=ADOPT_OPTION requires=option_id present=True",
+        "predicate": "V9 the directive's required companion field is present",
+        "value": "observed-good"
+      },
+      {
+        "measured": "option_id=A offered=['A', 'B']",
+        "predicate": "V10 option_id is among the offered options",
+        "value": "observed-good"
+      },
+      {
+        "measured": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed vs 281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+        "predicate": "L1 live PR head EQUALS valid_while.pr_head (identity, not ancestry)",
+        "value": "observed-good"
+      },
+      {
+        "measured": "closed vs closed",
+        "predicate": "L2 live PR state EQUALS the state recorded at compile time",
+        "value": "observed-good"
+      },
+      {
+        "measured": "40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19 vs 40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19",
+        "predicate": "L3 recomputed policy_generation.digest EQUALS valid_while.policy_digest",
+        "value": "observed-good"
+      },
+      {
+        "measured": "72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a vs 72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a",
+        "predicate": "L4 the schema of record still hashes to valid_while.vocabulary_digest",
+        "value": "observed-good"
+      },
+      {
+        "measured": "now=2026-09-02T00:04:28Z expires_at=2026-09-04T23:40:00Z",
+        "predicate": "L5 now < expires_at",
+        "value": "observed-good"
+      }
+    ],
+    "vocabulary_digest": "72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a"
+  },
+  "repo": {
+    "default_branch": "main",
+    "name": "fm-cleanroom-proof",
+    "node_id": "R_kgDOULXT8g",
+    "owner": "sbracewell64",
+    "url": "https://github.com/sbracewell64/fm-cleanroom-proof"
+  },
+  "request_sha256": "0034fa336640cb008c48dc992864af53dd80596d58ef3fdf752a40a44dcf85a2",
+  "ruling": {
+    "applies_to": {
+      "head_sha": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "policy_digest": "40e917930acbeadb89465918a6a49bea2b887e869ca22d38b54e2e95e8809a19",
+      "repo": {
+        "name": "fm-cleanroom-proof",
+        "owner": "sbracewell64",
+        "url": "https://github.com/sbracewell64/fm-cleanroom-proof"
+      },
+      "tree_sha": "1d88a770c95ca23b26ab806c1aeef2ca52d4a23a"
+    },
+    "confidence": "high",
+    "correlation_id": "fsc1-28adf42e612a169a203ae82c46fc6c92",
+    "directive": "ADOPT_OPTION",
+    "inspection": {
+      "evidence_refs_inspected": [
+        {
+          "kind": "blob",
+          "locator": "https://raw.githubusercontent.com/sbracewell64/fm-cleanroom-proof/281e15b292d0e604d7aac4c1f15413efaf8ee8ed/fmproof/semver.py",
+          "sha256": "f24d5657961327c74b492819193b3e94dd1be17d6ae628df5c04f20a99f94641"
+        },
+        {
+          "kind": "blob",
+          "locator": "https://raw.githubusercontent.com/sbracewell64/fm-cleanroom-proof/281e15b292d0e604d7aac4c1f15413efaf8ee8ed/tests/test_compare.py",
+          "sha256": "c1bef37b378bbe5e8ac2b0b9b92b3a09358fd2c6f6a8e891a3fc6db0412cce7d"
+        },
+        {
+          "kind": "blob",
+          "locator": "https://raw.githubusercontent.com/sbracewell64/fm-cleanroom-proof/281e15b292d0e604d7aac4c1f15413efaf8ee8ed/tests/test_parse.py",
+          "sha256": "09087611fb4414f032417a9b26d39a0693f7e5270a6f4622b08047ae47d4da83"
+        },
+        {
+          "kind": "file",
+          "locator": "https://semver.org/spec/v2.0.0.html#spec-item-10 - the verbatim section 10 bytes are also EMBEDDED in this issue body under NORMATIVE ANCHOR",
+          "sha256": "683f9e2920b262cfbd3a5884a1f3b81ca991e3e3af740f702ce8e1de696e8b8c"
+        }
+      ],
+      "observations": [
+        {
+          "measured": "PR #2 is closed+merged at head 281e15b292d0e604d7aac4c1f15413efaf8ee8ed; that commit resolves to tree 1d88a770c95ca23b26ab806c1aeef2ca52d4a23a; repository is archived",
+          "predicate": "The request still binds to the immutable candidate generation it names",
+          "value": "observed-good"
+        },
+        {
+          "measured": "workflow runs 33568974962 (ci) and 33568974944 (Require no-mistakes) are completed/success",
+          "predicate": "Exact-head CI and required no-mistakes workflow completed successfully",
+          "value": "observed-good"
+        },
+        {
+          "measured": "semver.py excludes +build from _VERSION_RE; test_compare.py and test_parse.py assert InvalidVersionError for build metadata",
+          "predicate": "Current exact-head parser and comparator reject SemVer build metadata and tests pin that refusal",
+          "value": "observed-good"
+        },
+        {
+          "measured": "official SemVer 2.0.0 sections 10-11 state build metadata MAY appear, MUST be ignored for precedence, and does not figure into precedence",
+          "predicate": "SemVer 2.0.0 defines build metadata as valid syntax and excludes it from precedence",
+          "value": "observed-good"
+        },
+        {
+          "measured": "DOCUMENTED in the sealed request option A: parse accepts and preserves metadata; compare ignores metadata for precedence; resulting tree and patch digest are pinned",
+          "predicate": "Option A preserves build metadata while removing it only from precedence comparison",
+          "value": "observed-good"
+        },
+        {
+          "measured": "requester.session_ref identifies the clean-room Proof B executor; ruler.session_ref identifies the canonical Browser Sol authority writer",
+          "narrowed_from": "could-not-observe",
+          "narrowing_reason": "BP5 measured only the GitHub-login proxy. This canonical writer directly observes its own separate Browser Sol authority role and the request-declared FirstMate executor role; the shared account is transport identity, not role identity.",
+          "predicate": "Ruling execution context is distinct from the maker/executor context despite the shared GitHub transport login",
+          "value": "observed-good"
+        }
+      ]
+    },
+    "kind": "ruling",
+    "option_id": "A",
+    "rationale": "Adopt A. The module presents itself as SemVer 2.0.0 parsing and precedence comparison. SemVer 2.0.0 makes build metadata valid syntax while requiring it to be ignored only for precedence. A resolves the current mismatch without silently discarding caller data because parse preserves the metadata and compare ignores it only on the precedence axis. B would deliberately keep valid SemVer inputs uncomparable and force callers to duplicate suffix-stripping logic outside the parser. The selected change is bounded to the pure module/tests, has no new dependency or reserved-path effect, and is explicitly single-commit reversible. This ruling selects the engineering option only; it does not waive exact-bytes application checks, tests, provenance, maker/checker separation, or any protected-effect gate.",
+    "ruled_at": "2026-09-01T23:58:22Z",
+    "ruler": {
+      "kind": "automation",
+      "login": "sbracewell64",
+      "session_ref": "browser-sol canonical authority-bearing writer"
+    },
+    "schema": "fm-sol-control/v1",
+    "single_writer_assertion": true,
+    "vocabulary_digest": "72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a"
+  },
+  "schema": "fm-proof-disposition/v1",
+  "stages_out_of_scope": [
+    {
+      "id": "B-S1",
+      "reason": "creating a control repository is outside this executor's authority bound, which permits one issue and its comments. See DEV-B1/DEV-B2."
+    },
+    {
+      "id": "B-S2",
+      "reason": "preparing a NEW candidate PR requires writing to the subject repository, which is archived and outside the authority bound. The subject candidate is Proof A's landed candidate instead. See DEV-B5."
+    },
+    {
+      "id": "B-S7",
+      "reason": "Browser Sol's own act. Recorded when observed; never performed here."
+    },
+    {
+      "id": "B-S13",
+      "reason": "landing the ruled change would require unarchiving the subject repository and a full Proof A pipeline run. The authority bound scopes application to a local scratch clone with the applied-bytes identity check. This is a DECLARED DECISION NOT TO ENFORCE, recorded as such, and is NOT a could-not-observe (shared contracts 0.1: CNO is reserved). See DEV-B6."
+    }
+  ],
+  "started_at": "2026-09-01T23:36:04Z",
+  "trace": {
+    "coverage_exempt_reason": "the disposition write cannot observe its own exit",
+    "coverage_exempt_stage": "B-S14",
+    "coverage_gates_PROVED_only": true,
+    "lines": 197,
+    "path": "trace.jsonl",
+    "seq_gaps": [],
+    "sha256": "f13f9103d1dba347f7ee0ba1e2bed97af0368bab0980cae7085f21c219613040",
+    "stage_coverage_complete": true,
+    "stages_not_entered_because_the_proof_stopped_earlier": [
+      "B-S14"
+    ],
+    "stages_uncovered": []
+  },
+  "vocabulary_digest": "72bcfa5253c0db5914f6fd26f82599a098ed29aaa4998e0b6a69c0fbbdaf984a",
+  "write_once": {
+    "amendments": 0,
+    "statement": "This record is written once. Its fold rule was fixed before the first observation and is not amended here. Where the rule produces an unflattering verdict, the verdict is the record.",
+    "written_at": "2026-09-02T00:04:55Z"
+  }
+}

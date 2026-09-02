@@ -1,0 +1,283 @@
+{
+  "artifact": "ce-isolation-baseline",
+  "schema": "cleanroom/ce-isolation-baseline/v1",
+  "phase": "phase-0-track-2",
+  "generated_utc": "2026-09-02T01:45:00Z",
+  "companion_markdown": "artifacts/baseline/ce-isolation-baseline.md",
+  "grading_vocabulary": ["OBSERVED-GOOD", "OBSERVED-BAD", "COULD-NOT-OBSERVE", "DOCUMENTED", "RECOMMENDED"],
+
+  "versions": {
+    "compound_engineering": {
+      "declared_version": "3.24.0",
+      "declared_at": "plugin.json:3",
+      "source_path": "/mnt/e/FirstMate-Cleanroom/tools/compound-engineering",
+      "pinned_commit": "cd31338034920c9a8239e8a3fc390778edd06ab8",
+      "source_worktree_clean_after_install": true,
+      "grade": "OBSERVED-GOOD"
+    },
+    "claude_code": { "version": "2.1.258", "path": "/home/OPERATOR/.local/share/claude/versions/2.1.258", "grade": "OBSERVED-GOOD" },
+    "no_mistakes_isolated": {
+      "path": "/mnt/e/FirstMate-Cleanroom/tools/bin/no-mistakes",
+      "version_string": "no-mistakes version v1.61.0 (0af0be6) 2026-08-31T14:04:25Z",
+      "sha256": "76b999e20fc71262b1ed523d4cbf991963e14cf196a8d455074b768ee2fc491a",
+      "grade": "OBSERVED-GOOD"
+    }
+  },
+
+  "scoped_config": {
+    "config_dir": "/mnt/e/FirstMate-Cleanroom/runtime/ce-config",
+    "install_scope": "user (scoped to this CLAUDE_CONFIG_DIR only)",
+    "digests": {
+      "settings_json_sha256": "374dca0822b7fa4a89b4dbdbb36df862272de134e0a6c4cbf9e3f994111100fa",
+      "known_marketplaces_json_sha256": "b17ae320f884f67642417afca3d6f1f1d2bc3fed8faeb73ea7ebabfbad377475",
+      "known_marketplaces_stable_sha256": "8642aa8dc1acb9f0da851c783eed551d500d82af862648e224b6eb2047aa7411",
+      "installed_plugins_json_sha256": "276ef210414de8c1b0c644d4e4bee96eaf0d86fcb55dc23a3a3c099176796898",
+      "plugins_tree_sha256": "2dd0162b7424d0b6247fff5020ebc7388c7764a4293fb2d0bcebebb0cfb6d0fa",
+      "plugins_tree_entry_count": 1358
+    },
+    "pin_verification": {
+      "installed_plugins_gitCommitSha": "cd31338034920c9a8239e8a3fc390778edd06ab8",
+      "install_path": "/mnt/e/FirstMate-Cleanroom/runtime/ce-config/plugins/cache/compound-engineering-plugin/compound-engineering/3.24.0",
+      "installed_at": "2026-09-02T01:28:39.556Z",
+      "source_tree_sha256": "e25a034d61f8c17910b8e567a6a08714d432f8021f335d091bfb7d7b5daa5fb7",
+      "snapshot_tree_sha256": "e25a034d61f8c17910b8e567a6a08714d432f8021f335d091bfb7d7b5daa5fb7",
+      "source_file_count": 1073,
+      "snapshot_file_count": 1073,
+      "distinct_inodes": true,
+      "note": "byte-identical copy, not a link; running corpus stays pinned until deliberate reinstall",
+      "grade": "OBSERVED-GOOD"
+    },
+    "component_inventory": { "skills": 33, "agents": 0, "hooks": 0, "mcp_servers": 0, "lsp_servers": 0, "always_on_tokens_estimate": 2011, "source": "claude plugin details (harness estimate)" },
+    "credentials": {
+      "mechanism": "symlink",
+      "link": "/mnt/e/FirstMate-Cleanroom/runtime/ce-config/.credentials.json",
+      "target": "/home/OPERATOR/.claude/.credentials.json",
+      "rationale": "secret stays on ext4 at mode 0600; never copied onto the /mnt/e drvfs mount whose permissions are nominal",
+      "auth_verified_after_symlink": true,
+      "grade": "OBSERVED-GOOD"
+    },
+    "operator_artifacts": [
+      "cleanroom/POLICY.md",
+      "cleanroom/host-isolation-probe.sh",
+      "templates/compound-engineering-config.yaml"
+    ]
+  },
+
+  "host_isolation": {
+    "claim": "host ~/.claude received no Compound Engineering material",
+    "grade": "OBSERVED-GOOD",
+    "probe": "/mnt/e/FirstMate-Cleanroom/runtime/ce-config/cleanroom/host-isolation-probe.sh",
+    "probe_positive_control": {
+      "description": "identical probe run against the scoped dir; a zero host result is meaningless without it",
+      "scoped_ce_string_hits": 3,
+      "scoped_ce_paths_under_plugins": 2,
+      "grade": "OBSERVED-GOOD"
+    },
+    "host_invariants": {
+      "marketplace_names": "claude-plugins-official",
+      "settings_json_sha256": "9aff3f3386b1a866a79ab207c12bfcd2744ddc154c5a158a1c06426125fd571f",
+      "settings_json_enabledPlugins": "ABSENT_KEY",
+      "settings_json_extraKnownMarketplaces": "ABSENT_KEY",
+      "home_claude_json_enabledPlugins": "ABSENT_KEY",
+      "home_claude_json_extraKnownMarketplaces": "ABSENT_KEY",
+      "plugins_tree_sha256": "d0ad0ae8dffd1bc6f264328f119947646f62f7db310a3598a575b88f1d6be732",
+      "plugins_tree_entry_count": 669,
+      "ce_string_hits_in_config_surface": 0,
+      "ce_paths_under_plugins": 0,
+      "unchanged_across": ["pre-install", "post-install", "post all live scoped sessions"]
+    },
+    "sole_host_delta": {
+      "field": "plugins/known_marketplaces.json .claude-plugins-official.lastUpdated",
+      "before": "2026-09-02T00:53:48.729Z",
+      "after": "2026-09-02T01:35:50.709Z",
+      "structurally_identical_with_timestamp_removed": true,
+      "marketplace_dir_mtime_unmoved": "2026-09-01 15:16",
+      "attribution": "COULD-NOT-OBSERVE",
+      "assessment": "benign Claude Code self-refresh of its own pre-existing official marketplace; same behavior recorded by the CE usage scout. No CE entry added.",
+      "mitigation": "probe now strips lastUpdated before hashing"
+    },
+    "scope_consequences": [
+      { "fact": "scoped dir starts with no credentials; first session returned 'Not logged in'", "grade": "OBSERVED-GOOD", "resolved_by": "symlink" },
+      { "fact": "scope does not inherit host settings.json (model opus[1m], effortLevel high, theme, SessionStart hooks gh-axi/chrome-devtools-axi/lavish-axi/herdr)", "grade": "OBSERVED-GOOD", "action": "pin model and effort per lane" },
+      { "fact": "working-directory project instructions still load; the ce-plan control run inherited the Firstmate worktree CLAUDE.md and addressed the operator as 'Captain'", "grade": "OBSERVED-GOOD", "action": "run CE lanes in the clean-room repo, not nested under another instruction tree" }
+    ]
+  },
+
+  "egress_off": {
+    "claim": "ce-doc-review in this config will not reach a second provider",
+    "overall_grade": "OBSERVED-GOOD at the chokepoint, with named limits",
+    "documented_switch": {
+      "key": "cross_model_review_mode",
+      "value_set": "off",
+      "scope": "REPO-LOCAL, not config-dir",
+      "resolution": "<repo-root>/.compound-engineering/config.local.yaml then config.yaml; <repo-root> = git rev-parse --show-toplevel",
+      "citations": [
+        "skills/ce-doc-review/references/cross-model-review.md:24-30 (ce-config-layers block)",
+        "skills/ce-doc-review/references/cross-model-review.md:32 (checkout egress policy, evaluated first)",
+        "skills/ce-code-review/references/cross-model-review.md:41",
+        "skills/ce-code-review/SKILL.md:28",
+        "docs/guides/configuration.md:49"
+      ],
+      "default_if_unset": "auto",
+      "enforcement": "model compliance, not code",
+      "grade": "DOCUMENTED",
+      "consequence": "cannot live in the scoped CLAUDE_CONFIG_DIR; every clean-room repo needs its own copy",
+      "template": "/mnt/e/FirstMate-Cleanroom/runtime/ce-config/templates/compound-engineering-config.yaml"
+    },
+    "enforced_control": {
+      "mechanism": "settings.json env keys in the scoped config dir",
+      "keys": { "CROSS_MODEL_PEERS": "none", "CROSS_MODEL_MAX_PEERS": "0" },
+      "delivery_verified": "session Bash observed PEERS=none MAX=0",
+      "nested_shell_inheritance_verified": "sh -c printed the same values",
+      "why_it_is_the_boundary": "read inside the worker script, so it applies however the script is launched",
+      "grade": "OBSERVED-GOOD",
+      "worker_gates": [
+        { "script": "skills/ce-doc-review/scripts/cross-model-doc-review.sh", "allowlist_gate": 496, "max_peers_gate": 503 },
+        { "script": "skills/ce-code-review/scripts/cross-model-adversarial-review.sh", "allowlist_gate": 449, "max_peers_gate": 456 },
+        { "script": "skills/ce-pov/scripts/cross-model-pov.sh", "allowlist_gate": 434, "max_peers_gate": null }
+      ],
+      "coverage_note": "CROSS_MODEL_PEERS=none covers all three scripts; CROSS_MODEL_MAX_PEERS=0 covers two"
+    },
+    "chokepoint_test": {
+      "script": "skills/ce-doc-review/scripts/cross-model-doc-review.sh",
+      "subject": "throwaway two-line document authored for the test; no clean-room material",
+      "host_family": "claude",
+      "fixed_route": "codex",
+      "runs": [
+        { "id": "A", "setting": "CROSS_MODEL_PEERS=none", "observed": "provider 'codex' not in CROSS_MODEL_PEERS allowlist; skipping -> no different-provider peer reachable", "dispatched": false, "artifacts": 0, "grade": "OBSERVED-GOOD" },
+        { "id": "B", "role": "negative control", "setting": "no allowlist", "observed": "peer run: provider=codex route=codex model=gpt-5.6-luna (effort xhigh) ... full document content egresses to this provider via this route", "dispatched": true, "artifacts": 0, "grade": "OBSERVED-BAD (control went red as required)" },
+        { "id": "C", "setting": "CROSS_MODEL_PEERS=codex", "observed": "same dispatch as B", "dispatched": true, "grade": "OBSERVED-BAD (confirms the allowlist is the discriminator)" },
+        { "id": "D", "setting": "CROSS_MODEL_MAX_PEERS=0", "observed": "CROSS_MODEL_MAX_PEERS=0; cross-model pass disabled", "dispatched": false, "artifacts": 0, "grade": "OBSERVED-GOOD" }
+      ],
+      "honest_notes": [
+        "The intended PATH-stripping safety net FAILED: a second codex exists at /mnt/c/Users/shane/AppData/Roaming/npm/codex and was not removed. Runs B and C really launched codex with the throwaway document embedded.",
+        "That Windows codex is broken (Error: Missing optional dep, Node 22.22.1) so it aborted at module load, but whether any packet left the machine is COULD-NOT-OBSERVE. Treat 'codex is broken here' as availability noise, never as a control."
+      ]
+    },
+    "weak_layer": {
+      "mechanism": "settings.json permissions.deny",
+      "entries": ["Bash(codex:*)", "Bash(grok:*)", "Bash(cursor-agent:*)", "Bash(cursor:*)", "Bash(opencode:*)", "Bash(git push:*)", "Bash(gh pr create:*)", "Bash(gh pr merge:*)", "Bash(gh-axi pr create:*)", "Bash(gh-axi pr merge:*)"],
+      "verified_blocks": [
+        { "command": "codex --version", "result": "Permission to use Bash with command codex --version has been denied." },
+        { "command": "git push origin HEAD", "result": "denied" }
+      ],
+      "verified_controls": [
+        { "command": "/bin/echo control-ok", "result": "ran" },
+        { "command": "git status --short", "result": "ran" }
+      ],
+      "holds_under_bypass_permissions": true,
+      "proven_bypass": { "command": "sh -c \"/home/OPERATOR/.local/bin/codex --version\"", "result": "RAN, printed codex-cli 0.146.0" },
+      "grade": "OBSERVED-BAD as a boundary",
+      "classification": "accident catcher / speed bump only; never cite as proof egress cannot happen",
+      "coverage": "not enumerated; one bypass found, others may exist"
+    },
+    "end_to_end_evidence": {
+      "source": "live /ce-plan run auto-invoked ce-doc-review in non-interactive mode",
+      "trio_lens_activated": "adversarial (one of the three conditional lenses that gate the cross-model pass, references/cross-model-review.md:13) - so the gate was reached, not skipped for lack of activation",
+      "cross_model_artifacts_written": 0,
+      "egress_announcement_in_output": false,
+      "ce_scratch_root_created": false,
+      "peer_processes_launched": 0,
+      "grade": "OBSERVED-GOOD with stated limit",
+      "limit": "absence of a peer process alone is COULD-NOT-OBSERVE; it cannot distinguish 'gate fired' from 'pass never armed'. The chokepoint test is the decisive evidence.",
+      "corroboration": "ce-doc-review contains exactly two scripts (cross-model-doc-review.sh, peer-job-runner.py) and no curl/wget/API URL anywhere in the skill directory; peer-job-runner.py receives argv from the gated script"
+    },
+    "other_paths_blocked_by_policy_not_invoked": [
+      { "path": "ce-explain publishing", "destination": "ht-ml.app (public internet)", "citation": "skills/ce-explain/SKILL.md:77", "status": "FORBIDDEN", "grade": "DOCUMENTED" },
+      { "path": "ce-pov cross-model panel", "destination": "second provider via scripts/cross-model-pov.sh on an oracle/panel summons", "status": "FORBIDDEN; also covered by CROSS_MODEL_PEERS=none at :434", "grade": "DOCUMENTED" },
+      { "path": "ce-proof", "destination": "proofeditor.ai", "status": "FORBIDDEN", "grade": "DOCUMENTED" },
+      { "path": "ce-code-review", "reason": "invocation is itself standing authorization for its peer route", "citation": "skills/ce-code-review/SKILL.md:28", "status": "FORBIDDEN - review belongs to no-mistakes", "grade": "DOCUMENTED" }
+    ]
+  },
+
+  "spine_verification": {
+    "resolution_probe": {
+      "method": "scoped session asked for its own skill names",
+      "resolved": ["compound-engineering:ce-plan", "compound-engineering:ce-doc-review", "compound-engineering:ce-work", "compound-engineering:ce-worktree", "compound-engineering:lfg", "compound-engineering:ce-commit-push-pr"],
+      "negative_control": { "typed": "/compound-engineering:nope-not-real", "result": "Unknown command: /compound-engineering:nope-not-real" },
+      "grade": "OBSERVED-GOOD"
+    },
+    "ce_plan_live_positive_control": {
+      "invoked": "/compound-engineering:ce-plan Add a --version flag to a small hello.sh script ... produce the plan artifact only, write no implementation code.",
+      "exit_code": 0,
+      "duration": "6m35s",
+      "artifact": "ce-artifacts/plans/2026-09-01-2135-feat-hello-version-flag-plan.md",
+      "artifact_lines": 73,
+      "artifact_bytes": 3593,
+      "front_matter": { "artifact_contract": "ce-unified-plan/v1", "artifact_readiness": "implementation-ready" },
+      "sections": ["Goal Capsule", "Product Contract", "Requirements", "Scope Boundaries", "Planning Contract", "Implementation Units", "Verification Contract", "Definition of Done"],
+      "no_implementation_code_written": true,
+      "grade": "OBSERVED-GOOD",
+      "side_findings": [
+        "docs_root works: artifacts landed under ce-artifacts/, not docs/",
+        "ce-plan AUTO-INVOKES ce-doc-review in non-interactive mode without being asked; plan for it"
+      ]
+    },
+    "ce_doc_review": { "invocation": "exercised live as ce-plan's automatic non-interactive review pass", "grade": "OBSERVED-GOOD" },
+    "ce_work": {
+      "invoked": false,
+      "grade_for_completion_behavior": "DOCUMENTED (read from SKILL.md and references at cd31338, not measured)",
+      "default_standalone_behavior": {
+        "verdict": "DOES NOT stop at a local commit; it pushes and opens a PR",
+        "citations": [
+          { "file": "skills/ce-work/SKILL.md", "line": 12, "text": "In standalone use, the shipping workflow takes the verified change through review and delivery." },
+          { "file": "skills/ce-work/SKILL.md", "line": 48, "text": "standalone mode must read references/shipping-workflow.md before quality checks or delivery" },
+          { "file": "skills/ce-work/references/shipping-workflow.md", "line": 91, "text": "Commit and Create Pull Request" },
+          { "file": "skills/ce-work/references/shipping-workflow.md", "line": 99, "text": "Load the ce-commit-push-pr skill with branding:on to handle committing, pushing, and PR creation." },
+          { "file": "skills/ce-work/references/shipping-workflow.md", "line": 112, "text": "If the user prefers to commit without creating a PR, load the ce-commit skill instead." }
+        ]
+      },
+      "required_boundary_mode": {
+        "mode": "mode:return-to-caller",
+        "verdict": "implementation and local verification ONLY; no push, no PR, no merge, no CI watch",
+        "citations": [
+          { "file": "skills/ce-work/SKILL.md", "line": 54, "text": "Return-to-Caller Mode performs implementation and local verification only. It must not enter Phase 3-4 or run final simplify, code review, PR creation, CI watching, babysitting, or any other standalone shipping action; the caller owns those gates." },
+          { "file": "skills/ce-work/SKILL.md", "line": 50, "text": "This gate does not apply in Return-to-Caller Mode." },
+          { "file": "skills/ce-work/references/return-to-caller.md", "line": 5, "text": "performs implementation and local verification only ... then returns a structured summary instead of running the standalone shipping tail" },
+          { "file": "skills/ce-work/references/return-to-caller.md", "line": 28, "text": "standalone_shipping_skipped: true" },
+          { "file": "skills/ce-work/references/return-to-caller.md", "line": 32, "text": "Any goal/workflow engine used here must not open a PR, run the owner workflow tail, or bypass the caller-owned gates." },
+          { "file": "skills/ce-work/references/input-triage.md", "line": 27, "text": "leading mode:return-to-caller token, stripped before anything else" }
+        ]
+      },
+      "configuration_required_to_guarantee_boundary": [
+        { "control": "always invoke ce-work mode:return-to-caller <plan-path>", "strength": "the skill's own documented boundary", "verify": "returned envelope carries standalone_shipping_skipped: true", "grade": "RECOMMENDED" },
+        { "control": "run the CE lane in a checkout with NO git remote until handoff", "strength": "mechanical - a dropped mode token has nothing to push to", "note": "lfg documents a clean no-remote refusal (skills/lfg/SKILL.md:35); ce-commit-push-pr documents none, so it fails at git instead of refusing", "grade": "RECOMMENDED" },
+        { "control": "permissions.deny on git push / gh pr create", "strength": "weak - bypassable indirectly", "grade": "RECOMMENDED as a catch, not a boundary" }
+      ]
+    },
+    "forbidden_commands": [
+      { "command": "lfg", "exists": true, "resolves_in_scope": true, "path": "skills/lfg/SKILL.md", "reason": "pushes and opens a PR without stopping whenever a remote exists", "citations": ["skills/lfg/SKILL.md:3", "skills/lfg/SKILL.md:49", "skills/lfg/SKILL.md:35"], "status": "FORBIDDEN for clean-room production work", "grade": "OBSERVED-GOOD (existence and resolution)" },
+      { "command": "ce-commit-push-pr", "exists": true, "resolves_in_scope": true, "path": "skills/ce-commit-push-pr/SKILL.md", "reason": "commits, pushes, and opens a PR; chains ce-babysit-pr by default via auto_babysit", "citations": ["skills/ce-commit-push-pr/SKILL.md:3"], "status": "FORBIDDEN for clean-room production work", "grade": "OBSERVED-GOOD (existence and resolution)" }
+    ],
+    "safe_local_commit_alternative": { "command": "ce-commit", "citation": "skills/ce-commit/SKILL.md:8", "text": "No push, no PR - use ce-commit-push-pr for the full ship flow.", "note": "not the sanctioned path; ce-work mode:return-to-caller already commits locally" }
+  },
+
+  "operator_recipe": {
+    "grade": "RECOMMENDED - not executed end to end",
+    "preconditions": [
+      "clean-room repo checked out OUTSIDE any other project's instruction tree",
+      "that checkout has no git remote",
+      "<repo-root>/.compound-engineering/config.yaml copied from runtime/ce-config/templates/compound-engineering-config.yaml",
+      "<repo-root>/.gitignore ignores ce-artifacts/ and .context/"
+    ],
+    "steps": [
+      { "step": "enter scope", "command": "export CLAUDE_CONFIG_DIR=/mnt/e/FirstMate-Cleanroom/runtime/ce-config", "note": "supplies CROSS_MODEL_PEERS=none, CROSS_MODEL_MAX_PEERS=0 and the deny list automatically; do not override" },
+      { "step": "verify isolation", "command": "$CLAUDE_CONFIG_DIR/cleanroom/host-isolation-probe.sh $HOME/.claude HOST  # expect ce_* = 0, then the same probe on $CLAUDE_CONFIG_DIR # expect ce_* > 0" },
+      { "step": "pin model and effort", "note": "the scope does NOT inherit the host's opus[1m] / effortLevel high; pass --model/--effort per invocation or add model and effortLevel to the scoped settings.json, and record which" },
+      { "step": "plan", "command": "claude --model opus --effort high -p '/compound-engineering:ce-plan <outcome>'", "expect": "implementation-ready plan under ce-artifacts/plans/ plus an automatic non-interactive ce-doc-review pass" },
+      { "step": "independent doc review (optional separate pass)", "command": "claude -p '/compound-engineering:ce-doc-review mode:non-interactive ce-artifacts/plans/<plan>.md'", "expect": "Coverage reports the cross-model pass as 'disabled by checkout config'", "failure_signal": "if Coverage instead names an unavailable route or an un-attestable host, the repo config was not read - stop and fix before continuing" },
+      { "step": "implement to a local committed candidate", "command": "claude --model opus --effort high -p '/compound-engineering:ce-work mode:return-to-caller ce-artifacts/plans/<plan>.md'", "mandatory": "the mode:return-to-caller token", "verify": ["status: complete", "standalone_shipping_skipped: true", "changed_files matches the plan units", "verification_evidence has one entry per behavior-bearing unit", "git log shows local commits and git status is clean", "git remote still empty and no PR exists"], "on_failure": "any missing item is a boundary failure - stop, do not hand on" },
+      { "step": "hand off to no-mistakes (mandatory, the only publisher)", "commands": ["git remote add origin <the real remote>   # only now", "/mnt/e/FirstMate-Cleanroom/tools/bin/no-mistakes axi run"], "note": "the worker that starts the run drives it through its own gates to a PR and green CI; landing authority is unchanged and is not CE's to hold", "never": "do not substitute lfg, ce-commit-push-pr, or ce-code-review for any part of this step" }
+    ]
+  },
+
+  "could_not_observe": [
+    { "item": "declared Firstmate verifier coverage", "detail": "bin/fm-verify.sh --list names browser, pr-checks, merge-clean, review-exec, review-mutation; none applies to third-party plugin isolation. Every grade was reached by hand under the three-valued rule.", "classification": "reported gap, not a pass" },
+    { "item": "which process refreshed the host known_marketplaces.json lastUpdated timestamp", "detail": "several Claude Code sessions run on this host; scoped sessions do not write to ~/.claude" },
+    { "item": "whether any network packet left the machine during control runs B and C", "detail": "the codex process failed at Node module load; no traffic was captured" },
+    { "item": "cross_model_review_mode: off doing anything on its own", "detail": "model-compliance instruction; its effect was not isolated from the environment layer, which was also in force" },
+    { "item": "the spine end to end", "detail": "ce-work was never invoked in either mode; all ce-work completion behavior is DOCUMENTED-by-the-subject, not measured. The operator recipe is a recipe, not a transcript." },
+    { "item": "ce-explain, ce-pov, ce-proof, ce-code-review behavior", "detail": "not invoked per the task; their egress descriptions are read, not measured" },
+    { "item": "permissions.deny coverage", "detail": "not enumerated; one bypass found and reported, others may exist" }
+  ]
+}

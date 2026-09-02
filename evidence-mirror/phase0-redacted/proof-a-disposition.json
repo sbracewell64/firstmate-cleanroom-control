@@ -1,0 +1,2270 @@
+{
+  "actor": {
+    "kind": "agent",
+    "login": "sbracewell64",
+    "session_ref": "cleanroom-proof-a-executor"
+  },
+  "attempt": 1,
+  "attempt_budget": 3,
+  "authorization": {
+    "act_digest": "0b4156251c220e51f189c8b3cf65c37bec0a76733beb50b80ff4b2c81692441f",
+    "expected_head": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+    "id": "auth-14593774-5023-4f40-9e89-470a885b36f0",
+    "kind": "PROOF_A_LANDING",
+    "merge_method": "merge",
+    "minted_at": "2026-09-01T23:04:35Z",
+    "record_path": "authorizations/auth-14593774-5023-4f40-9e89-470a885b36f0.json",
+    "spend_began_at": "2026-09-01T23:04:37Z",
+    "spent_at": "2026-09-01T23:04:40Z",
+    "state": "spent",
+    "triggering_conditions_evaluated": [
+      {
+        "evidence_ref": {
+          "kind": "api_capture",
+          "locator": "raw/20260901T230431Z-s11-pr-preread.stdout",
+          "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+        },
+        "measured": "sbracewell64/fm-cleanroom-proof",
+        "predicate": "T1 repo is the pinned proof repo (owner and name compared, not a URL substring)",
+        "stage_id": "A-S11",
+        "value": "observed-good"
+      },
+      {
+        "evidence_ref": {
+          "kind": "api_capture",
+          "locator": "raw/20260901T230432Z-s11-openprs.stdout",
+          "sha256": "8387b87f143537410627192403406035fc9388fcb2e343e6c72d95533c7b79b6"
+        },
+        "measured": "[{\"number\": 2}]",
+        "predicate": "T2 exactly one open PR for the candidate branch, and it is the recorded number",
+        "stage_id": "A-S11",
+        "value": "observed-good"
+      },
+      {
+        "evidence_ref": {
+          "kind": "api_capture",
+          "locator": "raw/20260901T230431Z-s11-pr-preread.stdout",
+          "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+        },
+        "measured": "attestation=281e15b292d0e604d7aac4c1f15413efaf8ee8ed live=281e15b292d0e604d7aac4c1f15413efaf8ee8ed checks=['281e15b292d0e604d7aac4c1f15413efaf8ee8ed']",
+        "predicate": "T3 attestation head == live PR head == every required check's head",
+        "stage_id": "A-S11",
+        "value": "observed-good"
+      },
+      {
+        "measured": "ladder=True checks=True",
+        "predicate": "T4 every required check success and the whole mergeability ladder observed-good",
+        "stage_id": "A-S11",
+        "value": "observed-good"
+      },
+      {
+        "evidence_ref": {
+          "kind": "api_capture",
+          "locator": "raw/20260901T230433Z-s11-pr-files.stdout",
+          "sha256": "1044e0abc0f8a73741aeec0fffc692714cad48668cdfb9297e414a33b05460db"
+        },
+        "measured": "files=['fmproof/__pycache__/__init__.cpython-314.pyc', 'fmproof/__pycache__/semver.cpython-314.pyc', 'fmproof/semver.py', 'tests/__pycache__/__init__.cpython-314.pyc', 'tests/__pycache__/test_compare.cpython-314.pyc', 'tests/__pycache__/test_parse.cpython-314.pyc', 'tests/test_compare.py'] outside=[]",
+        "predicate": "T5 path fence: the PR's own file list is inside the allowlist",
+        "stage_id": "A-S11",
+        "value": "observed-good"
+      },
+      {
+        "evidence_ref": {
+          "kind": "api_capture",
+          "locator": "raw/20260901T230433Z-s11-pr-files.stdout",
+          "sha256": "1044e0abc0f8a73741aeec0fffc692714cad48668cdfb9297e414a33b05460db"
+        },
+        "measured": "policy_files_touched=[]",
+        "predicate": "T6 the candidate did not alter the acceptance policy that judges it",
+        "stage_id": "A-S11",
+        "value": "observed-good"
+      },
+      {
+        "evidence_ref": {
+          "kind": "api_capture",
+          "locator": "raw/20260901T230433Z-s11-protection.stdout",
+          "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+        },
+        "measured": "6c6af4e145216f35a0ee5cbffac22c15ad335d1c52403d264774d2089aaf5a8a",
+        "predicate": "T7 the acceptance policy generation has not moved since A-S3",
+        "stage_id": "A-S11",
+        "value": "observed-good"
+      },
+      {
+        "measured": "missing=[]",
+        "predicate": "T8 the trace carries a good STAGE_EXIT for A-S0 through A-S10",
+        "stage_id": "A-S11",
+        "value": "observed-good"
+      }
+    ]
+  },
+  "bootstrap_exception": {
+    "commit_sha": "2ef121a978f006d43439fe7e46553e406bd56757",
+    "expiry": "immediate: A-S3 applied protection in the same stage sequence and A-S4 proved it refuses",
+    "non_merge_commits_on_main_after_protection": 0,
+    "scope": "exactly one commit, whose tree sha equals the pinned inputs/seed tree, pushed directly to main while main was unprotected",
+    "used": true
+  },
+  "candidate": {
+    "base_sha": "2ef121a978f006d43439fe7e46553e406bd56757",
+    "branch": "fm-proof-a/semver-compare",
+    "candidate_state": "ATTESTED",
+    "head_sha": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+    "local_head_sha": "d29527ed11fcbcff2b5d3facaa1cb7417915ff55",
+    "published_head_sha": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+    "published_tree_sha": "1d88a770c95ca23b26ab806c1aeef2ca52d4a23a",
+    "tree_sha": "7a8d4f5561df32ec4ea7a01024f9913511436b77"
+  },
+  "completed_at": "2026-09-01T23:12:39Z",
+  "counts": {
+    "checks_ran": 2,
+    "conditions_evaluated": 8,
+    "mutating_forge_calls": 9,
+    "negative_controls_watched_red": 6,
+    "observations_recorded": 152,
+    "stages_covered": 17
+  },
+  "d2_fired": [
+    {
+      "cognition_required": "Every observation in this proof was hand-graded. bin/fm-verify.sh --list declares five verifiers (browser, pr-checks, merge-clean, review-exec, review-mutation) and none is declared for a standalone clean-room proof repository, so the actor formed each verdict instead of consuming one.",
+      "eliminating_machinery": "A declared `proof-stage` verifier in the verifier registry returning PASS/FAIL/NO_VERIFIER_RAN for a named stage id.",
+      "id": "D2-S1"
+    },
+    {
+      "cognition_required": "The --intent bytes that become enforceable review acceptance criteria were authored by an agent, because --intent is the only channel by which caller-side evidence reaches the reviewer and there is no structured-criteria input port.",
+      "eliminating_machinery": "A structured criteria port on axi run (--criteria-file taking the plan's Verification Contract as typed data), or a deterministic serializer that renders that contract into intent bytes. Execution here is D0 because the bytes were pinned and hashed before the run; the authorship stays D2.",
+      "id": "D2-A1"
+    }
+  ],
+  "deviations": [
+    {
+      "design_says": "probe P10 compares the sha256 of inputs/{intent.txt,candidate.patch,protection.json} and the seed tree against pinned values",
+      "id": "D-1",
+      "permitted_by": "the design's own intent - the inputs are byte-pinned and hashed BEFORE the run, which is what makes A-S5 a D0 operation; only the moment of pinning differs",
+      "reality": "the design was DESIGN ONLY and no inputs existed, so the executor authored them, froze them into inputs/PINNED.json, and P10 verified every later read against that frozen manifest",
+      "reason": "there were no pre-existing pinned values to compare against; pinning had to happen once, before the first stage that consumes them"
+    },
+    {
+      "design_says": "the seed tree is the seven listed files",
+      "id": "D-2",
+      "permitted_by": "an input-authoring correction made before anything was pinned or created, at the point the design calls the last one where stopping costs nothing",
+      "reality": "the seed also carries tests/__init__.py, an eighth file",
+      "reason": "Python 3.14 requires the start directory of `unittest discover` to be importable, so the design's own pinned test command `python3 -m unittest discover -s tests -t . -v` fails on this host without it. Verified before pinning: without the file the command raises ImportError, with it 21 seed tests run and pass"
+    },
+    {
+      "design_says": "the clean-room no-mistakes instance is isolated from the host",
+      "id": "D-3",
+      "permitted_by": "not permitted by the design; recorded as an unplanned host side effect and escalated",
+      "reality": "`no-mistakes init` additionally wrote ~/.claude/skills/no-mistakes/SKILL.md (v1.61.0 copy) over the host's v1.40.3 copy dated 2026-07-25",
+      "reason": "the skill install is a side effect of init that NM_HOME does not scope"
+    },
+    {
+      "design_says": "the pipeline may author fix commits, and the A-S11 path fence re-asserts they touch only fmproof/** and tests/**",
+      "id": "D-4",
+      "permitted_by": "the design's own fence definition (proof-a-green-pr-design.md 9.5 and T5/T6): no abort rule fires, so the proof continues and records the finding",
+      "reality": "the pipeline's fix commit 281e15b2 consists solely of five .pyc build artifacts created by the post-review test and lint steps; they are inside the allowlist, so the fence passes, and they landed",
+      "reason": "the seed carries no .gitignore and the fix commit is built over the dirty worktree rather than a named path set; review runs before the steps that create the artifacts"
+    },
+    {
+      "design_says": "the vocabulary schema is pinned before the run and every producer validates against it",
+      "id": "D-5",
+      "permitted_by": "not anticipated by the design; taken as a record-honesty repair and recorded in full",
+      "reality": "git_point gained published_tree_sha after A-S10, and inputs/PINNED.json was re-pinned to the new digest with the prior digest retained in vocabulary_digest_history",
+      "reason": "without the field the record could not distinguish the pinned candidate tree from the tree actually published, which is the exact ambiguity the proof exists to remove"
+    },
+    {
+      "design_says": "A-S14 confirms the run reached a terminal status after the merge",
+      "id": "D-6",
+      "permitted_by": "proofs-shared-contracts.md 13.1: a CNO that resolves on a re-poll inside its declared bound spends nothing; the bound is declared here rather than assumed",
+      "reality": "the first measurement was taken with no declared bound and read observed-bad; it was demoted to non-gating and replaced by a bounded 16x30s re-observation",
+      "reason": "the CI reconciler is polled on a 30/60/120s schedule, so an immediate sample measures the sampling instant rather than the mechanism"
+    },
+    {
+      "design_says": "outcome is folded from observations[] under FAIL > CNO > PASS",
+      "id": "D-7",
+      "permitted_by": "not specified by the design; the rule is stated in the record, applied mechanically over trace order, and every superseded observation is retained rather than deleted",
+      "reality": "two stages were re-entered after an instrument repair, so the flat ledger holds superseded non-pass observations from evaluations that were later replaced by passing ones",
+      "reason": "the design's fold assumes each stage is evaluated once, while its own retry semantics explicitly re-enter stages; without a supersession rule the verdict would misreport a proof whose every gate was green"
+    }
+  ],
+  "environment": {
+    "gh_version": "2.96.0",
+    "git_version": "2.53.0",
+    "host": "WSL2 Linux 6.18.33.2-microsoft-standard-WSL2",
+    "jq_version": "jq-1.8.1",
+    "no_mistakes_binary_path": "/mnt/e/FirstMate-Cleanroom/tools/bin/no-mistakes",
+    "no_mistakes_home": "/home/OPERATOR/.fm-cleanroom-proof-a/nm-home",
+    "no_mistakes_source_sha": "0af0be6323bebd61edaf3a1a6170d82c5075e818",
+    "no_mistakes_version": "v1.61.0",
+    "python_version": "3.14.4"
+  },
+  "forge_gate": {
+    "check_runs": [
+      {
+        "conclusion": "success",
+        "head_sha": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+        "id": 100058518762,
+        "name": "test",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "head_sha": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+        "id": 100058519182,
+        "name": "PR must be raised via no-mistakes",
+        "status": "completed"
+      }
+    ],
+    "head_bind_verified": true,
+    "limit_declared": "verify.py:21-32 - a CONTRIBUTOR GUARDRAIL, not a forgery-proof security boundary. The signature and attestation are author-editable assertions in the PR body. Recorded as evidence the pipeline ran, never as proof it could not have been forged.",
+    "required_contexts": [
+      "test",
+      "PR must be raised via no-mistakes"
+    ]
+  },
+  "github_state_created": [
+    {
+      "how_created": "gh repo create",
+      "locator": "https://github.com/sbracewell64/fm-cleanroom-proof",
+      "n": 1,
+      "object": "Repository sbracewell64/fm-cleanroom-proof (public)",
+      "retained": true
+    },
+    {
+      "how_created": "direct push, bootstrap exception, pre-protection",
+      "locator": "2ef121a978f006d43439fe7e46553e406bd56757",
+      "n": 2,
+      "object": "One seed commit on main",
+      "retained": true
+    },
+    {
+      "how_created": "PATCH /repos/{o}/{r}",
+      "locator": "protection-generation.json",
+      "n": 3,
+      "object": "Repo merge settings: allow_merge_commit=true, allow_squash_merge=false, allow_rebase_merge=false, delete_branch_on_merge=false",
+      "retained": true
+    },
+    {
+      "how_created": "PUT /repos/{o}/{r}/branches/main/protection",
+      "locator": "6c6af4e145216f35a0ee5cbffac22c15ad335d1c52403d264774d2089aaf5a8a",
+      "n": 4,
+      "object": "Branch protection on main (enforce_admins, strict, 2 required contexts)",
+      "retained": true
+    },
+    {
+      "how_created": "pushed by no-mistakes' Push step, not by the actor",
+      "locator": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "n": 5,
+      "object": "One candidate branch fm-proof-a/semver-compare",
+      "retained": true
+    },
+    {
+      "how_created": "opened by no-mistakes' PR step",
+      "locator": "https://github.com/sbracewell64/fm-cleanroom-proof/pull/2",
+      "n": 6,
+      "object": "One pull request #2",
+      "retained": true
+    },
+    {
+      "how_created": "created by GitHub in response to 5/6",
+      "locator": "2 required check runs at the published head",
+      "n": 7,
+      "object": "Workflow runs and check runs on that PR",
+      "retained": true
+    },
+    {
+      "how_created": "the expected-head protected merge",
+      "locator": "a7db5c360d57964a160f59a5c71a8c07a6f5c382",
+      "n": 8,
+      "object": "One merge commit on main",
+      "retained": true
+    },
+    {
+      "how_created": "gh pr create, closed immediately, branch retained",
+      "locator": "https://github.com/sbracewell64/fm-cleanroom-proof/pull/1",
+      "n": 9,
+      "object": "One throwaway PR #1 for the A-S4 negative controls",
+      "retained": true
+    }
+  ],
+  "intent": {
+    "provenance": "agent",
+    "text_path": "inputs/intent.txt",
+    "text_sha256": "6edd63aab54459604a01453407ea1926cfb91096745af481691909a9f6290c17"
+  },
+  "merge": {
+    "already_merged": false,
+    "api": "PUT /repos/{owner}/{repo}/pulls/{number}/merge",
+    "forbidden_flags_asserted_absent": [
+      "--admin",
+      "-R",
+      "--repo",
+      "--force"
+    ],
+    "http_status": 200,
+    "merge_commit_sha": "a7db5c360d57964a160f59a5c71a8c07a6f5c382",
+    "merged": true,
+    "raw_response_path": "raw/merge-response.json",
+    "request_sha": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed"
+  },
+  "mergeability": {
+    "conditions": [
+      {
+        "measured": "open",
+        "predicate": "1 state == open",
+        "value": "observed-good"
+      },
+      {
+        "measured": "False",
+        "predicate": "2 draft == false",
+        "value": "observed-good"
+      },
+      {
+        "measured": "True",
+        "predicate": "3 mergeable == true",
+        "value": "observed-good"
+      },
+      {
+        "measured": "clean",
+        "predicate": "4 mergeable_state == clean",
+        "value": "observed-good"
+      },
+      {
+        "measured": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+        "predicate": "5 head.sha == published head",
+        "value": "observed-good"
+      },
+      {
+        "measured": "main",
+        "predicate": "6 base.ref == main",
+        "value": "observed-good"
+      },
+      {
+        "measured": "see A-S9",
+        "predicate": "7 every required check success at that head",
+        "value": "observed-good"
+      },
+      {
+        "measured": "clean",
+        "predicate": "8 conversation resolution satisfied (implied by mergeable_state == clean)",
+        "value": "observed-good"
+      }
+    ],
+    "draft": false,
+    "mergeable": true,
+    "mergeable_state": "clean",
+    "observed_at": "2026-09-01T23:02:12Z",
+    "polls_used": 1,
+    "protection_generation_digest": "6c6af4e145216f35a0ee5cbffac22c15ad335d1c52403d264774d2089aaf5a8a",
+    "state": "open"
+  },
+  "negative_controls": [
+    {
+      "distinct_match": true,
+      "id": "NC-2",
+      "measured": "gate=failure test=success",
+      "observed": "PR must be raised via no-mistakes",
+      "target": "PR must be raised via no-mistakes",
+      "value": "observed-good"
+    },
+    {
+      "distinct_match": true,
+      "id": "NC-3",
+      "measured": "attestation head_sha=b02acfe pr head=13f1b3e gate=failure test=success",
+      "observed": "PR must be raised via no-mistakes",
+      "target": "PR must be raised via no-mistakes",
+      "value": "observed-good"
+    },
+    {
+      "distinct_match": true,
+      "id": "NC-1",
+      "measured": "test=failure gate=failure",
+      "observed": "test",
+      "target": "test",
+      "value": "observed-good"
+    },
+    {
+      "distinct_match": true,
+      "id": "NC-5",
+      "measured": "exit 0 with outcome: ci-monitor-interrupted is CNO_INDETERMINATE, not QUALIFIED",
+      "observed": "A-S8 outcome-keyed parser",
+      "target": "A-S8 outcome-keyed parser",
+      "value": "observed-good"
+    },
+    {
+      "distinct_match": true,
+      "id": "NC-6",
+      "measured": "attestation head differs from PR head by one character; compliant=false",
+      "observed": "attestation head bind",
+      "target": "attestation head bind",
+      "value": "observed-good"
+    },
+    {
+      "distinct_match": true,
+      "id": "NC-4",
+      "measured": "called merge with sha=<base 2ef121a> instead of the head; forge said: {\"message\":\"Head branch was modified. Review and try the merge again.\",\"documentation_url\":\"https://docs.github.com/rest/pulls/pulls#merge-a-pull-request\",\"stat",
+      "observed": "expected-head merge bind",
+      "target": "expected-head merge bind",
+      "value": "observed-good"
+    }
+  ],
+  "observations": [
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T224809Z-p1-nm-version.stdout",
+        "sha256": "0816ee38928f098bcd8c998606ef3ec73019044d1e23ee7651e69fc26322e0e5"
+      },
+      "measured": "1.61.0",
+      "predicate": "P1 no-mistakes >= 1.46.0",
+      "stage_id": "A-S0",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T224809Z-p1-nm-version.stdout",
+        "sha256": "0816ee38928f098bcd8c998606ef3ec73019044d1e23ee7651e69fc26322e0e5"
+      },
+      "measured": "0af0be6 vs pinned 0af0be6323bebd61edaf3a1a6170d82c5075e818",
+      "predicate": "P2 build sha is the pinned v1.61.0 build",
+      "stage_id": "A-S0",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T224810Z-p3-nm-doctor.stdout",
+        "sha256": "68ff1e4179fd38453787d56425840e05e2e8a590548c4af140293d2ee57e1d50"
+      },
+      "measured": "data directory /home/OPERATOR/.fm-cleanroom-proof-a/nm-home",
+      "predicate": "P3 daemon healthy or startable under the isolated home",
+      "stage_id": "A-S0",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T224810Z-p3-nm-doctor.stdout",
+        "sha256": "68ff1e4179fd38453787d56425840e05e2e8a590548c4af140293d2ee57e1d50"
+      },
+      "measured": "/home/OPERATOR/.fm-cleanroom-proof-a/nm-home",
+      "predicate": "P3b isolated home is not the host's ~/.no-mistakes",
+      "stage_id": "A-S0",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T224811Z-p4-gh-auth.stdout",
+        "sha256": "61ea62f9298930e89b99ff2fb6a2ef5d5efa59cd4bd2ffe0e4e756aaadd0d7d3"
+      },
+      "measured": "sbracewell64",
+      "predicate": "P4 gh logged in as the operator",
+      "stage_id": "A-S0",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T224811Z-p4-gh-auth.stdout",
+        "sha256": "61ea62f9298930e89b99ff2fb6a2ef5d5efa59cd4bd2ffe0e4e756aaadd0d7d3"
+      },
+      "measured": "['gist', 'read:org', 'repo', 'workflow']",
+      "predicate": "P4b scopes include repo and workflow",
+      "stage_id": "A-S0",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T224812Z-p6-user-plan.stdout",
+        "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      "gating": false,
+      "measured": "gh api user .plan.name empty; token scopes lack 'user'",
+      "non_gating_reason": "The plan matters only because branch protection on a PRIVATE personal repo needs a paid plan. The captain ruled proof-repo-visibility=PUBLIC, where protection is free, and the fact that decides the proof - that protection is actually in force - is OBSERVED directly by the A-S3 read-back and proved to refuse by the A-S4 negative control.",
+      "predicate": "P6 account plan readable",
+      "stage_id": "A-S0",
+      "value": "could-not-observe"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T224813Z-p7-git-version.stdout",
+        "sha256": "97452bcde974ef512f9552791fc4f6a3219a724877671fba270baca1a6075b74"
+      },
+      "measured": "git version 2.53.0",
+      "predicate": "P7 git present",
+      "stage_id": "A-S0",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T224813Z-p7-git-effective-author.stdout",
+        "sha256": "95f3bbf2335ba3a83311f324c0da0f12d0a312c3b0b4fe0288e63c395740a316"
+      },
+      "measured": "author=Shane Bracewell <sbracewell64@gmail.com> 1788302893 -0400 committer=Shane Bracewell <sbracewell64@gmail.com> 1788302893 -0400",
+      "predicate": "P7b effective git identity for this proof is the operator's",
+      "stage_id": "A-S0",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T224813Z-p8-python.stdout",
+        "sha256": "63990b3ee50c49ab28d70e29c0f967f0c71330e39243ffeb4d3a8d5878c8a978"
+      },
+      "measured": "Python 3.14.4",
+      "predicate": "P8 python3 >= 3.12",
+      "stage_id": "A-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "attempt dirs=['attempt-1']; disposition.json exists=False",
+      "predicate": "P9 no prior attempt is being overwritten",
+      "stage_id": "A-S0",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "inputs/PINNED.json",
+        "sha256": "c30ae8c8e83175683a5bc8a73b4844616d3bdc9163c7fdc095d1eccd5a99a6b2"
+      },
+      "measured": "12 files verified",
+      "predicate": "P10 all pinned inputs match their frozen digests",
+      "stage_id": "A-S0",
+      "value": "observed-good"
+    },
+    {
+      "measured": "53c25b89239793003baad42d653beb41ab989206f76dfbd77ef1d154d8352051",
+      "predicate": "P10b vocabulary digest matches the schema file",
+      "stage_id": "A-S0",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224923Z-s1-repo-precheck.stdout",
+        "sha256": "4f50e254a719a6b1b06b529bdaa08980e4acf0878aad0090cba7771f6ebdf0b9"
+      },
+      "measured": "absent",
+      "predicate": "A-S1 idempotence: repository pre-existing?",
+      "stage_id": "A-S1",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224926Z-s1-repo-verify.stdout",
+        "sha256": "da823f964baf56d8b8cd2c5509378565d4bd0b60a7cc574acaeef7da84993955"
+      },
+      "measured": "sbracewell64/fm-cleanroom-proof",
+      "predicate": "A-S1 repository exists with the pinned full name",
+      "stage_id": "A-S1",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224926Z-s1-repo-verify.stdout",
+        "sha256": "da823f964baf56d8b8cd2c5509378565d4bd0b60a7cc574acaeef7da84993955"
+      },
+      "measured": "private=False",
+      "predicate": "A-S1 repository visibility is public (captain ruling proof-repo-visibility)",
+      "stage_id": "A-S1",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T224927Z-s2-tree.stdout",
+        "sha256": "ac063a995f0b7e61fb099bd103b3251eda5e402cc57e27935799b87e84cc057d"
+      },
+      "measured": "d162bf8f60e116b53cdee16a1fb11f8289b54222 vs pinned d162bf8f60e116b53cdee16a1fb11f8289b54222",
+      "predicate": "A-S2 seed tree sha equals the pinned seed tree",
+      "stage_id": "A-S2",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224929Z-s2-main-readback.stdout",
+        "sha256": "2a39cf08b9893d06c2b9b29e165d72cbee1f9fff8cb0f57176f98406056c919a"
+      },
+      "measured": "2ef121a978f006d43439fe7e46553e406bd56757",
+      "predicate": "A-S2 main resolves to the seed commit",
+      "stage_id": "A-S2",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224929Z-s2-main-readback.stdout",
+        "sha256": "2a39cf08b9893d06c2b9b29e165d72cbee1f9fff8cb0f57176f98406056c919a"
+      },
+      "measured": "sbracewell64@gmail.com",
+      "predicate": "A-S2 seed commit author identity is the operator's, not the host default",
+      "stage_id": "A-S2",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224929Z-s2-main-readback.stdout",
+        "sha256": "2a39cf08b9893d06c2b9b29e165d72cbee1f9fff8cb0f57176f98406056c919a"
+      },
+      "measured": "parents=0",
+      "predicate": "A-S2 bootstrap exception scope is exactly one commit",
+      "stage_id": "A-S2",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224930Z-s3-protection-before.stdout",
+        "sha256": "d6020ee3b0852c3deb66c66d159cc80caabeaa66ee301778307a2a18d486450d"
+      },
+      "measured": "absent (404)",
+      "predicate": "A-S3 prior protection captured before writing",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224932Z-s3-protection-get.stdout",
+        "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+      },
+      "measured": "{\"url\": \"https://api.github.com/repos/sbracewell64/fm-cleanroom-proof/branches/main/protection/enforce_admins\", \"enabled\": true}",
+      "predicate": "A-S3 enforce_admins is true (the owner cannot bypass)",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224932Z-s3-protection-get.stdout",
+        "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+      },
+      "measured": "true",
+      "predicate": "A-S3 required checks strict is true",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224932Z-s3-protection-get.stdout",
+        "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+      },
+      "measured": "[\"test\", \"PR must be raised via no-mistakes\"]",
+      "predicate": "A-S3 required contexts equal the pinned pair",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224932Z-s3-protection-get.stdout",
+        "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+      },
+      "measured": "{\"enabled\": false}",
+      "predicate": "A-S3 required_linear_history is false (E6 identity needs a merge commit)",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224932Z-s3-protection-get.stdout",
+        "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+      },
+      "measured": "{\"enabled\": false}",
+      "predicate": "A-S3 force pushes refused",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224932Z-s3-protection-get.stdout",
+        "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+      },
+      "measured": "{\"enabled\": false}",
+      "predicate": "A-S3 deletions refused",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224932Z-s3-protection-get.stdout",
+        "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+      },
+      "measured": "{\"enabled\": true}",
+      "predicate": "A-S3 conversation resolution required",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224932Z-s3-settings-verify.stdout",
+        "sha256": "4a21cf6319894fabf2957cabaa9c2d490215868cae811e7853878822d78197e5"
+      },
+      "measured": "True",
+      "predicate": "A-S3 allow_merge_commit == True",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224932Z-s3-settings-verify.stdout",
+        "sha256": "4a21cf6319894fabf2957cabaa9c2d490215868cae811e7853878822d78197e5"
+      },
+      "measured": "False",
+      "predicate": "A-S3 allow_squash_merge == False",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224932Z-s3-settings-verify.stdout",
+        "sha256": "4a21cf6319894fabf2957cabaa9c2d490215868cae811e7853878822d78197e5"
+      },
+      "measured": "False",
+      "predicate": "A-S3 allow_rebase_merge == False",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T224932Z-s3-settings-verify.stdout",
+        "sha256": "4a21cf6319894fabf2957cabaa9c2d490215868cae811e7853878822d78197e5"
+      },
+      "measured": "False",
+      "predicate": "A-S3 delete_branch_on_merge == False",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "protection-generation.json",
+        "sha256": "c3797a2417ea47ef1291d08d82bb3b8d3f684da4567187a8fbcf3eacbe113fd2"
+      },
+      "measured": "6c6af4e145216f35a0ee5cbffac22c15ad335d1c52403d264774d2089aaf5a8a",
+      "predicate": "A-S3 protection generation digest recorded",
+      "stage_id": "A-S3",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225151Z-nc2-b02acfe.stdout",
+        "sha256": "4e449117839eca24e6f7ab3e7ea071689b810e4bfed70b4aad2216111d7bc27f"
+      },
+      "measured": "test=success",
+      "predicate": "NC-2 the neighbouring check stayed green, so the gate reddened for its own reason",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225152Z-nc2-merge-attempt.stderr",
+        "sha256": "05353c09cab05ebc407368aadbe6637ae359490ddde01a0ef1873d9cf3e61370"
+      },
+      "measured": "{\"message\":\"Required status check \\\"PR must be raised via no-mistakes\\\" is failing.\",\"documentation_url\":\"https://docs.github.com/articles/about-protected-branches\",\"status\":\"405\"}gh: Required status ",
+      "predicate": "NC-2 the merge API refused the unqualified candidate",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225153Z-nc2-pr-view.stdout",
+        "sha256": "bb5a64ef61ead1e5857d8058cdf27934ffbab77ab6668f0fc66d9e7848c7ba6e"
+      },
+      "measured": "blocked",
+      "predicate": "NC-2 mergeable_state is blocked, not clean",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225218Z-nc3-green-b02acfe.stdout",
+        "sha256": "bb0da827561148a3ee95047f22ed550a29c2ff92b113065970560fe3746a49d8"
+      },
+      "measured": "success",
+      "predicate": "NC-3 setup: a hand-written body satisfies the gate (its declared limit, recorded as evidence the pipeline ran and NOT as proof it could not be forged)",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225242Z-nc3-13f1b3e.stdout",
+        "sha256": "019e2a1eb74cd861b7648fb43b4d902866df01ead58cc25bc1eaa38f4a276293"
+      },
+      "measured": "test=success",
+      "predicate": "NC-3 the test check stayed green, so only the head bind reddened the gate",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225306Z-nc1-pr-view.stdout",
+        "sha256": "eba2c91e9dccd9cf946b743f4f15dc9c451da32d21437d1c9f62ba36a0eb8356"
+      },
+      "measured": "blocked",
+      "predicate": "NC-1 the mergeability ladder refuses a red candidate, so the merge API is never called",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/nc5-ci-monitor-interrupted-with-exit-0.stdout",
+        "sha256": "6ae3a3cc6739ae4226c86d28a7ee954c3ae3586081a370324015a7f5aa71b956"
+      },
+      "measured": "CNO_INDETERMINATE (the pipeline was interrupted mid-CI; exit 0 does not make it qualified)",
+      "predicate": "NC-5 parser on ci-monitor-interrupted with exit 0 -> CNO_INDETERMINATE",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/nc5-a-parked-gate-with-exit-0.stdout",
+        "sha256": "507d8ebe9a196650794c188639f77ad8c971e2c8223ef5c283f303d4d8574d6d"
+      },
+      "measured": "QUALIFICATION_PARKED (no outcome: line and 1 gate: line(s) - the run is still owed a decision)",
+      "predicate": "NC-5 parser on a parked gate with exit 0 -> QUALIFICATION_PARKED",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/nc5-two-outcome-lines.stdout",
+        "sha256": "03808b1e6f02653a7cdaef0f059d4bf489dbe9cb4186149008ee5bb30bef216c"
+      },
+      "measured": "CNO_INDETERMINATE (ambiguous surface: 2 outcome: lines ['passed', 'failed'])",
+      "predicate": "NC-5 parser on two outcome lines -> CNO_INDETERMINATE",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/nc5-no-outcome-and-no-gate.stdout",
+        "sha256": "a15ad6a9b41c45e5622536c8fb4a51d8ade68cfbe3bd14b188492d4f4a0a7824"
+      },
+      "measured": "CNO_INDETERMINATE (no outcome: line and no gate: line)",
+      "predicate": "NC-5 parser on no outcome and no gate -> CNO_INDETERMINATE",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/nc5-a-genuine-pass.stdout",
+        "sha256": "499491c9097249d4c2052faafc97790e25d60053012e3c75bff44a501cf688e5"
+      },
+      "measured": "QUALIFIED (outcome field is terminal-for-qualification)",
+      "predicate": "NC-5 parser on a genuine pass -> QUALIFIED",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/nc6-matching.github_output",
+        "sha256": "7b753b6e2afdfbac2ed2d7db4e2ded3dde23e65ca62a5b0cd6d2c7254e06c01d"
+      },
+      "measured": "exempt=false compliant=true",
+      "predicate": "NC-6 control: a matching attestation head is compliant",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225350Z-nc6-one-char-off.stderr",
+        "sha256": "0f2d154bdd36884bde5e921cd0776a8cebd0f1ee21d97a374d9abed7dc86df98"
+      },
+      "measured": "::error::Pipeline attestation head_sha does not match the current PR head.\n\nattestation.head_sha: baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nPR head: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "predicate": "NC-6 the refusal names the head bind rather than some other requirement",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225405Z-nc-close-verify.stdout",
+        "sha256": "b25d638d9f4bf19b2ca6af2ab6ebcd09ab270c10e45c731b6a609ffa33d9f14c"
+      },
+      "measured": "state=closed merged=False",
+      "predicate": "A-S4 throwaway PR closed and not merged",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225406Z-nc-branch-retained.stdout",
+        "sha256": "68f4f72d128e9c5d7ff50e6a9a2b218217ec91d3a77ae6723b0c068c09541817"
+      },
+      "measured": "fm-proof-a/negative-control",
+      "predicate": "A-S4 negative-control branch retained as evidence",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "measured": "5 of 5 matched: NC-2, NC-3, NC-1, NC-5, NC-6",
+      "predicate": "A-S4 every negative control reddened its OWN target (distinctness)",
+      "stage_id": "A-S4",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "inputs/candidate.patch",
+        "sha256": "8a06d06ad82ef5ebe708e27ac492b145a88172dc8be50d8f5341f88bc3815581"
+      },
+      "measured": "8a06d06ad82ef5ebe708e27ac492b145a88172dc8be50d8f5341f88bc3815581",
+      "predicate": "A-S5 candidate patch matches its frozen digest",
+      "stage_id": "A-S5",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225442Z-s5-apply-check.stderr",
+        "sha256": "bdaf2d2fbdff4896743738e58616d275082714935f654ba7b921af1b9beb806a"
+      },
+      "measured": "Checking patch fmproof/semver.py...\nChecking patch tests/test_compare.py...",
+      "predicate": "A-S5 pinned patch applies cleanly to the seed",
+      "stage_id": "A-S5",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225442Z-s5-tree.stdout",
+        "sha256": "eed2fee8364accd2f38080d966df4a1c844b3dbee727020038c94771a05a226a"
+      },
+      "measured": "7a8d4f5561df32ec4ea7a01024f9913511436b77 vs pinned 7a8d4f5561df32ec4ea7a01024f9913511436b77",
+      "predicate": "A-S5 post-apply tree sha equals the pinned candidate tree",
+      "stage_id": "A-S5",
+      "value": "observed-good"
+    },
+    {
+      "measured": "branch=fm-proof-a/semver-compare local_head=d29527ed11fcbcff2b5d3facaa1cb7417915ff55",
+      "predicate": "A-S5 candidate is committed locally and nothing has been pushed",
+      "stage_id": "A-S5",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225650Z-g0.stdout",
+        "sha256": "766b7ca441bb2f1afba5989b8a9ed1bfe0747cc147dcfe376280bacf67d0c991"
+      },
+      "measured": "refs/heads/fm-proof-a/semver-compare",
+      "predicate": "G0 HEAD is not detached",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225650Z-g1-default.stdout",
+        "sha256": "6403203dd5a0867eb14d104ee8a73730bd72dd9ad92e78d996a6dba0a5dcfc01"
+      },
+      "measured": "branch=fm-proof-a/semver-compare default=main",
+      "predicate": "G1 branch is not the default branch",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225650Z-g2.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "measured": "clean",
+      "predicate": "G2 working tree is clean",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225651Z-g3-head.stdout",
+        "sha256": "d44ab6821116966c4941375c33a0b2f8d3b89c2f1e7a477812ff97a695380ab4"
+      },
+      "measured": "head=d29527ed11fcbcff2b5d3facaa1cb7417915ff55 base=2ef121a978f006d43439fe7e46553e406bd56757 ancestor_rc=0",
+      "predicate": "G3 head is recorded and descended from the pinned base",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225651Z-g4.stdout",
+        "sha256": "eed2fee8364accd2f38080d966df4a1c844b3dbee727020038c94771a05a226a"
+      },
+      "measured": "7a8d4f5561df32ec4ea7a01024f9913511436b77 vs 7a8d4f5561df32ec4ea7a01024f9913511436b77",
+      "predicate": "G4 tree matches the pinned candidate tree",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225651Z-g5.stdout",
+        "sha256": "cbfa24ac688962088f889717a7c526c81ea693fed225d8c9f89e9db8a9e7787d"
+      },
+      "measured": "touched=['fmproof/semver.py', 'tests/test_compare.py'] outside=[]",
+      "predicate": "G5 diff touches only the path allowlist",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225651Z-g6.stdout",
+        "sha256": "5a91c5684bb1031bcc13509565211e56d42bd0e310f0e2eb2c97b9c09dc35118"
+      },
+      "measured": "5a91c5684bb1031bcc13509565211e56d42bd0e310f0e2eb2c97b9c09dc35118 vs pinned 5a91c5684bb1031bcc13509565211e56d42bd0e310f0e2eb2c97b9c09dc35118",
+      "predicate": "G6 the config that WILL execute (origin/main copy) matches the pinned bytes",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225651Z-g6.stdout",
+        "sha256": "5a91c5684bb1031bcc13509565211e56d42bd0e310f0e2eb2c97b9c09dc35118"
+      },
+      "measured": "allow_repo_commands=None",
+      "predicate": "G6b the trusted copy does not set allow_repo_commands, so a pushed branch controls nothing that executes",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225651Z-g7-axi-status.stdout",
+        "sha256": "1b2274f53b0b95548738444a88146a5ebb846d6e04eff18464435fa3ef868b5a"
+      },
+      "measured": "current_branch: fm-proof-a/semver-compare | runs_on_current_branch: 0 | runs: 0 runs yet in this repository | help[1]: \"Run no-mistakes axi run --intent \\\"the user's goal\\\" --yes to validate the current branch\"",
+      "predicate": "G7 branch ownership is resolvable",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "could-not-observe"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225652Z-g8.stdout",
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      "measured": "[]",
+      "predicate": "G8 no pre-existing pull request for this branch (a second PR is a duplicate, not a retry)",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225653Z-g9-protection.stdout",
+        "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+      },
+      "measured": "contexts=['PR must be raised via no-mistakes', 'test'] job_names=['PR must be raised via no-mistakes', 'test']",
+      "predicate": "G9 every required context is the display name of a real job at origin/main",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "inputs/intent.txt",
+        "sha256": "6edd63aab54459604a01453407ea1926cfb91096745af481691909a9f6290c17"
+      },
+      "measured": "2011 bytes sha256=6edd63aab54459604a01453407ea1926cfb91096745af481691909a9f6290c17",
+      "predicate": "G10 intent is present, non-empty and matches its pinned hash",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "measured": "invocation=axi run --intent @inputs/intent.txt forbidden_present=[]",
+      "predicate": "G11 no forbidden flag appears in the recorded invocation",
+      "stage_id": "A-S6",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S6; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225725Z-g0.stdout",
+        "sha256": "766b7ca441bb2f1afba5989b8a9ed1bfe0747cc147dcfe376280bacf67d0c991"
+      },
+      "measured": "refs/heads/fm-proof-a/semver-compare",
+      "predicate": "G0 HEAD is not detached",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225726Z-g1-default.stdout",
+        "sha256": "6403203dd5a0867eb14d104ee8a73730bd72dd9ad92e78d996a6dba0a5dcfc01"
+      },
+      "measured": "branch=fm-proof-a/semver-compare default=main",
+      "predicate": "G1 branch is not the default branch",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225726Z-g2.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "measured": "clean",
+      "predicate": "G2 working tree is clean",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225727Z-g3-head.stdout",
+        "sha256": "d44ab6821116966c4941375c33a0b2f8d3b89c2f1e7a477812ff97a695380ab4"
+      },
+      "measured": "head=d29527ed11fcbcff2b5d3facaa1cb7417915ff55 base=2ef121a978f006d43439fe7e46553e406bd56757 ancestor_rc=0",
+      "predicate": "G3 head is recorded and descended from the pinned base",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225727Z-g4.stdout",
+        "sha256": "eed2fee8364accd2f38080d966df4a1c844b3dbee727020038c94771a05a226a"
+      },
+      "measured": "7a8d4f5561df32ec4ea7a01024f9913511436b77 vs 7a8d4f5561df32ec4ea7a01024f9913511436b77",
+      "predicate": "G4 tree matches the pinned candidate tree",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225727Z-g5.stdout",
+        "sha256": "cbfa24ac688962088f889717a7c526c81ea693fed225d8c9f89e9db8a9e7787d"
+      },
+      "measured": "touched=['fmproof/semver.py', 'tests/test_compare.py'] outside=[]",
+      "predicate": "G5 diff touches only the path allowlist",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225727Z-g6.stdout",
+        "sha256": "5a91c5684bb1031bcc13509565211e56d42bd0e310f0e2eb2c97b9c09dc35118"
+      },
+      "measured": "5a91c5684bb1031bcc13509565211e56d42bd0e310f0e2eb2c97b9c09dc35118 vs pinned 5a91c5684bb1031bcc13509565211e56d42bd0e310f0e2eb2c97b9c09dc35118",
+      "predicate": "G6 the config that WILL execute (origin/main copy) matches the pinned bytes",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225727Z-g6.stdout",
+        "sha256": "5a91c5684bb1031bcc13509565211e56d42bd0e310f0e2eb2c97b9c09dc35118"
+      },
+      "measured": "allow_repo_commands=None",
+      "predicate": "G6b the trusted copy does not set allow_repo_commands, so a pushed branch controls nothing that executes",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T225727Z-g7-axi-status.stdout",
+        "sha256": "1b2274f53b0b95548738444a88146a5ebb846d6e04eff18464435fa3ef868b5a"
+      },
+      "measured": "axi status runs_on_current_branch=0",
+      "predicate": "G7 no active run owns this branch",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225727Z-g8.stdout",
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      "measured": "[]",
+      "predicate": "G8 no pre-existing pull request for this branch (a second PR is a duplicate, not a retry)",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T225728Z-g9-protection.stdout",
+        "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+      },
+      "measured": "contexts=['PR must be raised via no-mistakes', 'test'] job_names=['PR must be raised via no-mistakes', 'test']",
+      "predicate": "G9 every required context is the display name of a real job at origin/main",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "inputs/intent.txt",
+        "sha256": "6edd63aab54459604a01453407ea1926cfb91096745af481691909a9f6290c17"
+      },
+      "measured": "2011 bytes sha256=6edd63aab54459604a01453407ea1926cfb91096745af481691909a9f6290c17",
+      "predicate": "G10 intent is present, non-empty and matches its pinned hash",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "measured": "invocation=axi run --intent @inputs/intent.txt forbidden_present=[]",
+      "predicate": "G11 no forbidden flag appears in the recorded invocation",
+      "stage_id": "A-S6",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/axi-run.stdout",
+        "sha256": "ef7674b4da52a692a735f6ee8f26fa0444db941fab36ab268af4cf06ce47516e"
+      },
+      "measured": "outcome=checks-passed verdict=QUALIFIED (exit_code=0 recorded, unused)",
+      "predicate": "A-S8 the verdict comes from the outcome FIELD, never the exit code",
+      "stage_id": "A-S8",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/axi-run.stdout",
+        "sha256": "ef7674b4da52a692a735f6ee8f26fa0444db941fab36ab268af4cf06ce47516e"
+      },
+      "measured": "checks-passed",
+      "predicate": "A-S8 candidate qualified (outcome in {checks-passed, passed})",
+      "stage_id": "A-S8",
+      "value": "observed-good"
+    },
+    {
+      "measured": "outcome_field=checks-passed; A-S14 separately confirms terminalization after the merge",
+      "predicate": "A-S8 checks-passed is recorded as NON-terminal: the run hands back while still running",
+      "stage_id": "A-S8",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230200Z-s8-pr-list.stdout",
+        "sha256": "237f20c9c60eba699f4737939a7cd9dfb99fdf57c3fcb5bd7fad951e3e3328eb"
+      },
+      "measured": "#2 https://github.com/sbracewell64/fm-cleanroom-proof/pull/2",
+      "predicate": "A-S8 exactly one pull request exists for the candidate branch",
+      "stage_id": "A-S8",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230201Z-s8-pr-view.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "local=d29527ed11fcbcff2b5d3facaa1cb7417915ff55 published=281e15b292d0e604d7aac4c1f15413efaf8ee8ed (pipeline authored commits on top)",
+      "predicate": "A-S8 published head recorded separately from the local head (the pipeline may author fix commits)",
+      "stage_id": "A-S8",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/pr-body-attestation.txt",
+        "sha256": "4e472623281e0ccb87b3f165fa2a14406b9e5b5c0a84d3397548c8aba7083c0c"
+      },
+      "measured": "1",
+      "predicate": "A-S8 exactly one live attestation marker in the PR body",
+      "stage_id": "A-S8",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/pr-body-attestation.txt",
+        "sha256": "4e472623281e0ccb87b3f165fa2a14406b9e5b5c0a84d3397548c8aba7083c0c"
+      },
+      "measured": "True",
+      "predicate": "A-S8 the no-mistakes signature line is present",
+      "stage_id": "A-S8",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/pr-body-attestation.txt",
+        "sha256": "4e472623281e0ccb87b3f165fa2a14406b9e5b5c0a84d3397548c8aba7083c0c"
+      },
+      "measured": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed vs 281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "predicate": "A-S8 attestation head_sha equals the live PR head",
+      "stage_id": "A-S8",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/pr-body-attestation.txt",
+        "sha256": "4e472623281e0ccb87b3f165fa2a14406b9e5b5c0a84d3397548c8aba7083c0c"
+      },
+      "measured": "completed",
+      "predicate": "A-S8 attestation step review is completed (skipped is NOT compliant)",
+      "stage_id": "A-S8",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/pr-body-attestation.txt",
+        "sha256": "4e472623281e0ccb87b3f165fa2a14406b9e5b5c0a84d3397548c8aba7083c0c"
+      },
+      "measured": "completed",
+      "predicate": "A-S8 attestation step test is completed (skipped is NOT compliant)",
+      "stage_id": "A-S8",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/pr-body-attestation.txt",
+        "sha256": "4e472623281e0ccb87b3f165fa2a14406b9e5b5c0a84d3397548c8aba7083c0c"
+      },
+      "measured": "completed",
+      "predicate": "A-S8 attestation step document is completed (skipped is NOT compliant)",
+      "stage_id": "A-S8",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230208Z-s9-protection.stdout",
+        "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+      },
+      "measured": "6c6af4e145216f35a0ee5cbffac22c15ad335d1c52403d264774d2089aaf5a8a",
+      "predicate": "A-S9 protection generation is unchanged since A-S3",
+      "stage_id": "A-S9",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230208Z-s9-281e15b.stdout",
+        "sha256": "a8adfe9550f0f098440b761d0994cdfdb45af20a4ea72d6f3bd738f03348c0b4"
+      },
+      "measured": "fetched=2",
+      "predicate": "A-S9 the check-run listing universe is complete",
+      "stage_id": "A-S9",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230208Z-s9-281e15b.stdout",
+        "sha256": "a8adfe9550f0f098440b761d0994cdfdb45af20a4ea72d6f3bd738f03348c0b4"
+      },
+      "measured": "conclusion=success head_sha=281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "predicate": "A-S9 required check 'test' concluded success at the published head",
+      "stage_id": "A-S9",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230208Z-s9-281e15b.stdout",
+        "sha256": "a8adfe9550f0f098440b761d0994cdfdb45af20a4ea72d6f3bd738f03348c0b4"
+      },
+      "measured": "conclusion=success head_sha=281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "predicate": "A-S9 required check 'PR must be raised via no-mistakes' concluded success at the published head",
+      "stage_id": "A-S9",
+      "value": "observed-good"
+    },
+    {
+      "gating": false,
+      "measured": "verify.py:21-32 declares the gate a contributor guardrail, not a forgery-proof security boundary; NC-3's setup demonstrated a hand-written body passing",
+      "non_gating_reason": "This records a LIMIT of the instrument, not a predicate about this candidate. It must appear in the record so a reader cannot mistake the green gate for a forgery proof, but it is not itself a gate the proof passes or fails.",
+      "predicate": "A-S9 forge_gate is recorded as evidence the pipeline ran, NOT as proof it could not be forged",
+      "stage_id": "A-S9",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230210Z-s9-commits.stdout",
+        "sha256": "80cca1423ddbe52ae28ecbaf88b5a8863df2190dad2e5c5745b58633eb0af209"
+      },
+      "measured": "2 commits; contaminated=[]",
+      "predicate": "A-S9 every published commit carries the operator identity, not the host default",
+      "stage_id": "A-S9",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230210Z-s10-pr.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "open",
+      "predicate": "A-S10 ladder 1 state == open",
+      "stage_id": "A-S10",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230210Z-s10-pr.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "False",
+      "predicate": "A-S10 ladder 2 draft == false",
+      "stage_id": "A-S10",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230210Z-s10-pr.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "True",
+      "predicate": "A-S10 ladder 3 mergeable == true",
+      "stage_id": "A-S10",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230210Z-s10-pr.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "clean",
+      "predicate": "A-S10 ladder 4 mergeable_state == clean",
+      "stage_id": "A-S10",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230210Z-s10-pr.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "predicate": "A-S10 ladder 5 head.sha == published head",
+      "stage_id": "A-S10",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230210Z-s10-pr.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "main",
+      "predicate": "A-S10 ladder 6 base.ref == main",
+      "stage_id": "A-S10",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230210Z-s10-pr.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "see A-S9",
+      "predicate": "A-S10 ladder 7 every required check success at that head",
+      "stage_id": "A-S10",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230210Z-s10-pr.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "clean",
+      "predicate": "A-S10 ladder 8 conversation resolution satisfied (implied by mergeable_state == clean)",
+      "stage_id": "A-S10",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230210Z-s10-pr.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "6c6af4e145216f35a0ee5cbffac22c15ad335d1c52403d264774d2089aaf5a8a",
+      "predicate": "A-S10 'clean' is qualified by the policy generation it was computed under",
+      "stage_id": "A-S10",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230219Z-s11-pr-preread.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "sbracewell64/fm-cleanroom-proof",
+      "predicate": "T1 repo is the pinned proof repo (owner and name compared, not a URL substring)",
+      "stage_id": "A-S11",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S11; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230220Z-s11-openprs.stdout",
+        "sha256": "8387b87f143537410627192403406035fc9388fcb2e343e6c72d95533c7b79b6"
+      },
+      "measured": "[{\"number\": 2}]",
+      "predicate": "T2 exactly one open PR for the candidate branch, and it is the recorded number",
+      "stage_id": "A-S11",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S11; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230219Z-s11-pr-preread.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "attestation=281e15b292d0e604d7aac4c1f15413efaf8ee8ed live=281e15b292d0e604d7aac4c1f15413efaf8ee8ed checks=['281e15b292d0e604d7aac4c1f15413efaf8ee8ed']",
+      "predicate": "T3 attestation head == live PR head == every required check's head",
+      "stage_id": "A-S11",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S11; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "measured": "ladder=True checks=True",
+      "predicate": "T4 every required check success and the whole mergeability ladder observed-good",
+      "stage_id": "A-S11",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S11; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230220Z-s11-pr-files.stdout",
+        "sha256": "1044e0abc0f8a73741aeec0fffc692714cad48668cdfb9297e414a33b05460db"
+      },
+      "measured": "files=['fmproof/__pycache__/__init__.cpython-314.pyc', 'fmproof/__pycache__/semver.cpython-314.pyc', 'fmproof/semver.py', 'tests/__pycache__/__init__.cpython-314.pyc', 'tests/__pycache__/test_compare.cpython-314.pyc', 'tests/__pycache__/test_parse.cpython-314.pyc', 'tests/test_compare.py'] outside=[]",
+      "predicate": "T5 path fence: the PR's own file list is inside the allowlist",
+      "stage_id": "A-S11",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S11; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230220Z-s11-pr-files.stdout",
+        "sha256": "1044e0abc0f8a73741aeec0fffc692714cad48668cdfb9297e414a33b05460db"
+      },
+      "measured": "policy_files_touched=[]",
+      "predicate": "T6 the candidate did not alter the acceptance policy that judges it",
+      "stage_id": "A-S11",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S11; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230221Z-s11-protection.stdout",
+        "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+      },
+      "measured": "6c6af4e145216f35a0ee5cbffac22c15ad335d1c52403d264774d2089aaf5a8a",
+      "predicate": "T7 the acceptance policy generation has not moved since A-S3",
+      "stage_id": "A-S11",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S11; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "measured": "missing=['A-S7']",
+      "predicate": "T8 the trace carries a good STAGE_EXIT for A-S0 through A-S10",
+      "stage_id": "A-S11",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S11; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-bad"
+    },
+    {
+      "gating": false,
+      "measured": "281e15b2 adds 5 .pyc files under fmproof/__pycache__ and tests/__pycache__; no workflow, no .no-mistakes.yaml, no dependency manifest, nothing under .github/",
+      "non_gating_reason": "The design's fence is path-scoped: T5 is the allowlist {fmproof/**, tests/**} and T6 is the policy-file fence, and this content is inside the first and clear of the second. Adding a 'no build artifacts' gate here would be raising a bar mid-run that the design does not set, which is the same error as lowering one. It is recorded as a finding instead, and the disposition keeps the pinned candidate tree and the published tree as separate fields so no reader can mistake one for the other.",
+      "predicate": "A-S11 the published head adds only build artifacts inside the allowlist, never a policy file",
+      "stage_id": "A-S11",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S11; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230431Z-s11-pr-preread.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "sbracewell64/fm-cleanroom-proof",
+      "predicate": "T1 repo is the pinned proof repo (owner and name compared, not a URL substring)",
+      "stage_id": "A-S11",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230432Z-s11-openprs.stdout",
+        "sha256": "8387b87f143537410627192403406035fc9388fcb2e343e6c72d95533c7b79b6"
+      },
+      "measured": "[{\"number\": 2}]",
+      "predicate": "T2 exactly one open PR for the candidate branch, and it is the recorded number",
+      "stage_id": "A-S11",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230431Z-s11-pr-preread.stdout",
+        "sha256": "5393e464a24212df2c4d339fb925d04601e566b7a83fc330e88687e98fb7e22a"
+      },
+      "measured": "attestation=281e15b292d0e604d7aac4c1f15413efaf8ee8ed live=281e15b292d0e604d7aac4c1f15413efaf8ee8ed checks=['281e15b292d0e604d7aac4c1f15413efaf8ee8ed']",
+      "predicate": "T3 attestation head == live PR head == every required check's head",
+      "stage_id": "A-S11",
+      "value": "observed-good"
+    },
+    {
+      "measured": "ladder=True checks=True",
+      "predicate": "T4 every required check success and the whole mergeability ladder observed-good",
+      "stage_id": "A-S11",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230433Z-s11-pr-files.stdout",
+        "sha256": "1044e0abc0f8a73741aeec0fffc692714cad48668cdfb9297e414a33b05460db"
+      },
+      "measured": "files=['fmproof/__pycache__/__init__.cpython-314.pyc', 'fmproof/__pycache__/semver.cpython-314.pyc', 'fmproof/semver.py', 'tests/__pycache__/__init__.cpython-314.pyc', 'tests/__pycache__/test_compare.cpython-314.pyc', 'tests/__pycache__/test_parse.cpython-314.pyc', 'tests/test_compare.py'] outside=[]",
+      "predicate": "T5 path fence: the PR's own file list is inside the allowlist",
+      "stage_id": "A-S11",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230433Z-s11-pr-files.stdout",
+        "sha256": "1044e0abc0f8a73741aeec0fffc692714cad48668cdfb9297e414a33b05460db"
+      },
+      "measured": "policy_files_touched=[]",
+      "predicate": "T6 the candidate did not alter the acceptance policy that judges it",
+      "stage_id": "A-S11",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230433Z-s11-protection.stdout",
+        "sha256": "a345309fa46912bceb5a37c454684f0dada24ab8332868c794368bbf46f40530"
+      },
+      "measured": "6c6af4e145216f35a0ee5cbffac22c15ad335d1c52403d264774d2089aaf5a8a",
+      "predicate": "T7 the acceptance policy generation has not moved since A-S3",
+      "stage_id": "A-S11",
+      "value": "observed-good"
+    },
+    {
+      "measured": "missing=[]",
+      "predicate": "T8 the trace carries a good STAGE_EXIT for A-S0 through A-S10",
+      "stage_id": "A-S11",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "authorizations/auth-14593774-5023-4f40-9e89-470a885b36f0.json",
+        "sha256": "3b22a8bb310f7c3bacdbef97894461f6ee1deb2b2dbf19fc55099da69eb0a124"
+      },
+      "measured": "auth-14593774-5023-4f40-9e89-470a885b36f0 head=281e15b292d0e604d7aac4c1f15413efaf8ee8ed act_digest=0b4156251c220e51",
+      "predicate": "A-S11 one-use head-bound authorization minted",
+      "stage_id": "A-S11",
+      "value": "observed-good"
+    },
+    {
+      "measured": "merged=false",
+      "predicate": "A-S12 NC-4 did not land anything: the PR is still open",
+      "stage_id": "A-S12",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "authorizations/auth-14593774-5023-4f40-9e89-470a885b36f0.json",
+        "sha256": "3b22a8bb310f7c3bacdbef97894461f6ee1deb2b2dbf19fc55099da69eb0a124"
+      },
+      "measured": "0b4156251c220e51f189c8b3cf65c37bec0a76733beb50b80ff4b2c81692441f",
+      "predicate": "A-S12 the constructed act matches the digest minted at A-S11",
+      "stage_id": "A-S12",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/merge-response.json",
+        "sha256": "330d234c652015d82321a409d6d05995ec66c932f86cc668e7184fa76bd01fd2"
+      },
+      "measured": "http_status=200 merged=True",
+      "predicate": "A-S12 the merge API returned 200 with merged true",
+      "stage_id": "A-S12",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230446Z-s13-pr.stdout",
+        "sha256": "39f7e8ff947a6bbc6a426558eff062d75d3d5fda78f5ecb7480a924efa93cca0"
+      },
+      "measured": "merged=True state=closed",
+      "predicate": "A-S13 (1) the pull request is merged",
+      "stage_id": "A-S13",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230446Z-s13-pr.stdout",
+        "sha256": "39f7e8ff947a6bbc6a426558eff062d75d3d5fda78f5ecb7480a924efa93cca0"
+      },
+      "measured": "a7db5c360d57964a160f59a5c71a8c07a6f5c382 vs a7db5c360d57964a160f59a5c71a8c07a6f5c382",
+      "predicate": "A-S13 (2) merge_commit_sha equals the merge response's sha",
+      "stage_id": "A-S13",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230447Z-s13-merge-commit.stdout",
+        "sha256": "11b1e6196a502802c12f82cdb7f592412d8701edc871163bdbfce8204a103d41"
+      },
+      "measured": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "predicate": "A-S13 (3) the landed merge's SECOND PARENT is exactly the authorized head (identity, not containment)",
+      "stage_id": "A-S13",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230447Z-s13-merge-commit.stdout",
+        "sha256": "11b1e6196a502802c12f82cdb7f592412d8701edc871163bdbfce8204a103d41"
+      },
+      "measured": "2ef121a978f006d43439fe7e46553e406bd56757 vs 2ef121a978f006d43439fe7e46553e406bd56757",
+      "predicate": "A-S13 (4) the first parent is the pre-merge main head recorded at A-S10",
+      "stage_id": "A-S13",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230447Z-s13-merge-commit.stdout",
+        "sha256": "11b1e6196a502802c12f82cdb7f592412d8701edc871163bdbfce8204a103d41"
+      },
+      "measured": "parents=2",
+      "predicate": "A-S13 the landing is a true merge commit, so the identity test is available at all",
+      "stage_id": "A-S13",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T230448Z-s13-ls-remote.stdout",
+        "sha256": "74fc6e440b007bfe4b359a8ba2803b71796b7a2613410d1a1a6d76a701e8a494"
+      },
+      "measured": "a7db5c360d57964a160f59a5c71a8c07a6f5c382 vs a7db5c360d57964a160f59a5c71a8c07a6f5c382",
+      "predicate": "A-S13 (5) the remote default branch now resolves to the merge commit",
+      "stage_id": "A-S13",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T230448Z-s14-axi-status.stdout",
+        "sha256": "c2f44db1c60ef0c37174ab3e8818b989032fc42ae1af9a23ca55be22df1e2c44"
+      },
+      "gating": false,
+      "measured": "running",
+      "non_gating_reason": "Measured immediately after the merge with NO declared bound. The CI step's reconciler is polled, at 30s/60s/120s by elapsed time (no-mistakes:internal/pipeline/steps/ci_checks.go:20-29), so at the instant of measurement a terminal status was not yet reachable. A predicate about a polled mechanism, sampled before its interval, is not a result about that mechanism. The bounded re-observation below is the gating one; this line is kept so the premature reading is visible rather than deleted.",
+      "predicate": "A-S14 the run reached a terminal status after the merge",
+      "stage_id": "A-S14",
+      "value": "observed-bad"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/axi-status-final.stdout",
+        "sha256": "6170bacd3837425d02bccea0b0c1df223f9cec816c2d79a5e4320c2b0412524a"
+      },
+      "measured": "status=completed after 1 polls",
+      "predicate": "A-S14 the run terminalized (bounded: 16 polls x 30s)",
+      "stage_id": "A-S14",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T230626Z-s16-mirror.stderr",
+        "sha256": "a13fb582f2e41fd37655a1827ade4bd2fd129bc9e702d97a0e716539b7c0c2a4"
+      },
+      "measured": "/mnt/e/FirstMate-Cleanroom/artifacts/proofs/proof-a/mirror.git",
+      "predicate": "A-S16 mirror clone created",
+      "stage_id": "A-S16",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T230627Z-s16-mirror-verify.stdout",
+        "sha256": "50836eee574ecff79dea3b4fd40673d7d000f7a5f177d8a6a3000b59c78383b8"
+      },
+      "measured": "cat-file=commit main=a7db5c360d57964a160f59a5c71a8c07a6f5c382 expected=a7db5c360d57964a160f59a5c71a8c07a6f5c382",
+      "predicate": "the mirror resolves the exact merge commit, verified after the merge",
+      "stage_id": "A-S16",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "raw/20260901T230627Z-s16-mirror-refs.stdout",
+        "sha256": "674e2d079e99075f2050fe91574c025dc980918cd1b3f60a3ed16d19cca9e3aa"
+      },
+      "measured": "5 refs mirrored",
+      "predicate": "A-S16 the mirror retains the negative-control branch as evidence",
+      "stage_id": "A-S16",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "api_capture",
+        "locator": "raw/20260901T230628Z-s16-archive-verify.stdout",
+        "sha256": "eeae719258ce6e47ca27eaf54bd710fb521072bc56725552b18bda238cab7232"
+      },
+      "measured": "archived=True",
+      "predicate": "A-S16 the repository is archived, read-only, with history and check runs intact",
+      "stage_id": "A-S16",
+      "value": "observed-good"
+    },
+    {
+      "measured": "uncovered=['A-S15'] seq_gaps=0 lines=208",
+      "predicate": "A-S15 trace covers every stage with a matched enter/exit pair and no seq gap",
+      "stage_id": "A-S15",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S15; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "could-not-observe"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "../schemas/fm-proof-vocab-v1.schema.json",
+        "sha256": "ca0d6340a4a4b6d20209af2fda35c324f273d727b7ed4b20c254a821de1cf8a2"
+      },
+      "measured": "ca0d6340a4a4b6d20209af2fda35c324f273d727b7ed4b20c254a821de1cf8a2",
+      "predicate": "A-S15 the disposition validates against the single vocabulary source",
+      "stage_id": "A-S15",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S15; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "measured": "uncovered=[] seq_gaps=0 lines=213",
+      "predicate": "A-S15 trace covers every stage with a matched enter/exit pair and no seq gap (A-S15 exempt: it cannot observe its own exit)",
+      "stage_id": "A-S15",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S15; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "../schemas/fm-proof-vocab-v1.schema.json",
+        "sha256": "50575d7f042acd4ce6c560091bbf7d52bc172df6f1e6a56f7fdecbfc55125506"
+      },
+      "measured": "50575d7f042acd4ce6c560091bbf7d52bc172df6f1e6a56f7fdecbfc55125506",
+      "predicate": "A-S15 the disposition validates against the single vocabulary source",
+      "stage_id": "A-S15",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S15; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "measured": "uncovered=[] seq_gaps=0 lines=217",
+      "predicate": "A-S15 trace covers every stage with a matched enter/exit pair and no seq gap (A-S15 exempt: it cannot observe its own exit)",
+      "stage_id": "A-S15",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S15; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "measured": "Every observation in this proof was hand-graded: bin/fm-verify.sh --list declares five verifiers and none covers a standalone clean-room proof reposit",
+      "predicate": "A-S15 D2-S1 fired and is recorded with the machinery that would eliminate it",
+      "stage_id": "A-S15",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S15; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "measured": "The --intent bytes that become enforceable review acceptance criteria were authored, not derived.",
+      "predicate": "A-S15 D2-A1 fired and is recorded with the machinery that would eliminate it",
+      "stage_id": "A-S15",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S15; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "evidence_ref": {
+        "kind": "file",
+        "locator": "../schemas/fm-proof-vocab-v1.schema.json",
+        "sha256": "50575d7f042acd4ce6c560091bbf7d52bc172df6f1e6a56f7fdecbfc55125506"
+      },
+      "measured": "50575d7f042acd4ce6c560091bbf7d52bc172df6f1e6a56f7fdecbfc55125506",
+      "predicate": "A-S15 the disposition validates against the single vocabulary source",
+      "stage_id": "A-S15",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S15; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "measured": "uncovered=[] seq_gaps=0",
+      "predicate": "A-S15 trace covers every stage with a matched enter/exit pair and no seq gap (A-S15 exempt: it cannot observe its own exit)",
+      "stage_id": "A-S15",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S15; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "measured": "Every observation in this proof was hand-graded. bin/fm-verify.sh --list declares five verifiers (browser, pr-checks, merge-clean, review-exec, review",
+      "predicate": "A-S15 D2-S1 fired and is recorded with the machinery that would eliminate it",
+      "stage_id": "A-S15",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S15; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "measured": "The --intent bytes that become enforceable review acceptance criteria were authored by an agent, because --intent is the only channel by which caller-",
+      "predicate": "A-S15 D2-A1 fired and is recorded with the machinery that would eliminate it",
+      "stage_id": "A-S15",
+      "superseded": true,
+      "superseded_reason": "recorded before the last STAGE_ENTER for A-S15; that stage was re-entered after an instrument repair and its later evaluation replaced this one. Retained as evidence the guard fired and was handled, and excluded from the fold.",
+      "value": "observed-good"
+    },
+    {
+      "measured": "uncovered=[] seq_gaps=0",
+      "predicate": "A-S15 trace covers every stage with a matched enter/exit pair and no seq gap (A-S15 exempt: it cannot observe its own exit)",
+      "stage_id": "A-S15",
+      "value": "observed-good"
+    },
+    {
+      "measured": "Every observation in this proof was hand-graded. bin/fm-verify.sh --list declares five verifiers (browser, pr-checks, merge-clean, review-exec, review",
+      "predicate": "A-S15 D2-S1 fired and is recorded with the machinery that would eliminate it",
+      "stage_id": "A-S15",
+      "value": "observed-good"
+    },
+    {
+      "measured": "The --intent bytes that become enforceable review acceptance criteria were authored by an agent, because --intent is the only channel by which caller-",
+      "predicate": "A-S15 D2-A1 fired and is recorded with the machinery that would eliminate it",
+      "stage_id": "A-S15",
+      "value": "observed-good"
+    }
+  ],
+  "observer": {
+    "independence": "could-not-observe",
+    "note": "An independent read-only observer task watched this run and writes to its own area, which this actor neither reads nor writes. This trace is the ACTOR's, so observer independence for THIS record is could-not-observe, not observed-good: independence is a property of the execution context, not of a name.",
+    "trace_written_by": "actor"
+  },
+  "outcome": "PROVED",
+  "outcome_fold": {
+    "counts": {
+      "could-not-observe": 0,
+      "observed-bad": 0,
+      "observed-good": 116
+    },
+    "first_non_pass_stage": null,
+    "reproducible_from_record": true,
+    "rule": "FAIL > CNO > PASS",
+    "superseded_observations": 33,
+    "supersession_rule": "For each stage, only observations recorded at or after that stage's LAST STAGE_ENTER count toward the fold. Superseded observations are retained in observations[] flagged superseded with superseded_reason, never deleted. Non-gating observations carry non_gating_reason and are excluded too."
+  },
+  "pinned_inputs": [
+    {
+      "path": "candidate.patch",
+      "sha256": "8a06d06ad82ef5ebe708e27ac492b145a88172dc8be50d8f5341f88bc3815581"
+    },
+    {
+      "path": "intent.txt",
+      "sha256": "6edd63aab54459604a01453407ea1926cfb91096745af481691909a9f6290c17"
+    },
+    {
+      "path": "protection.json",
+      "sha256": "e3865c81eedad3bd27287e355061b266193bc7c755d932b0b698d8606afb6eaa"
+    },
+    {
+      "path": "repo-settings.json",
+      "sha256": "a5d19017d925402cbced7e1959f19f7be3e2eded62950dfcaf47a0bd9c63e8e1"
+    },
+    {
+      "path": "seed/.github/workflows/ci.yml",
+      "sha256": "a68a738e1a06d83a5f001e353e15655072e0d873e096451398cb519ae6768dd8"
+    },
+    {
+      "path": "seed/.github/workflows/no-mistakes-required.yml",
+      "sha256": "fc2a64be6f82cb081915c1c1844a670a13bde9a0b09c66c4c76ab530984ea09a"
+    },
+    {
+      "path": "seed/.no-mistakes.yaml",
+      "sha256": "5a91c5684bb1031bcc13509565211e56d42bd0e310f0e2eb2c97b9c09dc35118"
+    },
+    {
+      "path": "seed/README.md",
+      "sha256": "e82e658e0934b01baac86255b540c4a8b66e9b8b5c39310cce61fed8c9c4d0fd"
+    },
+    {
+      "path": "seed/fmproof/__init__.py",
+      "sha256": "90cd8f41eda986cc778f5fd132b61c03117a1a27d5678dfe24ce65322964824c"
+    },
+    {
+      "path": "seed/fmproof/semver.py",
+      "sha256": "a2b8ac6f74d7a593f20d69687ee366626d7da5a77d4d5d8082fb53af49e731de"
+    },
+    {
+      "path": "seed/tests/__init__.py",
+      "sha256": "866d086ebc5362dc683b96935206f8e1f47d8b8a3a5e41afee69e20e45b8b752"
+    },
+    {
+      "path": "seed/tests/test_parse.py",
+      "sha256": "09087611fb4414f032417a9b26d39a0693f7e5270a6f4622b08047ae47d4da83"
+    }
+  ],
+  "post_merge": {
+    "default_branch_head": "a7db5c360d57964a160f59a5c71a8c07a6f5c382",
+    "identity_check": {
+      "measured": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "predicate": "merge_commit^2 == authorization.expected_head",
+      "stage_id": "A-S13",
+      "value": "observed-good"
+    },
+    "merge_commit_first_parent": "2ef121a978f006d43439fe7e46553e406bd56757",
+    "merge_commit_second_parent": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+    "pipeline_terminalized": {
+      "run_status": "completed",
+      "value": "observed-good"
+    },
+    "pr_state": "MERGED"
+  },
+  "proof_id": "proof-a",
+  "qualification": {
+    "attestation": {
+      "head_sha": "281e15b292d0e604d7aac4c1f15413efaf8ee8ed",
+      "marker_count": 1,
+      "raw_marker_path": "raw/pr-body-attestation.txt",
+      "steps": [
+        {
+          "status": "completed",
+          "step": "intent"
+        },
+        {
+          "status": "completed",
+          "step": "rebase"
+        },
+        {
+          "status": "completed",
+          "step": "review"
+        },
+        {
+          "status": "completed",
+          "step": "test"
+        },
+        {
+          "status": "completed",
+          "step": "document"
+        },
+        {
+          "status": "completed",
+          "step": "lint"
+        },
+        {
+          "status": "completed",
+          "step": "push"
+        },
+        {
+          "status": "running",
+          "step": "pr"
+        },
+        {
+          "status": "pending",
+          "step": "ci"
+        }
+      ]
+    },
+    "exit_code": 0,
+    "forbidden_flags_asserted_absent": [
+      "--yes",
+      "-y",
+      "--skip",
+      "--admin",
+      "--force",
+      "--force-with-lease",
+      "-R",
+      "--repo"
+    ],
+    "invocation": [
+      "no-mistakes",
+      "axi",
+      "run",
+      "--intent",
+      "@inputs/intent.txt"
+    ],
+    "outcome_field": "checks-passed",
+    "raw_stdout_path": "raw/axi-run.stdout",
+    "run_status_at_write": "completed",
+    "steps": [
+      {
+        "status": "completed",
+        "step": "intent"
+      },
+      {
+        "status": "completed",
+        "step": "rebase"
+      },
+      {
+        "status": "completed",
+        "step": "review"
+      },
+      {
+        "status": "completed",
+        "step": "test"
+      },
+      {
+        "status": "completed",
+        "step": "document"
+      },
+      {
+        "status": "completed",
+        "step": "lint"
+      },
+      {
+        "status": "completed",
+        "step": "push"
+      },
+      {
+        "status": "running",
+        "step": "pr"
+      },
+      {
+        "status": "pending",
+        "step": "ci"
+      }
+    ],
+    "tool": "no-mistakes",
+    "version": "v1.61.0"
+  },
+  "refusals": [
+    {
+      "code": "PRECONDITION_UNMET",
+      "message": "pre-gate fails=[] cnos=['G7']",
+      "stage_id": "A-S6"
+    },
+    {
+      "code": "PRECONDITION_UNMET",
+      "message": "a triggering condition failed: the landing routes to the captain rather than lowering a bar",
+      "stage_id": "A-S11"
+    }
+  ],
+  "repo": {
+    "default_branch": "main",
+    "name": "fm-cleanroom-proof",
+    "node_id": "R_kgDOULXT8g",
+    "owner": "sbracewell64",
+    "url": "https://github.com/sbracewell64/fm-cleanroom-proof"
+  },
+  "retention": {
+    "archived": true,
+    "delete_blocked_reason": "the gh token's scopes are gist, read:org, repo, workflow - delete_repo is absent, so gh repo delete cannot succeed. The design's ruled disposition is preserve-as-evidence rather than route around it.",
+    "deleted": false,
+    "mirror_path": "mirror.git",
+    "mirror_resolves_merge_commit": {
+      "measured": "cat-file=commit main=a7db5c360d57964a160f59a5c71a8c07a6f5c382 expected=a7db5c360d57964a160f59a5c71a8c07a6f5c382",
+      "predicate": "the mirror resolves the exact merge commit, verified after the merge",
+      "stage_id": "A-S16",
+      "value": "observed-good"
+    }
+  },
+  "schema": "fm-proof-disposition/v1",
+  "started_at": "2026-09-01T22:48:09Z",
+  "trace": {
+    "coverage_exempt_reason": "The disposition write is the step that consumes trace coverage, so it cannot observe its own STAGE_EXIT; that exit is emitted immediately after this record is written.",
+    "coverage_exempt_stage": "A-S15",
+    "lines": 231,
+    "path": "trace.jsonl",
+    "seq_gaps": 0,
+    "sha256": "95a459663b248c29019ed024abc65ec8e5000101ca072a8ebcdfc8b8e0c1726d",
+    "sha256_covers_first_n_lines": 231,
+    "stage_coverage_complete": true,
+    "stages_uncovered": []
+  },
+  "vocabulary_digest": "50575d7f042acd4ce6c560091bbf7d52bc172df6f1e6a56f7fdecbfc55125506"
+}

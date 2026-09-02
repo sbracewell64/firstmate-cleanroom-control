@@ -1,0 +1,339 @@
+{
+  "schema": "fm-cleanroom-runtime-baseline.v1",
+  "generated_utc": "2026-09-02T01:36:36Z",
+  "generated_local": "2026-09-01T21:36:36-04:00",
+  "produced_by": {
+    "task": "cleanroom-runtime-env",
+    "phase": "Phase 0 Track 1",
+    "directive": "Captain 2026-09-02 Phase 0 directive",
+    "goal": "usable new FirstMate operating environment (not a production-qualified autonomous controller)"
+  },
+  "grading": {
+    "vocabulary": ["observed-good", "observed-bad", "could-not-observe"],
+    "rule": "a verification that could not run is could-not-observe, never a pass"
+  },
+
+  "code_root": {
+    "path": "/mnt/e/FirstMate-Cleanroom/upstream/firstmate",
+    "sha": "41d0ab3910ece4e90db0194f756437b3abe8ab8f",
+    "tree_sha": "ca6a21611d8ed450190022d91484666307a836ec",
+    "head_subject": "fix: surface inbound Relay media to responding agents (#3442)",
+    "head_date": "2026-09-01T13:54:48-07:00",
+    "branch": "main",
+    "tracking": "origin/main",
+    "origin": "https://github.com/kunchenguid/firstmate",
+    "writable_by_this_task": false
+  },
+
+  "fm_home": {
+    "path": "/mnt/e/FirstMate-Cleanroom/runtime/firstmate",
+    "role": "primary (no .fm-secondmate-home marker)",
+    "contract_source": "docs/configuration.md section \"FM_HOME\" @41d0ab39",
+    "directories_created": ["data", "state", "config", "projects"],
+    "filesystem": {
+      "mount": "/mnt/e",
+      "fstype": "9p (WSL DrvFs, E:\\)",
+      "posix_mode_semantics": "chmod is a NO-OP; every file and directory reads 0777",
+      "symlinks": "supported",
+      "flock": "supported",
+      "mkfifo": "NOT supported (EEXIST on every attempt)",
+      "exec_bit": "honored"
+    }
+  },
+
+  "config_files_created": [
+    {
+      "path": "data/backlog.md",
+      "sha256": "f74c5faf45936a0cebe9ae56481bbef5a8e6ae4d5314f1f1f95e79f8ebe9a65f",
+      "author": "this task",
+      "why": "tasks-axi markdown backend target; empty three-section skeleton (## In flight / ## Queued / ## Done)"
+    },
+    {
+      "path": "data/projects.md",
+      "sha256": "cd8838df9226485981c80d378af41cb5c8d9933789212d0dc0835cf185daa3db",
+      "author": "this task",
+      "why": "empty project registry with the bin/fm-project-mode.sh line format documented in a comment; present-and-empty is the honest state for a home with zero clones"
+    },
+    {
+      "path": ".tasks.toml",
+      "sha256": "c5ea09bba244e6fef65c1a7d6244acb30462b4d28c39b1cb35a39689ee70ce59",
+      "author": "this task",
+      "why": "firstmate runs tasks-axi with cwd = the data directory's parent (this home), not the code root, so the tracked .tasks.toml in the code root is never discovered; this copy preserves the upstream defaults (archive=data/done-archive.md, done_keep=10)"
+    },
+    {
+      "path": "enter-firstmate.sh",
+      "sha256": "030b5ce00be14594c491f14733d57aa062e5a146d0407626e13b4f0ff723bee3",
+      "author": "this task",
+      "why": "captain entry point; lives in the runtime home because the code root is pristine. Sets FM_HOME, prepends the cleanroom tools bin and ~/.local/bin, cds to the code root, execs the harness. FM_ENTRY_DRY_RUN=1 prints the resolved launch without starting it"
+    },
+    {
+      "path": "config/startup-memory-budget",
+      "sha256": "0d5f5787265adcabadcbe5607a8f7c8d13c872e066e8b127e7d699437caeecf7",
+      "author": "upstream bin/fm-bootstrap.sh (locked primary bootstrap)",
+      "value": "7500",
+      "why": "materialized automatically by the first locked session start; not hand-written"
+    }
+  ],
+
+  "state_files_created_by_upstream": [
+    "state/.inactive-outcome-reconcile",
+    "state/.session-start-complete",
+    "state/.startup-network.report",
+    "state/.startup-network.status",
+    "state/.startup-network.timings",
+    "state/.trace-context-effective",
+    "state/.wake-queue",
+    "state/.wake-queue.seq",
+    "state/.watcher-down",
+    "state/home-summary.json",
+    "state/terminal-outcomes/"
+  ],
+
+  "session_bringup": {
+    "command": "cd <code_root> && FM_HOME=<fm_home> bin/fm-session-start.sh",
+    "grade": "observed-good",
+    "evidence": {
+      "lock": "lock acquired: harness pid 784718 at <fm_home>/state/.lock",
+      "lock_released_after_verification": true,
+      "lock_path_is_per_home": "bin/fm-lock.sh:13-14 @41d0ab39 -> STATE=$FM_HOME/state, LOCK=$STATE/.lock",
+      "stale_lock_takeover": "bin/fm-lock.sh:58-66 @41d0ab39 -- a dead holder pid is taken over automatically",
+      "wake_queue": "drained, empty",
+      "supervision_block": "rendered for primary harness claude",
+      "backlog_listing": "rendered (compact fallback: tasks-axi flagged unavailable/incompatible)",
+      "context_digest": "projects.md printed; secondmates.md / captain.md / captain-shared.md / learnings.md correctly reported ABSENT",
+      "deferred_network_stage": "completed in 2s -- gh-auth 559ms, secondmate-liveness 11ms, secondmate-sync 98ms, handoff-delivery 2ms, fleet-sync 1016ms; no actionable finding"
+    }
+  },
+
+  "toolchain": {
+    "harnesses_present": {
+      "claude": "2.1.258 (Claude Code)",
+      "codex": "codex-cli 0.146.0",
+      "pi": "0.81.1"
+    },
+    "harnesses_absent": ["grok", "pi-signed", "opencode", "cursor-agent", "kimi", "muse"],
+    "herdr": {
+      "binary": "/home/OPERATOR/.local/bin/herdr",
+      "client_version": "0.7.5",
+      "server_version": "0.7.5",
+      "protocol": 17,
+      "compatible": "yes",
+      "socket": "/home/OPERATOR/.config/herdr/herdr.sock",
+      "session": "default (running)",
+      "windows_launcher": "/mnt/c/Users/shane/AppData/Local/Programs/Herdr/bin/herdr.exe"
+    },
+    "gh": {
+      "version": "2.96.0 (2026-07-02)",
+      "auth_account": "sbracewell64",
+      "auth_host": "github.com",
+      "token_scopes": ["gist", "read:org", "repo", "workflow"],
+      "grade": "observed-good"
+    },
+    "other": {
+      "tmux": "3.6",
+      "git": "2.53.0",
+      "jq": "1.8.1",
+      "treehouse": "v2.1.0 (v2.3.0 available)",
+      "node": "present"
+    },
+    "version_floors_vs_pinned_upstream": [
+      {"tool": "no-mistakes", "floor": "1.46.0", "host_installed": "1.40.3", "verdict": "BELOW", "cleanroom_copy": "/mnt/e/FirstMate-Cleanroom/tools/bin/no-mistakes v1.61.0", "resolved_by": "PATH prepend of /mnt/e/FirstMate-Cleanroom/tools/bin", "grade": "observed-good after PATH prepend"},
+      {"tool": "tasks-axi", "floor": "0.2.4", "host_installed": "0.2.3", "verdict": "BELOW", "cleanroom_copy": null, "resolved_by": null, "grade": "observed-bad"},
+      {"tool": "lavish-axi", "floor": "0.1.46", "host_installed": "0.1.43", "verdict": "BELOW", "cleanroom_copy": null, "resolved_by": null, "grade": "observed-bad"},
+      {"tool": "quota-axi", "floor": "0.1.29", "host_installed": "0.1.16", "verdict": "BELOW", "cleanroom_copy": null, "resolved_by": null, "grade": "observed-bad"},
+      {"tool": "gh-axi", "floor": "0.1.29", "host_installed": "0.1.29", "verdict": "AT FLOOR", "grade": "observed-good"}
+    ],
+    "floor_owners": [
+      "bin/fm-bootstrap.sh:893 NO_MISTAKES_MIN=1.46.0",
+      "bin/fm-bootstrap.sh:901 GH_AXI_MIN=0.1.29",
+      "bin/fm-bootstrap.sh:902 LAVISH_AXI_MIN=0.1.46",
+      "bin/fm-tasks-axi-lib.sh:37 FM_TASKS_AXI_MIN=0.2.4",
+      "bin/fm-quota-axi-lib.sh:12 FM_QUOTA_AXI_MIN=0.1.29"
+    ]
+  },
+
+  "backend": {
+    "selected_by": "runtime auto-detection (HERDR_ENV=1); config/backend deliberately NOT pinned by this task",
+    "detected": "herdr",
+    "detection_notice": "NOTICE: auto-detected herdr runtime (HERDR_ENV=1) - spawning into the EXPERIMENTAL herdr backend. Set config/backend or pass --backend tmux to opt out.",
+    "grade": "observed-good",
+    "herdr_capability_floors": {
+      "FM_BACKEND_HERDR_MIN_PROTOCOL": {"floor": 14, "installed": 17, "verdict": "met"},
+      "FM_BACKEND_HERDR_MIN_EVENTS_PROTOCOL": {"floor": 16, "installed": 17, "verdict": "met"},
+      "FM_BACKEND_HERDR_MIN_WORKSPACE_MOVE_PROTOCOL": {"floor": 16, "installed": 17, "verdict": "met"},
+      "FM_BACKEND_HERDR_MIN_PRESENTATION_PROTOCOL": {"floor": 19, "installed": 17, "verdict": "BELOW"},
+      "FM_BACKEND_HERDR_MIN_PRESENTATION_VERSION": {"floor": "0.8.0", "installed": "0.7.5", "verdict": "BELOW"}
+    },
+    "presentation_spaces": "unconfigured home is BELOW the 0.8.0/protocol-19 floor, so it uses the flat per-home layout and warns once per detected release",
+    "spawn_smoke_test": {
+      "performed": "READ-ONLY capability and gate inspection only",
+      "real_spawn": false,
+      "grade": "could-not-observe",
+      "why": "no crew was spawned, per the task's own constraint and the unguarded (non --herdr-lab) brief; upstream ships no dry-run or standalone spawn-capability probe (no --dry-run in bin/fm-spawn.sh, no spawn_capable/preflight verb in bin/fm-backend.sh @41d0ab39). End-to-end spawn placement therefore remains unverified."
+    }
+  },
+
+  "entry_procedure": {
+    "upstream_windows_support": {
+      "firstmate.bat": "ABSENT at 41d0ab39",
+      "docs/windows-launcher.md": "ABSENT at 41d0ab39",
+      "bin/fm-launch.sh": "ABSENT at 41d0ab39",
+      "bin/fm-wsl-entry.sh": "ABSENT at 41d0ab39",
+      "note": "those four exist only in the sbracewell64/firstmate fork used by the other home; the pinned upstream ships no Windows launcher, so this procedure is authored, not adapted from a shipped doc. Nothing was written into the pristine checkout."
+    },
+    "wsl": {"distro": "Ubuntu", "version": "Ubuntu 26.04 LTS", "wsl_exe": "C:\\WINDOWS\\system32\\wsl.exe", "wt_exe": "%LOCALAPPDATA%\\Microsoft\\WindowsApps\\wt.exe"},
+    "entry_script": "/mnt/e/FirstMate-Cleanroom/runtime/firstmate/enter-firstmate.sh",
+    "windows_terminal_one_off": "wt.exe --window new-tab --title \"FirstMate Cleanroom\" wsl.exe -d Ubuntu -- bash -lc /mnt/e/FirstMate-Cleanroom/runtime/firstmate/enter-firstmate.sh",
+    "windows_terminal_profile_commandline": "wsl.exe -d Ubuntu -- bash -lc /mnt/e/FirstMate-Cleanroom/runtime/firstmate/enter-firstmate.sh",
+    "recommended_shape": "start Herdr first, then run the entry script INSIDE a Herdr pane, so crew placement resolves from the launcher's own workspace identity instead of the shared 'firstmate' label",
+    "verification": [
+      {"claim": "wsl.exe --cd reaches the /mnt/e code root", "grade": "observed-good", "evidence": "PWD=/mnt/e/FirstMate-Cleanroom/upstream/firstmate"},
+      {"claim": "a LOGIN shell (bash -lc) is required; a non-login shell has no ~/.local/bin and cannot find claude/herdr", "grade": "observed-good", "evidence": "bash -c -> 'claude NOT on PATH (non-login)'; bash -lc -> /home/OPERATOR/.local/bin/claude"},
+      {"claim": "the entry script resolves cwd, FM_HOME, harness, herdr and no-mistakes v1.61.0 correctly through wsl.exe", "grade": "observed-good", "evidence": "FM_ENTRY_DRY_RUN=1 run through wsl.exe -d Ubuntu printed all five values"},
+      {"claim": "wt.exe accepts the one-off command line", "grade": "observed-good", "evidence": "wt exit=0"},
+      {"claim": "the Windows Terminal window rendered the expected output", "grade": "could-not-observe", "evidence": "wt detaches; this session cannot read the spawned window"},
+      {"claim": "an inline $-bearing script passed straight to wsl.exe is unreliable", "grade": "observed-bad", "evidence": "wsl.exe -d Ubuntu -- bash -lc 'export FM_HOME=/tmp/x; echo \"[$FM_HOME]\"' printed [] -- variable and command substitutions were lost before bash saw them; the mechanism was not isolated (could-not-observe). This is why the entry is a SCRIPT FILE, not an inline command."}
+    ]
+  },
+
+  "shared_surfaces": [
+    {
+      "surface": "Herdr workspace label namespace",
+      "shared_with": "~/kun-agent-workspace (the other FirstMate home)",
+      "collision_risk": "HIGH",
+      "grade": "observed-bad",
+      "detail": "bin/backends/herdr.sh:353-364 @41d0ab39 resolves EVERY primary home to the constant label 'firstmate' with no FM_ROOT discriminator -- unlike cmux/zellij, which use bin/fm-backend-hometag-lib.sh's prefix+FM_ROOT-hash tag. A workspace labeled 'firstmate' (id w12) is live right now and belongs to the other home.",
+      "consequences": [
+        "spawn from INSIDE a Herdr pane: safe -- fm_backend_herdr_workspace_ensure (herdr.sh:1761-1771) uses the launcher's exact resolved workspace identity and never consults the label",
+        "spawn from OUTSIDE Herdr with exactly one 'firstmate' workspace present: it ADOPTS that workspace (herdr.sh:1783-1787) -- this home's workers would appear inside the OTHER home's workspace",
+        "spawn from OUTSIDE Herdr with two 'firstmate' workspaces: refuses as an unresolvable placement (herdr.sh:1776-1779)",
+        "recovery / list-live: fm_backend_herdr_workspace_find (herdr.sh:1504-1506) keeps FIRST-match-by-label behavior regardless of launcher identity, so it can scan the wrong home's workspace"
+      ],
+      "mitigation": "always launch this home's session inside a Herdr pane (the entry script's recommended shape), and/or give this home a distinct Herdr session via HERDR_SESSION so the label namespaces do not overlap"
+    },
+    {
+      "surface": "Herdr server, socket and 'default' session",
+      "path": "/home/OPERATOR/.config/herdr/herdr.sock",
+      "shared_with": "~/kun-agent-workspace",
+      "collision_risk": "MEDIUM",
+      "grade": "observed-bad",
+      "detail": "one running herdr 0.7.5 server, one 'default' session, 12 live workspaces, all shared. Both homes address it through the same socket."
+    },
+    {
+      "surface": "tmux fallback session name",
+      "shared_with": "~/kun-agent-workspace",
+      "collision_risk": "MEDIUM (latent)",
+      "grade": "observed-bad",
+      "detail": "bin/backends/tmux.sh:70 @41d0ab39 uses the constant session name 'firstmate' with windows 'fm-<id>'. If both homes ever fall back to tmux, colliding task ids collide on window names. No tmux server is running today (observed: 'no server running on /tmp/tmux-1000/default')."
+    },
+    {
+      "surface": "~/.claude/skills/no-mistakes/SKILL.md",
+      "shared_with": "every Claude session on this machine, both homes",
+      "collision_risk": "HIGH",
+      "grade": "observed-bad",
+      "detail": "a single user-global skill file, 18844 bytes, mtime 2026-09-01 19:44:50 -0400 (rewritten today). It is loaded identically by both homes' Claude sessions.",
+      "version_claim": {"claim": "already overwritten by v1.61.0 guidance", "grade": "could-not-observe", "why": "the file carries no version marker; grep for a 1.6x string found only an unrelated sentence at line 289. The recent mtime and the presence of a v1.61.0 binary under /mnt/e/FirstMate-Cleanroom/tools/bin are consistent with the claim but do not establish it."},
+      "aggravator": "the host-wide no-mistakes CLI is v1.40.3 while that guidance was written for a newer build, so the other home's sessions read newer instructions than its binary implements"
+    },
+    {
+      "surface": "~/.claude/settings.json (user-global harness config)",
+      "shared_with": "both homes",
+      "collision_risk": "LOW",
+      "grade": "observed-good",
+      "detail": "user-global SessionStart hooks (gh-axi, chrome-devtools-axi, lavish-axi, herdr-agent-state.sh), model opus[1m], effortLevel high, skipDangerousModePermissionPrompt true. None of them resolve FM_HOME, so they do not cross-wire the homes. FirstMate's own hooks are PROJECT-scoped via $CLAUDE_PROJECT_DIR in <code_root>/.claude/settings.json, so this home's session loads the cleanroom checkout's bin/ scripts."
+    },
+    {
+      "surface": "~/.local/bin harness and tool binaries",
+      "shared_with": "both homes",
+      "collision_risk": "HIGH for remediation",
+      "grade": "observed-bad",
+      "detail": "claude, codex, pi, herdr, treehouse, tasks-axi, quota-axi, lavish-axi, gh-axi and no-mistakes are single host-wide installs. Upgrading tasks-axi / lavish-axi / quota-axi to clear this environment's floors would also change the tools the other, currently LIVE home uses mid-flight. This is the unavoidable local setup effect and it is a captain decision, not a mechanical fix."
+    },
+    {
+      "surface": "~/.no-mistakes/ root, daemon, socket and state.sqlite",
+      "shared_with": "both homes",
+      "collision_risk": "HIGH",
+      "grade": "observed-bad",
+      "detail": "one daemon (pid 3349937, uptime 6d13h, /home/OPERATOR/.no-mistakes/bin/no-mistakes v1.40.3) serving every lane. A separate cleanroom daemon already runs from /mnt/e/FirstMate-Cleanroom/tools/bin/no-mistakes v1.61.0 with --root /home/OPERATOR/.fm-cleanroom-proof-a/nm-home (pid 1417454). --root is not a documented public flag on `no-mistakes daemon --help`, and FirstMate's worker path calls plain `no-mistakes axi run` with no root threading, so a v1.61.0 client on PATH would default to the SHARED ~/.no-mistakes root and its v1.40.3 daemon. Client/daemon skew is unresolved.",
+      "hard_rule": "never stop, restart or update that shared daemon -- it kills other lanes' in-flight pipeline runs"
+    },
+    {
+      "surface": "treehouse worktree pool ~/.treehouse/",
+      "shared_with": "both homes",
+      "collision_risk": "LOW today",
+      "grade": "observed-good",
+      "detail": "the pool is keyed per repository path (e.g. kun-agent-workspace-ab4d3f). This home has zero project clones, so no pool is shared today. Cloning the same project into both homes at the same path would change that."
+    },
+    {
+      "surface": "gh authentication ~/.config/gh/hosts.yml",
+      "shared_with": "both homes",
+      "collision_risk": "LOW",
+      "grade": "observed-good",
+      "detail": "one account, sbracewell64. Both homes act as the same GitHub identity."
+    },
+    {
+      "surface": "FirstMate session lock",
+      "shared_with": "NONE",
+      "collision_risk": "NONE",
+      "grade": "observed-good",
+      "detail": "bin/fm-lock.sh:13-14 @41d0ab39 resolves the lock to $FM_HOME/state/.lock. This home's lock is /mnt/e/FirstMate-Cleanroom/runtime/firstmate/state/.lock; the other home's is /home/OPERATOR/kun-agent-workspace/state/.lock, held by live pid 321. Different files, no interaction. Verified by acquiring this home's lock while the other home's lock stayed held."
+    },
+    {
+      "surface": "data/, state/, config/, projects/",
+      "shared_with": "NONE",
+      "collision_risk": "NONE",
+      "grade": "observed-good",
+      "detail": "fully per-home under $FM_HOME. Backlog, briefs, wake queue, watcher state, project registry and clones are all private to this home."
+    }
+  ],
+
+  "premise_correction": {
+    "brief_said": "the retired home at ~/kun-agent-workspace",
+    "observed": "that home is NOT retired. Its session lock holds live pid 321 (claude --dangerously-skip-permissions --effort high, 8d03h uptime), its watcher beacon state/.last-watcher-beat was touched 34s before the check, and it has ten or more live crew lanes in the Herdr session.",
+    "grade": "observed-bad",
+    "consequence": "every shared-surface collision above is a live risk right now, not a dormant one."
+  },
+
+  "pristine_status_check": {
+    "command": "git -C /mnt/e/FirstMate-Cleanroom/upstream/firstmate status --porcelain",
+    "result": "",
+    "porcelain_lines": 0,
+    "porcelain_ignored_lines": 0,
+    "head_before": "41d0ab3910ece4e90db0194f756437b3abe8ab8f",
+    "head_after": "41d0ab3910ece4e90db0194f756437b3abe8ab8f",
+    "tree_before": "ca6a21611d8ed450190022d91484666307a836ec",
+    "tree_after": "ca6a21611d8ed450190022d91484666307a836ec",
+    "file_count_before": 485,
+    "file_count_after": 485,
+    "file_set_diff": "identical",
+    "checked_at": "2026-09-01T21:36:36-04:00",
+    "grade": "observed-good",
+    "note": "the untracked/ignored sweep was run as well, so a write that .gitignore would have hidden is also excluded."
+  },
+
+  "unavoidable_local_setup_effects": [
+    {"effect": "created /mnt/e/FirstMate-Cleanroom/runtime/firstmate and its data/, state/, config/, projects/ subtrees", "reversible": true},
+    {"effect": "acquired and then RELEASED this home's session lock (pid 784718); state/.lock is absent again", "reversible": true},
+    {"effect": "the first locked session start materialized config/startup-memory-budget=7500 and eleven state/ records; those are ordinary FirstMate home state", "reversible": true},
+    {"effect": "the deferred network stage ran one `gh auth status` and one fleet-sync fetch pass over an EMPTY projects/ dir; no clone was touched", "reversible": true},
+    {"effect": "NOTHING was installed, upgraded, started or stopped on the host. No daemon was restarted. No npm global changed.", "reversible": "n/a"}
+  ],
+
+  "open_decisions_for_the_captain": [
+    {
+      "id": "cleanroom-axi-floor-upgrade",
+      "question": "tasks-axi, lavish-axi and quota-axi are below the pinned upstream's floors, and they are single host-wide npm installs shared with the LIVE other home. Upgrade them (changing the live home's tools mid-flight), pin cleanroom-local copies the way no-mistakes already is, or run this environment with those four capabilities degraded?",
+      "blocks": "automatic backlog transitions (tasks-axi), quota-aware array dispatch (quota-axi), rich review surfaces (lavish-axi)"
+    },
+    {
+      "id": "cleanroom-herdr-label-isolation",
+      "question": "the Herdr workspace label 'firstmate' is a constant shared by every primary home. Isolate this environment with its own HERDR_SESSION, always enter through a Herdr pane, or accept the adoption/first-match risk?",
+      "blocks": "safe crew placement and recovery whenever this home's session is not started inside a Herdr pane"
+    },
+    {
+      "id": "cleanroom-no-mistakes-root",
+      "question": "the cleanroom no-mistakes v1.61.0 client on PATH would default to the SHARED ~/.no-mistakes root served by a v1.40.3 daemon. Which root should this environment's pipeline runs use, and how is that threaded when FirstMate calls plain `no-mistakes axi run`?",
+      "blocks": "any no-mistakes delivery mode in this environment"
+    }
+  ]
+}

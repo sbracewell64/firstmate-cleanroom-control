@@ -1,0 +1,30 @@
+{
+  "record": "fm-sol-control-v2-schema-freeze/v1",
+  "frozen_at": "2026-09-02T11:35:41Z",
+  "protocol": "fm-sol-control/v2",
+  "schema_path": "artifacts/control/schema/fm-sol-control-v2.schema.json",
+  "schema_sha256": "23e828b27d5c8d44e7c23ac67ddfe74ab3ba71783726f5e67304dd7c58fafbd3",
+  "schema_bytes": 36228,
+  "renderer_path": "artifacts/control/bin/fsc2.py",
+  "renderer_sha256": "c25f3f5e024f254f08eb5ef6f243250f8db74405191f516d68211d56d8428f3d",
+  "resolver_path": "artifacts/control/bin/fsc2_config.py",
+  "resolver_sha256": "5438a24a775a2ba13d4ec1cc30e65e0ed4183bd24b9136d770b66f8d95ec89b1",
+  "control_config_owner": "/mnt/e/FirstMate-Cleanroom/runtime/firstmate/config/control-plane.yaml",
+  "control_config_generation_digest": "58235a9229b99afb82a3b7b43e9cebf5d53cbe4dc63edf9f0e7c5c0cb562a336",
+  "reply_contract_projections": {
+    "request": "0dd5bea7dce21792ec0f8a2c58bc48eef31911a5e44f7891dc4a5b5218c2c784",
+    "ruling":  "4cb118682724eeaad6bbe49a629b35b8766e55503e7de9062083936628e415cf",
+    "receipt": "aa6d3e0d17eebed066ba963fc7d3818734539fe81cca559d47d33749ee446939"
+  },
+  "write_once": true,
+  "superseded_by": null,
+  "supersedes": null,
+  "freeze_ordering": "FROZEN BEFORE the first transaction. No fm-sol-control/v2 envelope had been compiled, no evidence mirror published and no issue opened at the moment of this freeze.",
+  "captain_addendum": {
+    "id": "captain-addendum-control-config-generation, 2026-09-02",
+    "arrival": "BEFORE this freeze and BEFORE any request was emitted",
+    "prior_freeze_superseded": null,
+    "note": "The addendum's re-freeze branch did not apply: no earlier freeze existed to supersede. The addendum is incorporated in this, the first and only freeze."
+  },
+  "enforcement_limit": "The canonical owner and this schema live on a 9p drvfs mount without metadata, so a read-only file mode cannot be set (chmod 0700 on this path is observed to resolve back to 777). Write-once is therefore enforced by digest comparison - bin/fsc2-verify-freeze.sh re-hashes and refuses on any drift - and NOT by filesystem permission. Recorded as a real limit rather than an assumed protection."
+}
