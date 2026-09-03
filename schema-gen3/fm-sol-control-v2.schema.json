@@ -1,0 +1,1936 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sbracewell64/firstmate-cleanroom-control/schema/fm-sol-control-v2.schema.json",
+  "title": "fm-sol-control/v2",
+  "$comment": "THE single source of truth for the clean-room control plane, SCHEMA GENERATION 3. Producer validation, consumer validation, the envelope-as-fetched verifier and the human reply-contract projection are all derived from THIS FILE and from nothing else. No field name may be typed by a human or an agent anywhere. The PROTOCOL STRING IS UNCHANGED at fm-sol-control/v2: a generation is distinguished by vocabulary_digest. Generation 3 supersedes generation 2 (sha256 bbe6ce89744ef03901cd5823a75670db86293bdc1f55bff4f4095b0ced446908) under the Browser Sol ruling of 2026-09-02 on control issue #3 (tooling_supersession) and the generation-2 observer's findings 3.1, 3.5 and 4.4. Generations 1 and 2 remain frozen, published and historical; nothing emitted under them is ever revalidated under this one.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/request"
+    },
+    {
+      "$ref": "#/$defs/ruling"
+    },
+    {
+      "$ref": "#/$defs/receipt"
+    }
+  ],
+  "$defs": {
+    "sha1_hex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256_hex": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "rfc3339_utc": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
+    },
+    "three_valued": {
+      "enum": [
+        "observed-good",
+        "observed-bad",
+        "could-not-observe"
+      ]
+    },
+    "verdict_class": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "CNO"
+      ],
+      "$comment": "Folded under the precedence FAIL > CNO > PASS. There is no continue-with-a-warning value. An empty result set, an unreadable record, an absent artifact, an unreachable tool and a silent verifier are all CNO and none of them is PASS."
+    },
+    "id_derivation": {
+      "$comment": "MACHINE-READABLE DERIVATION INPUTS, and the authoritative statement of every derived identity. The compiler and the consumer READ this object out of the schema and hash the named field values in the order given; they do not carry their own list of field names. Each id is 'prefix' followed by the first 32 hex characters of sha256 over the resolved values joined by LF with one trailing LF. A dotted input is a path into the envelope; a null or absent value resolves to the empty string. GENERATION 3 adds outcome to receipt_id: in generation 2 a CONSUMED receipt and a refusal over the same ruling derived the identical receipt_id (observer finding 4.4), so two different terminal outcomes over one ruling were indistinguishable by identity.",
+      "const": {
+        "request_id": {
+          "prefix": "fscr2-",
+          "inputs": [
+            "schema",
+            "control_config_generation.digest",
+            "work_id",
+            "work_generation",
+            "request_generation",
+            "subject.identity_line",
+            "acceptance_policy.digest",
+            "vocabulary_digest"
+          ]
+        },
+        "correlation_id": {
+          "prefix": "fsc2-",
+          "inputs": [
+            "schema",
+            "venue.owner",
+            "venue.name",
+            "work_id",
+            "subject.identity_line",
+            "question.key",
+            "acceptance_policy.digest",
+            "control_config_generation.digest"
+          ]
+        },
+        "receipt_id": {
+          "prefix": "fscp2-",
+          "inputs": [
+            "in_reply_to",
+            "consumes_ruling_id",
+            "ruling_sha256",
+            "outcome"
+          ]
+        },
+        "consumption_key": {
+          "prefix": "fscx2-",
+          "inputs": [
+            "in_reply_to",
+            "consumes_ruling_id"
+          ]
+        }
+      }
+    },
+    "protocol_string": {
+      "const": "fm-sol-control/v2",
+      "$comment": "Compared by EXACT STRING EQUALITY, never by substring or prefix. 'fm-sol-control/v2' contains 'fm-sol-control', so a consumer matching on word overlap would consume retired-venue v1 traffic. See venue_isolation.match_rule in the canonical control config."
+    },
+    "request_id": {
+      "type": "string",
+      "pattern": "^fscr2-[0-9a-f]{32}$",
+      "$comment": "EXPLICIT AND STABLE. Derived, never assigned; the inputs and their order are owned by $defs.id_derivation in this file and are read from there rather than transcribed. Recompiling the same request at the same generations yields the same id, so 'have I already asked this?' is a lookup and not a judgement; any generation moving yields a DIFFERENT id, so a stale ruling cannot even address the new subject."
+    },
+    "ruling_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{7,127}$",
+      "$comment": "EXPLICIT AND UNIQUE, assigned by the ruler and unique across the ruler's whole lineage. Not derived by us: it is the ruler's own handle for its ruling, and supersedes/in_reply_to chains are built from it. Two rulings sharing one ruling_id are a lineage fork."
+    },
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^fscp2-[0-9a-f]{32}$",
+      "$comment": "Derived; inputs and order owned by $defs.id_derivation. The receipt identity is therefore a function of exactly what was consumed, so a second consumption of the same ruling cannot produce a different receipt identity."
+    },
+    "correlation_id": {
+      "type": "string",
+      "pattern": "^fsc2-[0-9a-f]{32}$",
+      "$comment": "Derived; inputs and order owned by $defs.id_derivation. Venue unit is one issue per correlation_id, which bounds the comment universe so the completeness predicate is cheap and always satisfiable."
+    },
+    "consumption_key": {
+      "type": "string",
+      "pattern": "^fscx2-[0-9a-f]{32}$",
+      "$comment": "REPLAY / CONSUMPTION IDENTITY. Derived; inputs and order owned by $defs.id_derivation. Consumption is at-most-once PER THIS KEY. A consumer that finds a durable record for this key performs ZERO action and returns the first outcome unchanged; it never re-applies, never re-posts and never re-closes."
+    },
+    "repo_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner",
+        "name",
+        "url"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$"
+        },
+        "name": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]{1,100}$"
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https://github\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+$"
+        },
+        "node_id": {
+          "type": "string"
+        }
+      },
+      "$comment": "EXACT repository identity. owner and name are compared as exact strings; url is redundant transport convenience and is never the comparison axis."
+    },
+    "git_point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "branch",
+        "head_sha",
+        "tree_sha"
+      ],
+      "properties": {
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "head_sha": {
+          "$ref": "#/$defs/sha1_hex"
+        },
+        "tree_sha": {
+          "$ref": "#/$defs/sha1_hex"
+        },
+        "base_sha": {
+          "$ref": "#/$defs/sha1_hex"
+        }
+      },
+      "$comment": "EXACT head sha and EXACT tree sha. Identity, never ancestry: a ruling made about abc123 does not apply to a descendant of abc123. Where base_sha is present the compiler must additionally have observed base_sha != head_sha and that the diff resolves non-empty (v1 CHANGE 2, INSTR-1)."
+    },
+    "evidence_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "locator",
+        "sha256"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "blob",
+            "commit",
+            "diff",
+            "check_run",
+            "pull_request",
+            "workflow_run",
+            "file",
+            "api_capture"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "locator": {
+          "type": "string",
+          "anyOf": [
+            {
+              "pattern": "^https://github\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/(blob|raw|tree)/[0-9a-f]{40}/\\S+$"
+            },
+            {
+              "pattern": "^https://raw\\.githubusercontent\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/[0-9a-f]{40}/\\S+$"
+            },
+            {
+              "pattern": "^https://github\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/commit/[0-9a-f]{40}(\\.patch|\\.diff)?$"
+            },
+            {
+              "pattern": "^https://github\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/(issues|pull)/[0-9]+(#issuecomment-[0-9]+)?$"
+            },
+            {
+              "pattern": "^https://api\\.github\\.com/\\S+$"
+            },
+            {
+              "pattern": "^[0-9]{1,20}$"
+            },
+            {
+              "pattern": "^file:\\S+$"
+            }
+          ]
+        },
+        "digest_basis": {
+          "$ref": "#/$defs/digest_basis"
+        }
+      },
+      "$comment": "THE LOCATOR LAW. locator MUST be content-addressed or immutable and is refused otherwise: the accepted forms are a blob/raw/tree URL AT A 40-HEX COMMIT, a commit URL, an issue or issue-comment permalink, an api.github.com URL, a bare numeric check-run or workflow-run id, or a file: capture path. A BRANCH OR TAG URL IS STRUCTURALLY UNREPRESENTABLE: every accepted pattern either pins a 40-hex commit or names an immutable numeric object, so '.../blob/main/x' matches nothing. No pattern admits whitespace, so a locator carrying prose is refused (v1 CHANGE 3, P-B-CAP-4). The locator MUST name the object its sha256 names; where the addressable object and the hashed object genuinely differ, the honest form is kind=api_capture over the captured bytes. GENERATION 2 adds digest_basis: the sha256 above is either a real byte digest of what the locator returns (fetched_bytes, which must also declare bytes) or a digest of the locator's own immutable identity (locator_identity, which adds no independent binding and may not be presented as one).",
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "commit",
+                  "check_run",
+                  "workflow_run"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "digest_basis": {
+                "const": "locator_identity"
+              }
+            }
+          },
+          "$comment": "These kinds address objects that are immutable but not content-addressable by fetch, so their digest can only be locator_identity. Declaring fetched_bytes for them is refused rather than believed."
+        },
+        {
+          "if": {
+            "properties": {
+              "digest_basis": {
+                "const": "fetched_bytes"
+              }
+            },
+            "required": [
+              "digest_basis"
+            ]
+          },
+          "then": {
+            "required": [
+              "bytes"
+            ]
+          },
+          "$comment": "A claim to have hashed fetched bytes must say HOW MANY bytes were hashed. A byte digest with no length is not independently checkable against a truncated read."
+        }
+      ]
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "login",
+        "kind",
+        "provenance_class"
+      ],
+      "properties": {
+        "login": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "human",
+            "agent",
+            "automation"
+          ]
+        },
+        "session_ref": {
+          "type": "string",
+          "$comment": "NON-CREDENTIAL DESCRIPTOR. Canonical provenance ruling SOL-FM-AUTHORITY-WRITER-PROVENANCE-CLAIMS-ARE-NOT-EVIDENCE-20260902-G5 (sbracewell64/firstmate-sol-control issue 19, comment 5505694096): session_ref, from, role, kind, automation/process/pane labels, model or provider labels, authority strings and transport-account identity are CLAIMS or METADATA unless an independently authoritative owner binds them to the exact producing execution identity. A self-asserted session_ref is non-credential; it MAY describe an actor and it can NEVER narrow an independence could-not-observe. Carrying it is permitted and is never, on its own, evidence."
+        },
+        "provenance_class": {
+          "enum": [
+            "self_asserted_descriptor",
+            "forge_recorded_binding"
+          ],
+          "$comment": "self_asserted_descriptor is the only honest value for anything the producer wrote about itself. forge_recorded_binding is admissible ONLY when forge_binding is present and names a field the FORGE writes, which the evaluated producer could not manufacture."
+        },
+        "forge_binding": {
+          "$ref": "#/$defs/forge_binding"
+        }
+      },
+      "dependentRequired": {
+        "forge_binding": [
+          "provenance_class"
+        ]
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "provenance_class": {
+                "const": "forge_recorded_binding"
+              }
+            },
+            "required": [
+              "provenance_class"
+            ]
+          },
+          "then": {
+            "required": [
+              "forge_binding"
+            ]
+          }
+        }
+      ]
+    },
+    "forge_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "value",
+        "observed_at",
+        "locator"
+      ],
+      "properties": {
+        "field": {
+          "enum": [
+            "performed_via_github_app",
+            "author_association",
+            "app_slug"
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "observed_at": {
+          "$ref": "#/$defs/rfc3339_utc"
+        },
+        "locator": {
+          "type": "string",
+          "pattern": "^https://api\\.github\\.com/\\S+$"
+        }
+      },
+      "$comment": "The forge-recorded credential path (v1 CHANGE 6). This is a fact THE FORGE WRITES about a comment, readable by any third party at the locator, and not a string the producer chose. It is the only class of evidence that may support narrowing an independence CNO, and even then it establishes a distinct CREDENTIAL PATH, never a distinct PRINCIPAL."
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "predicate",
+        "value"
+      ],
+      "properties": {
+        "predicate": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "$ref": "#/$defs/three_valued"
+        },
+        "measured": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_ref": {
+          "$ref": "#/$defs/evidence_ref"
+        },
+        "narrowed_from": {
+          "$ref": "#/$defs/three_valued"
+        },
+        "narrowing_reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "narrowing_evidence_class": {
+          "enum": [
+            "owner_bound_external"
+          ],
+          "$comment": "A ONE-VALUE ENUM ON PURPOSE. There is no value here for a self-asserted narrowing, so 'I narrowed my own could-not-observe because I say I am independent' is not merely disallowed, it is UNSPELLABLE and fails validation as RULING_MALFORMED naming this field. This is ruling 19/5505694096 encoded structurally rather than as prose a reviewer must remember."
+        },
+        "narrowing_binding": {
+          "$ref": "#/$defs/forge_binding"
+        },
+        "read": {
+          "$ref": "#/$defs/authoritative_read"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "narrowed_from"
+            ]
+          },
+          "then": {
+            "required": [
+              "narrowing_reason",
+              "narrowing_evidence_class",
+              "narrowing_binding"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "read": {
+                "required": [
+                  "truncated"
+                ],
+                "properties": {
+                  "truncated": {
+                    "const": true
+                  }
+                }
+              }
+            },
+            "required": [
+              "read"
+            ]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "const": "could-not-observe"
+              }
+            }
+          },
+          "$comment": "TRUNCATION IS COULD-NOT-OBSERVE, structurally. An observation whose authority-bearing read was truncated cannot carry observed-good or observed-bad: the document was not seen whole, so neither verdict was earned. Captain directive 4."
+        },
+        {
+          "if": {
+            "properties": {
+              "read": {
+                "required": [
+                  "mechanism"
+                ],
+                "properties": {
+                  "mechanism": {
+                    "const": "gh_axi_truncating"
+                  }
+                }
+              }
+            },
+            "required": [
+              "read"
+            ]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "const": "could-not-observe"
+              }
+            }
+          },
+          "$comment": "A READ THROUGH A TRUNCATING SURFACE NEVER CERTIFIES ANYTHING. Even when a particular response happens to fit under the bound, the surface cannot demonstrate that it did, so the verdict stays could-not-observe and the repair is to re-read through a non-truncating surface. Captain directive 5: never validate an envelope larger than the complete response a truncating surface can return."
+        }
+      ],
+      "$comment": "Three-valued, always. Narrowing a could-not-observe requires ALL of narrowing_reason, narrowing_evidence_class and an owner-bound narrowing_binding, together; a narrowing that cites no independently verifiable owner-bound evidence cannot be expressed."
+    },
+    "control_config_generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owner_path",
+        "digest",
+        "resolver_digest",
+        "resolved_at"
+      ],
+      "properties": {
+        "owner_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "resolver_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "resolved_at": {
+          "$ref": "#/$defs/rfc3339_utc"
+        },
+        "projection_locator": {
+          "$ref": "#/$defs/evidence_ref"
+        }
+      },
+      "$comment": "Captain addendum, 2026-09-02. ONE canonical owner names the protocol, the control repository, the logical Browser Sol project and the routing metadata; ONE deterministic resolver normalizes it; digest = sha256 over the canonical normalized bytes. Every envelope carries the generation it was compiled against. At consumption the consumer FRESHLY RE-RESOLVES the current effective config and compares: a mismatch means the ruling stays historical evidence with outcome REFUSED_STALE_CONFIG and ZERO action. resolver_digest is the sha256 of the resolver itself, so an emitter and a watcher resolving through different resolver bytes is detectable rather than assumed away."
+    },
+    "acceptance_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generation",
+        "digest",
+        "inputs"
+      ],
+      "properties": {
+        "generation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "$comment": "The acceptance policy in force for this decision, as a named generation and a digest over its exact inputs. Compared by identity at consumption; a moved policy digest is RULING_SUPERSEDED and needs a new request, which is a different fact and a different repair from a moved subject head."
+    },
+    "protocol_generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocol",
+        "schema_locator",
+        "schema_sha256",
+        "renderer_digest"
+      ],
+      "properties": {
+        "protocol": {
+          "$ref": "#/$defs/protocol_string"
+        },
+        "schema_locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_sha256": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "renderer_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        }
+      }
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "identity_line",
+        "members"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "document_package",
+            "candidate_branch",
+            "evidence_bundle"
+          ]
+        },
+        "identity_line": {
+          "type": "string",
+          "minLength": 1,
+          "$comment": "The EXACT SUBJECT, as one canonical line that both sides compare by string identity. For a document_package it is the sorted 'sha256  relative_path' manifest digest; for a candidate_branch it is 'owner/name@head_sha^{tree_sha}'. Ruling applicability is exact: applies_to.subject_identity_line must EQUAL this."
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "path",
+              "sha256",
+              "bytes",
+              "evidence_ref"
+            ],
+            "properties": {
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "$ref": "#/$defs/sha256_hex"
+              },
+              "bytes": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "source_of_truth": {
+                "type": "string"
+              },
+              "evidence_ref": {
+                "$ref": "#/$defs/evidence_ref"
+              }
+            }
+          }
+        }
+      }
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "summary",
+        "consequence",
+        "reversibility"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z]$"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "consequence": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reversibility": {
+          "enum": [
+            "reversible",
+            "reversible_with_cost",
+            "materially_irreversible"
+          ]
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "patch_sha256": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "resulting_tree_sha": {
+          "$ref": "#/$defs/sha1_hex"
+        }
+      }
+    },
+    "valid_while": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "control_config_generation_digest",
+        "policy_digest",
+        "vocabulary_digest",
+        "evidence_digest",
+        "subject_identity_line"
+      ],
+      "properties": {
+        "control_config_generation_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "policy_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "vocabulary_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "evidence_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "subject_identity_line": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject_head_sha": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "subject_state": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "$comment": "THE STALENESS LADDER'S INPUTS. All are identity comparisons against LIVE reads at consumption. evidence_digest is sha256 over the canonical sorted list of 'kind\\tlocator\\tsha256' triples, one per line, LF-terminated: a ruling bound to a request id is not thereby bound to the evidence its ruler was shown (v1 CHANGE 4)."
+    },
+    "reply_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_locator",
+        "schema_sha256",
+        "required_fields",
+        "renderer_digest"
+      ],
+      "properties": {
+        "schema_locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_sha256": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "renderer_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "required_fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "$comment": "GENERATED by walking this file. No pre-filled ruling skeleton is ever shipped: supplying the phrasing supplies a template, and a template can be filled without the underlying fact becoming true (v1 CHANGE 1). The renderer self-checks by re-rendering after posting and byte-comparing."
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "kind",
+        "request_id",
+        "correlation_id",
+        "work_id",
+        "project",
+        "work_generation",
+        "request_generation",
+        "created_at",
+        "requester",
+        "control_config_generation",
+        "vocabulary_digest",
+        "protocol_generation",
+        "venue",
+        "repo",
+        "subject",
+        "acceptance_policy",
+        "decision_class",
+        "boundary_evidence",
+        "question",
+        "evidence_refs",
+        "valid_while",
+        "reply_contract",
+        "expires_at",
+        "routing_labels",
+        "publication_redaction"
+      ],
+      "properties": {
+        "schema": {
+          "$ref": "#/$defs/protocol_string"
+        },
+        "kind": {
+          "const": "request"
+        },
+        "request_id": {
+          "$ref": "#/$defs/request_id"
+        },
+        "correlation_id": {
+          "$ref": "#/$defs/correlation_id"
+        },
+        "work_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{2,63}$",
+          "$comment": "The durable identity of the WORK this decision belongs to, stable across every request generation about it."
+        },
+        "project": {
+          "type": "string",
+          "minLength": 1,
+          "$comment": "The logical project. Routing and diagnostic metadata only: it is NEVER proof of ruler identity or authority. Authority is grounded in the typed ruling, exact request parentage, forge venue and identity evidence, and fresh applicability checks."
+        },
+        "work_generation": {
+          "type": "integer",
+          "minimum": 1,
+          "$comment": "Increments when the WORK's own subject or acceptance contract moves. A ruling naming an older work_generation is inapplicable."
+        },
+        "request_generation": {
+          "type": "integer",
+          "minimum": 1,
+          "$comment": "Increments per re-ask within one work_generation, e.g. after INSUFFICIENT_EVIDENCE. A ruling naming an older request_generation is inapplicable."
+        },
+        "created_at": {
+          "$ref": "#/$defs/rfc3339_utc"
+        },
+        "requester": {
+          "$ref": "#/$defs/actor"
+        },
+        "control_config_generation": {
+          "$ref": "#/$defs/control_config_generation"
+        },
+        "vocabulary_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "protocol_generation": {
+          "$ref": "#/$defs/protocol_generation"
+        },
+        "venue": {
+          "$ref": "#/$defs/repo_ref",
+          "$comment": "The CONTROL venue this request is posted in. Must equal the repository resolved from the canonical control config; a request compiled for any other venue is refused before emission."
+        },
+        "repo": {
+          "$ref": "#/$defs/repo_ref",
+          "$comment": "The SUBJECT repository identity, exact."
+        },
+        "subject": {
+          "$ref": "#/$defs/subject"
+        },
+        "candidate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/git_point"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "candidate_state": {
+          "enum": [
+            "MUTATING",
+            "STABLE_FOR_VALIDATION",
+            "VALIDATED_EXACT_HEAD",
+            "ATTESTABLE",
+            "ATTESTED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "acceptance_policy": {
+          "$ref": "#/$defs/acceptance_policy"
+        },
+        "decision_class": {
+          "enum": [
+            "DELEGATED_ENGINEERING",
+            "CAPTAIN_RESERVED"
+          ]
+        },
+        "boundary_evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/observation"
+          }
+        },
+        "question": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "key",
+            "title",
+            "options",
+            "body_markdown"
+          ],
+          "properties": {
+            "key": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "options": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "$ref": "#/$defs/option"
+              }
+            },
+            "body_markdown": {
+              "type": "string",
+              "minLength": 1,
+              "$comment": "The question as prose, carried INSIDE the envelope. It is the input to the venue rendering, never the output of it: generation 2's body_rendered was the rendered issue body itself, which cannot be carried by an envelope that the body embeds (observer finding 3.1). Nothing derives from this field."
+            }
+          }
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/evidence_ref_declared"
+          }
+        },
+        "valid_while": {
+          "$ref": "#/$defs/valid_while"
+        },
+        "reply_contract": {
+          "$ref": "#/$defs/reply_contract"
+        },
+        "expires_at": {
+          "$ref": "#/$defs/rfc3339_utc"
+        },
+        "supersedes_request_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/request_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "routing_labels": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "$comment": "THE LABEL ATOMICITY LAW. These are the routing labels the canonical control configuration declares (routing.escalation_label and routing.destination_label), resolved through the single resolver and never typed here. The venue item MUST be created carrying them IN THE SAME forge call that creates it. In generation 1 the labels were applied 10 minutes 25 seconds after the issue was opened, so for ten minutes the request sat in the venue without its declared routing metadata and any label-keyed discovery path could not have fired; latency measured from creation was then not latency from routability (observer finding 4.6). The emitter's post-condition is checked against the CREATION RESPONSE, not against a later read: a label present on a later read does not establish that it was present at creation."
+        },
+        "publication_redaction": {
+          "$ref": "#/$defs/redaction_policy"
+        }
+      }
+    },
+    "ruling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "kind",
+        "ruling_id",
+        "in_reply_to",
+        "correlation_id",
+        "vocabulary_digest",
+        "control_config_generation_digest",
+        "ruled_at",
+        "ruler",
+        "applies_to",
+        "inspection",
+        "directive",
+        "single_writer_assertion"
+      ],
+      "properties": {
+        "schema": {
+          "$ref": "#/$defs/protocol_string"
+        },
+        "kind": {
+          "const": "ruling"
+        },
+        "ruling_id": {
+          "$ref": "#/$defs/ruling_id"
+        },
+        "in_reply_to": {
+          "$ref": "#/$defs/request_id",
+          "$comment": "MUST equal the request's request_id, by exact string equality. This is the explicit parentage: a ruling that does not name its parent request is not a ruling about it, however plausible its prose."
+        },
+        "correlation_id": {
+          "$ref": "#/$defs/correlation_id"
+        },
+        "vocabulary_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "control_config_generation_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "ruled_at": {
+          "$ref": "#/$defs/rfc3339_utc"
+        },
+        "ruler": {
+          "$ref": "#/$defs/actor"
+        },
+        "applies_to": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "venue",
+            "repo",
+            "work_id",
+            "work_generation",
+            "request_generation",
+            "subject_identity_line",
+            "policy_digest",
+            "evidence_digest"
+          ],
+          "properties": {
+            "venue": {
+              "$ref": "#/$defs/repo_ref"
+            },
+            "repo": {
+              "$ref": "#/$defs/repo_ref"
+            },
+            "work_id": {
+              "type": "string"
+            },
+            "work_generation": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "request_generation": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "subject_identity_line": {
+              "type": "string",
+              "minLength": 1
+            },
+            "head_sha": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/sha1_hex"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "tree_sha": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/sha1_hex"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "policy_digest": {
+              "$ref": "#/$defs/sha256_hex"
+            },
+            "evidence_digest": {
+              "$ref": "#/$defs/sha256_hex"
+            }
+          },
+          "$comment": "EXACT RULING APPLICABILITY. Every field is copied from the request and compared by identity, never by ancestry, containment or plausibility. A disagreement on the subject is RULING_SUBJECT_MISMATCH; a disagreement on the policy digest is RULING_SUPERSEDED; a disagreement on the control config generation is REFUSED_STALE_CONFIG. The three never share a code, because they have three different repairs."
+        },
+        "inspection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "evidence_refs_inspected",
+            "observations"
+          ],
+          "properties": {
+            "evidence_refs_inspected": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/evidence_ref"
+              }
+            },
+            "observations": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/observation"
+              }
+            }
+          },
+          "$comment": "The ruler records WHICH evidence locators it actually resolved and read, and its own observations three-valued INCLUDING anything it could not observe. Under-claiming here is the honest shape; a ruling claiming every ref is the shape a fabricated ruling has."
+        },
+        "directive": {
+          "enum": [
+            "ADOPT_OPTION",
+            "REJECT_ALL_WITH_CONSTRAINT",
+            "INSUFFICIENT_EVIDENCE",
+            "OUT_OF_SCOPE_CAPTAIN_RESERVED"
+          ],
+          "$comment": "Closed and total over the reachable answers. THERE IS NO FIELD FOR A THIRD OPTION: the only way to reject every offered option is REJECT_ALL_WITH_CONSTRAINT, which produces no change and hands the constraint back. INSUFFICIENT_EVIDENCE is the ruler's could-not-observe and OUT_OF_SCOPE_CAPTAIN_RESERVED is the ruler correcting our boundary predicate; both are SUCCESSFUL round trips."
+        },
+        "option_id": {
+          "type": "string",
+          "pattern": "^[A-Z]$"
+        },
+        "constraint": {
+          "type": "string",
+          "minLength": 1
+        },
+        "missing_evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "reserved_reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "type": "string"
+        },
+        "confidence": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "supersedes": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ruling_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "single_writer_assertion": {
+          "const": true,
+          "$comment": "The ruler asserting it is the only writer for this correlation id. A second ruling then contradicts an explicit claim rather than merely existing. An intentional replacement names the prior ruling_id in supersedes; two rulings that do not name each other are a LINEAGE FORK, which is a CNO: neither is consumed, both are preserved, and explicit supersession is required."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "directive": {
+                "const": "ADOPT_OPTION"
+              }
+            },
+            "required": [
+              "directive"
+            ]
+          },
+          "then": {
+            "required": [
+              "option_id"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "directive": {
+                "const": "REJECT_ALL_WITH_CONSTRAINT"
+              }
+            },
+            "required": [
+              "directive"
+            ]
+          },
+          "then": {
+            "required": [
+              "constraint"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "directive": {
+                "const": "INSUFFICIENT_EVIDENCE"
+              }
+            },
+            "required": [
+              "directive"
+            ]
+          },
+          "then": {
+            "required": [
+              "missing_evidence"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "directive": {
+                "const": "OUT_OF_SCOPE_CAPTAIN_RESERVED"
+              }
+            },
+            "required": [
+              "directive"
+            ]
+          },
+          "then": {
+            "required": [
+              "reserved_reason"
+            ]
+          }
+        }
+      ]
+    },
+    "receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "kind",
+        "receipt_id",
+        "in_reply_to",
+        "correlation_id",
+        "vocabulary_digest",
+        "control_config_generation_digest",
+        "consumed_at",
+        "consumer",
+        "validation",
+        "verdict_class",
+        "outcome"
+      ],
+      "properties": {
+        "schema": {
+          "$ref": "#/$defs/protocol_string"
+        },
+        "kind": {
+          "const": "receipt"
+        },
+        "receipt_id": {
+          "$ref": "#/$defs/receipt_id"
+        },
+        "in_reply_to": {
+          "$ref": "#/$defs/request_id"
+        },
+        "correlation_id": {
+          "$ref": "#/$defs/correlation_id"
+        },
+        "vocabulary_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "control_config_generation_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "consumed_at": {
+          "$ref": "#/$defs/rfc3339_utc"
+        },
+        "consumer": {
+          "$ref": "#/$defs/actor"
+        },
+        "consumes_ruling_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ruling_id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ruling_comment_id": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "ruling_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256_hex"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "$comment": "Taken over the POSTED bytes, never over a local file. A local envelope and a forge-rendered body are canonically identical but not byte-identical; hashing the posted bytes is what makes the record joinable by a third party."
+        },
+        "consumption_identity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "key",
+            "first_consumed_at",
+            "consumption_count",
+            "durable_record",
+            "claim_mechanism"
+          ],
+          "properties": {
+            "key": {
+              "$ref": "#/$defs/consumption_key"
+            },
+            "first_consumed_at": {
+              "$ref": "#/$defs/rfc3339_utc"
+            },
+            "consumption_count": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1,
+              "$comment": "AT MOST ONCE, structurally: the maximum is 1, so a record claiming a second consumption cannot be expressed."
+            },
+            "durable_record": {
+              "type": "string",
+              "minLength": 1
+            },
+            "claim_mechanism": {
+              "const": "exclusive_create",
+              "$comment": "The durable consumption record is claimed with O_CREAT|O_EXCL on the operational home's ext4 filesystem, so two consumers cannot both pass an exists-then-write guard (observer finding 3.5). A receipt that cannot state this mechanism cannot be expressed."
+            }
+          },
+          "$comment": "PRESENT IF AND ONLY IF outcome == CONSUMED. Generation 1 required this block for every outcome, so the ten non-consuming outcomes had to fabricate consumption_count=1, a first_consumed_at and a durable_record path that was never written (observer finding 4.3). Within the CONSUMED branch the at-most-once pin is unchanged and still structural: consumption_count is minimum 1 maximum 1, so a second consumption cannot be expressed, and durable_record must name a record that exists. Zero consumptions are now expressed by the ABSENCE of this block, which is the only shape that cannot lie."
+        },
+        "replay_check": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "second_consumption_attempted",
+            "actions_performed_on_replay",
+            "outcome_identical",
+            "evidence"
+          ],
+          "properties": {
+            "second_consumption_attempted": {
+              "const": true
+            },
+            "actions_performed_on_replay": {
+              "const": 0
+            },
+            "outcome_identical": {
+              "const": true
+            },
+            "evidence": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "$comment": "The replay proof, in the record rather than in prose: a second consumption was ACTUALLY attempted, it performed exactly zero actions, and it returned the identical outcome. A replay check that was not run cannot be reported as passed, because every field here is a const the attempt has to satisfy."
+        },
+        "validation": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/observation"
+          },
+          "$comment": "THE WHOLE LADDER, pass or fail, every predicate evaluated and none skipped. Every failing predicate is reported, not only the first."
+        },
+        "verdict_class": {
+          "$ref": "#/$defs/verdict_class"
+        },
+        "applied": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "directive",
+            "action_id",
+            "applied_bytes_identity"
+          ],
+          "properties": {
+            "directive": {
+              "type": "string"
+            },
+            "option_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "action_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "applied_bytes_identity": {
+              "$ref": "#/$defs/observation"
+            }
+          },
+          "$comment": "The directive-to-action map is pre-registered, total over the directive enum, with no default branch and no fallback. No step reads the rationale and decides what to write."
+        },
+        "resulting": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tree_sha": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/sha1_hex"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "pull_request": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "scope": {
+              "type": "string"
+            }
+          }
+        },
+        "note": {
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "CONSUMED",
+            "REFUSED_MALFORMED",
+            "REFUSED_MISMATCH",
+            "REFUSED_STALE",
+            "REFUSED_STALE_CONFIG",
+            "REFUSED_AMBIGUOUS",
+            "CNO_TRANSPORT",
+            "CNO_INCOMPLETE_UNIVERSE",
+            "CNO_TOOL_UNREACHABLE",
+            "NO_ANSWER",
+            "WITHDRAWN",
+            "CNO_TRUNCATED_RESPONSE"
+          ],
+          "$comment": "CONSUMPTION OUTCOME, closed and total over every reachable terminal. EVERY terminal state produces a receipt, refusals and withdrawals included: a refusal that leaves no receipt is a silently abandoned request. REFUSED_STALE_CONFIG is the captain addendum's terminal for a ruling bound to a prior control-config generation: the ruling stays historical evidence and zero action is taken. NO_ANSWER (nothing arrived before expires_at) is recorded APART from INSUFFICIENT_EVIDENCE, which is an answer. CNO_TRUNCATED_RESPONSE (generation 2) is the terminal for an authority-bearing forge response that arrived truncated: the ruling universe was not seen whole, which is a different fact from an unreachable tool and from an incomplete pagination universe, and it has a different repair -- re-read through a non-truncating surface."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "CONSUMED"
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "required": [
+              "consumes_ruling_id",
+              "ruling_comment_id",
+              "ruling_sha256",
+              "consumption_identity",
+              "applied",
+              "replay_check"
+            ]
+          },
+          "$comment": "A CONSUMED receipt must name exactly one durable consumption identity, the ruling bytes it consumed, what it applied, and a replay check that was ACTUALLY run. A CONSUMED receipt missing any of them is refused."
+        },
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "not": {
+                  "const": "CONSUMED"
+                }
+              }
+            },
+            "required": [
+              "outcome"
+            ]
+          },
+          "then": {
+            "properties": {
+              "consumption_identity": false,
+              "applied": false,
+              "replay_check": false
+            }
+          },
+          "$comment": "NOTHING WAS CONSUMED, so nothing may claim to have been. For every outcome other than CONSUMED these three blocks are UNSPELLABLE: a NO_ANSWER, refusal, CNO or WITHDRAWN receipt carrying a consumption record, an applied action or a replay check fails validation naming the offending field. This is the half of the conditional generation 1 lacked: making the block optional would have allowed the fabricated record to keep validating."
+        },
+        {
+          "if": {
+            "properties": {
+              "validation": {
+                "contains": {
+                  "type": "object",
+                  "required": [
+                    "read"
+                  ],
+                  "properties": {
+                    "read": {
+                      "type": "object",
+                      "anyOf": [
+                        {
+                          "required": [
+                            "truncated"
+                          ],
+                          "properties": {
+                            "truncated": {
+                              "const": true
+                            }
+                          }
+                        },
+                        {
+                          "required": [
+                            "mechanism"
+                          ],
+                          "properties": {
+                            "mechanism": {
+                              "const": "gh_axi_truncating"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "validation"
+            ]
+          },
+          "then": {
+            "properties": {
+              "outcome": {
+                "const": "CNO_TRUNCATED_RESPONSE"
+              }
+            }
+          },
+          "$comment": "TRUNCATION DOMINATES THE FOLD. If any authority-bearing read in the ladder was truncated or went through a truncating surface, the ruling universe was not seen whole, and the only terminal that can be expressed is CNO_TRUNCATED_RESPONSE. A receipt that folds such a ladder to NO_ANSWER -- 'nothing arrived' asserted over a universe that was not observed -- is refused (issue #3 required_repairs[3])."
+        }
+      ]
+    },
+    "control_config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "control",
+        "routing",
+        "venue_isolation",
+        "listener"
+      ],
+      "properties": {
+        "schema": {
+          "const": "fm-control-config/v1"
+        },
+        "control": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "protocol",
+            "repository",
+            "browser_sol_project",
+            "browser_sol_thread"
+          ],
+          "properties": {
+            "protocol": {
+              "$ref": "#/$defs/protocol_string"
+            },
+            "repository": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$"
+            },
+            "browser_sol_project": {
+              "type": "string",
+              "minLength": 1
+            },
+            "browser_sol_thread": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "routing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "from",
+            "to",
+            "escalation_label",
+            "destination_label"
+          ],
+          "properties": {
+            "from": {
+              "type": "string",
+              "minLength": 1
+            },
+            "to": {
+              "type": "string",
+              "minLength": 1
+            },
+            "escalation_label": {
+              "type": "string",
+              "minLength": 1
+            },
+            "destination_label": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "venue_isolation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "match_rule",
+            "denied_repositories",
+            "denied_protocols"
+          ],
+          "properties": {
+            "match_rule": {
+              "const": "exact_string_equality"
+            },
+            "denied_repositories": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9-]+/[A-Za-z0-9._-]+$"
+              }
+            },
+            "denied_protocols": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "listener": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "record_path",
+            "check_script_path"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[a-z0-9][a-z0-9-]*$"
+            },
+            "record_path": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[^/].*$"
+            },
+            "check_script_path": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[^/].*$"
+            }
+          },
+          "$comment": "THE LISTENER'S IDENTITY AND PATHS, owned HERE and nowhere else. In generation 1 the listener record carried its own task id and its own check-script path, a second authored copy of values the canonical configuration should own; a listener that names its own identity can be repointed by editing it. Both paths are RELATIVE to the operational home (FM_HOME) and are refused if absolute, so the same configuration resolves correctly in any home and cannot pin the record to one operator's filesystem. The listener record is GENERATED from this section, never authored beside it. GENERATION 3 derives the ongoing inbound monitor from this same section: the process-event source id is '<id>-inbound', the extension id is 'org.firstmate.cleanroom.control-listener', and its adapter name equals the source id. Nothing is added to the configuration, so the control-config generation does not move."
+        }
+      },
+      "$comment": "The canonical control-plane configuration contract, owned by THIS FILE so that no field name lives in two places. The canonical owner INSTANCE is runtime/firstmate/config/control-plane.yaml; the single deterministic resolver normalizes it and every emitter, watcher, consumer, receipt writer, diagnostic and bootstrap check consumes that resolved representation rather than reimplementing it. GENERATION 2 folds the listener identity and its record and check-script paths into this same canonical owner, so no duplicate of any control value survives outside the resolver."
+    },
+    "schema_generation": {
+      "const": {
+        "protocol": "fm-sol-control/v2",
+        "generation": 3,
+        "supersedes_schema_sha256": "bbe6ce89744ef03901cd5823a75670db86293bdc1f55bff4f4095b0ced446908",
+        "supersedes_generation": 2
+      },
+      "$comment": "Machine-readable lineage. The protocol string is deliberately NOT bumped, for the same reason as generation 2: the venue-isolation law compares it by exact equality and the retired venue owns fm-sol-control/v1 over a different envelope."
+    },
+    "read_mechanism": {
+      "enum": [
+        "gh_api_non_truncating",
+        "urllib_direct",
+        "local_file",
+        "gh_axi_truncating"
+      ],
+      "$comment": "HOW authority-bearing bytes were obtained. gh-axi truncates at approximately 4 KB and reports `truncated: true, original_length: N`; every envelope in this protocol exceeds that bound, so an envelope read through it was never seen whole. The mechanism is recorded rather than assumed, because a truncated read and a complete read are indistinguishable once the bytes are in hand."
+    },
+    "authoritative_read": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mechanism",
+        "truncated",
+        "received_bytes"
+      ],
+      "properties": {
+        "mechanism": {
+          "$ref": "#/$defs/read_mechanism"
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "declared_bytes": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "$comment": "The length the surface itself declared, where it declares one (gh-axi's original_length). Null when the surface declares nothing, which is itself a reason the read cannot be certified complete."
+        },
+        "received_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "$comment": "THE COMPLETENESS-OF-READ RECORD. A negative or affirmative claim about a forge document rests on having seen the whole document; this block is where that is stated and checkable rather than assumed from the fact that bytes arrived."
+    },
+    "digest_basis": {
+      "enum": [
+        "fetched_bytes",
+        "locator_identity"
+      ],
+      "$comment": "WHAT THE sha256 IS TAKEN OVER, per evidence kind, because the two are not the same binding and generation 1 documented no rule at all. `fetched_bytes` is a real independent byte digest: the locator was resolved and the bytes it returned were hashed, so a third party re-fetching gets the same value or the evidence moved. `locator_identity` is sha256 over the locator's own immutable identity string -- a 40-hex commit SHA, a numeric run id -- and it ADDS NO INDEPENDENT BINDING, because its input is already present in the locator. It is legitimate where the addressed object is not content-addressable (a GitHub commit HTML page carries per-request tokens and hashes differently on every fetch, so hashing it would be strictly worse), and it must NEVER be presented as an independent byte digest. Observer finding 4.5."
+    },
+    "evidence_ref_declared": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/evidence_ref"
+        },
+        {
+          "required": [
+            "digest_basis"
+          ]
+        }
+      ],
+      "$comment": "An evidence reference the REQUESTING side constructs, where digest_basis is mandatory: the producer knows exactly how it computed its own digest and has no excuse for leaving the basis unstated. The base evidence_ref keeps digest_basis optional so the ruling side's evidence_refs_inspected is not forced to a field the counterparty never agreed to; the per-kind laws still bind it whenever it is supplied."
+    },
+    "redaction_class": {
+      "enum": [
+        "posix_home",
+        "wsl_windows_userprofile",
+        "windows_userprofile",
+        "macos_home",
+        "unc_wsl_home"
+      ],
+      "$comment": "THE OPERATOR-PATH CLASSES a public evidence mirror must replace. Generation 1's redaction covered posix_home (/home/<user>) exactly and completely, and MISSED the Windows form: /mnt/c/Users/<operator>/AppData/... survived into three files published on the public venue whose declared class states that operator-local filesystem paths are replaced (observer finding 4.4). A redaction contract that names only the form the operator happened to think of is not a contract. Equivalent user-profile forms are enumerated here so the scanner and the declaration cannot drift apart."
+    },
+    "redaction_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_id",
+        "policy_digest",
+        "classes_applied",
+        "residue_count",
+        "scan"
+      ],
+      "properties": {
+        "policy_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_digest": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "classes_applied": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/redaction_class"
+          }
+        },
+        "residue_count": {
+          "const": 0,
+          "$comment": "STRUCTURALLY ZERO. A request whose published evidence still carries an operator-local user-profile path CANNOT BE EXPRESSED, so the failure surfaces at compile time in the producer rather than on a public venue after the fact."
+        },
+        "scan": {
+          "$ref": "#/$defs/observation",
+          "$comment": "The scanner run that produced residue_count, three-valued: a scanner that could not run is could-not-observe and is NOT zero residue."
+        }
+      },
+      "$comment": "The declared, digested redaction contract for evidence published to a public venue, carried in the envelope so a third party can check the claim rather than trust the prose."
+    },
+    "venue_publication": {
+      "const": {
+        "law": "issue_body == render(envelope)",
+        "render": [
+          "question.body_markdown",
+          "",
+          "<!-- fm-sol-control/v2 envelope; schema generation 3; validate the fenced block as fetched -->",
+          "```json",
+          "<envelope: json.dumps(envelope, indent=2, sort_keys=True, ensure_ascii=False)>",
+          "```",
+          ""
+        ],
+        "extraction": "the LAST fenced ```json block of the venue body is the envelope",
+        "verifier": "artifacts/control/gen3/bin/fsc3-verify-envelope.py"
+      },
+      "$comment": "THE ONE STRUCTURAL REPRESENTATION of a published request. The venue body is a pure function of the envelope, so a reader who does the correct thing -- fetch the body, extract the envelope, validate it against the schema of record named by its vocabulary_digest -- gets a validation PASS on a sound request instead of a disclosed failure. The emitter renders through this law and the declared verifier checks it against the venue after publication."
+    },
+    "envelope_verifier": {
+      "const": {
+        "tool": "artifacts/control/gen3/bin/fsc3-verify-envelope.py",
+        "checks": [
+          "the venue body, read whole through a non-truncating surface, contains exactly one extractable envelope",
+          "the extracted envelope validates against the schema of record whose sha256 equals its vocabulary_digest",
+          "every derived identity in the envelope recomputes from the envelope's own bytes per $defs.id_derivation",
+          "for a request: the venue body equals render(envelope) per $defs.venue_publication"
+        ],
+        "verdict": "three-valued: observed-good, observed-bad, could-not-observe (a truncated or unreachable read is could-not-observe, never a pass)"
+      },
+      "$comment": "THE DECLARED VERIFIER for envelope-against-frozen-schema validation, which both the generation-2 executor and observer recommended independently (issue #3 required_repairs[5]). It removes the most-repeated by-hand judgement on the plane."
+    },
+    "inbound_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "kind",
+        "repository",
+        "issue_number",
+        "item",
+        "author",
+        "created_at",
+        "body_sha256",
+        "body_bytes",
+        "applicability",
+        "surfaced_by_request_id"
+      ],
+      "properties": {
+        "schema": {
+          "const": "fm-cleanroom-control-inbound/v1"
+        },
+        "kind": {
+          "enum": [
+            "issue",
+            "comment"
+          ]
+        },
+        "repository": {
+          "type": "string",
+          "minLength": 3
+        },
+        "issue_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "item": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "url"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "url": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "author": {
+          "type": "string",
+          "minLength": 1
+        },
+        "created_at": {
+          "$ref": "#/$defs/rfc3339_utc"
+        },
+        "body_sha256": {
+          "$ref": "#/$defs/sha256_hex"
+        },
+        "body_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "applicability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "class",
+            "protocol_family",
+            "addressed_to",
+            "from",
+            "ruling_for_request_id"
+          ],
+          "properties": {
+            "class": {
+              "enum": [
+                "inbound_commission",
+                "ruling_candidate",
+                "inbound_commission_and_ruling_candidate"
+              ]
+            },
+            "protocol_family": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "addressed_to": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "from": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "ruling_for_request_id": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/request_id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "surfaced_by_request_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "$comment": "ONE QUALIFIED INBOUND ITEM as captured by the ongoing listener (generation 3, issue #3 unattended_monitoring). It is evidence handed to firstmate, never authority: it names where the item is and why it qualified, and it carries a digest so a later read can prove the body it acted on. surfaced_by_request_id is the host's idempotence key for the poll that surfaced it, so a pre-capture retry re-emits the same items and a later poll never re-announces them."
+    }
+  }
+}

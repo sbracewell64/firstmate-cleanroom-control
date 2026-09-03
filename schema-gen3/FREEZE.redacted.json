@@ -1,0 +1,111 @@
+{
+  "artifacts": {
+    "consumer": {
+      "bytes": 28956,
+      "path": "artifacts/control/gen3/bin/fsc3-consume.py",
+      "sha256": "07dce163952b91a999dae52f69260847bbdbe66ff8a5f7d17c1b3ee375806fc9"
+    },
+    "emitter": {
+      "bytes": 8159,
+      "path": "artifacts/control/gen3/bin/fsc3-emit-request.py",
+      "sha256": "9f42d2d0d134c8793d6af098bef7d76eacd27692f3533d7a0abc0c56f98a3fe5"
+    },
+    "envelope_verifier": {
+      "bytes": 7606,
+      "path": "artifacts/control/gen3/bin/fsc3-verify-envelope.py",
+      "sha256": "19b692a7a0c895652011f3647456f4598f47768bcf1d33000a5ff53cf2137bea"
+    },
+    "listener_extension_entrypoint": {
+      "bytes": 20220,
+      "path": "artifacts/control/gen3/listener/cleanroom-control-inbound.mjs",
+      "sha256": "bccaa9338e0cc7fc0bef4a5b8eea6306203cfc49d615b99e8a31f38b9ca0db0b"
+    },
+    "listener_extension_manifest": {
+      "bytes": 409,
+      "path": "artifacts/control/gen3/listener/firstmate-extension.json",
+      "sha256": "c2cd42b2c25e0df0de6897454395d637a574c3d5becef13c5c286196a98ca14a"
+    },
+    "listener_tool": {
+      "bytes": 16500,
+      "path": "artifacts/control/gen3/bin/fsc3-listener.py",
+      "sha256": "4826f3953cba25e5cf410bca114aff4c3722d951b5a28e890adb02050aadf348"
+    },
+    "redactor": {
+      "bytes": 6321,
+      "path": "artifacts/control/gen3/bin/fsc3-redact.py",
+      "sha256": "0ddafc1afea5856766cb8c9c1c234ab71eef233c555da9903654297946089e4e"
+    },
+    "renderer": {
+      "bytes": 11533,
+      "path": "artifacts/control/gen3/bin/fsc3.py",
+      "sha256": "ab8d7cd522dd3ceb8a465156220f0b3a579d6fcac899091aabf2a81f17af3aea"
+    },
+    "reply_contract_receipt": {
+      "bytes": 4466,
+      "path": "artifacts/control/gen3/schema/reply-contract.receipt.txt",
+      "sha256": "cc77349afec84ad321aa7ee212eef5043e0d7bd79cf802fef941f2d3a30402af"
+    },
+    "reply_contract_request": {
+      "bytes": 10347,
+      "path": "artifacts/control/gen3/schema/reply-contract.request.txt",
+      "sha256": "d0a928f9067b04a6dcaa3c76f0634a1c620a6e4a6ef3eaa749b8e753fc5a7fa1"
+    },
+    "reply_contract_ruling": {
+      "bytes": 6285,
+      "path": "artifacts/control/gen3/schema/reply-contract.ruling.txt",
+      "sha256": "6fec16aba4cdb96c3ec63085165bee34c7bc1142445f0bad4a6ceb6147112671"
+    },
+    "request_fixture": {
+      "bytes": 30825,
+      "path": "artifacts/control/gen3/fixtures/request.gen3-fixture.json",
+      "sha256": "370202b080cad92c334c4fb4ef2e2ccae3f8778d9495357fb3016d99a9886338"
+    },
+    "resolver": {
+      "bytes": 8776,
+      "path": "artifacts/control/gen3/bin/fsc3_config.py",
+      "sha256": "601b7f26609460bec9bc93d7d1dacd8fc78ddb6582a37a0993178759847e7cee"
+    },
+    "schema": {
+      "bytes": 68786,
+      "path": "artifacts/control/gen3/schema/fm-sol-control-v2.schema.json",
+      "sha256": "43c1faa9ff8485ac7392b363a4d83729cd84ae4c1ab1a606e128ca20781342a8"
+    },
+    "schema_builder": {
+      "bytes": 14281,
+      "path": "artifacts/control/gen3/bin/build-gen3-schema.py",
+      "sha256": "d2b80e41e6b2662827b66456ae86861290ca8accf6010b5e7373bec6e399638f"
+    },
+    "watched_reds": {
+      "bytes": 45971,
+      "path": "artifacts/control/gen3/reds/watched-reds.py",
+      "sha256": "1af258e6d062d91d993496eaa387873708bb9255e5c986a9c1f73817b139ce19"
+    },
+    "watched_reds_fake_forge": {
+      "bytes": 1050,
+      "path": "artifacts/control/gen3/reds/fixture-fake-gh.sh",
+      "sha256": "a0787e9eb56054ee507b179b7f228b9be27b770b7c52842f5c153cfa0e74b290"
+    }
+  },
+  "control_config_generation_snapshot": {
+    "binding": "NON-BINDING SNAPSHOT",
+    "digest": "912f6238d94dfdf8afd672bc7f28a445b66138c14a5a08fa266a77837346c2aa",
+    "note": "Recorded so a reader can see which configuration was in force at the freeze, and NOT as a freeze constraint. The control-config generation is designed to move -- a repository, routing or listener change MUST move it -- so treating a changed config digest as schema drift would be a wrong-subject error. The freeze verifier deliberately does not check it.",
+    "owner_path": "/home/OPERATOR/.firstmate-cleanroom/config/control-plane.yaml",
+    "resolver_digest": "601b7f26609460bec9bc93d7d1dacd8fc78ddb6582a37a0993178759847e7cee"
+  },
+  "enforcement": "The generation 3 artifacts live on the same drvfs mount as generation 2, which does not carry file modes, so write-once cannot be enforced by permission here either. Enforcement is DIGEST COMPARISON ONLY -- detective, not preventive -- through bin/fsc2-verify-freeze.sh, which re-hashes every artifact above and refuses on any drift. This is a real limit, recorded rather than assumed away. The one thing that DID move to a filesystem with real modes is the private mutable runtime home, because the upstream listener registrar requires an exact 0700.",
+  "freeze_ordering": "FROZEN BEFORE any generation 3 envelope was compiled or emitted. No fm-sol-control/v2 generation 3 request exists: emitting one is a separately authorized lane and the emitter refuses without that lane's token. The watched-red harness (128 arms) was run against these exact bytes immediately before AND after this record was written; the authoring iterations that preceded the freeze are pre-freeze churn, not mutation of a frozen artifact. The bounded conformance transaction ruled on issue #3 runs AFTER this freeze, through these bytes.",
+  "frozen_at": "2026-09-03T00:29:39Z",
+  "protocol": "fm-sol-control/v2",
+  "record": "fm-sol-control-v2-schema-freeze/v3",
+  "schema_generation": 3,
+  "superseded_by": null,
+  "supersedes": {
+    "disposition": "Generations 1 and 2 stay frozen, published and untouched (control issue #3, tooling_supersession required_repairs[6]). The NO_ANSWER transaction on issue #1 (generation 1) and the CONSUMED transaction on issue #2 (generation 2) are never revalidated under generation 3: an immutable historical record is not a defect to retrofit.",
+    "freeze_record": "artifacts/control/gen2/schema/FREEZE.json",
+    "path": "artifacts/control/gen2/schema/fm-sol-control-v2.schema.json",
+    "schema_generation": 2,
+    "schema_sha256": "bbe6ce89744ef03901cd5823a75670db86293bdc1f55bff4f4095b0ced446908"
+  },
+  "write_once": true
+}
