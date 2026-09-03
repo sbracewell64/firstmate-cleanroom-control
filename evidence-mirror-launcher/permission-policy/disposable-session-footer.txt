@@ -1,0 +1,10 @@
+argv: claude --dangerously-skip-permissions --settings /home/OPERATOR/.firstmate-cleanroom/config/claude-settings.json
+cwd: /tmp/claude-1000/-mnt-e-FirstMate-Cleanroom-upstream-firstmate/455c55cd-6938-4493-88a4-c5c60905e751/scratchpad/perm-proof-cwd (scratch dir; folder-trust dialog answered Yes)
+captured: 2026-09-03T22:03:54Z
+
+  ⏵⏵ bypass permissions on (shift+tab to cycle) · ← for agents                              /rc connecting…
+
+{"argv":["claude","--dangerously-skip-permissions","--settings","/home/OPERATOR/.firstmate-cleanroom/config/claude-settings.json"],"pid":1007559}
+claude version: 2.1.259 (Claude Code)
+global settings (read-only): skipDangerousModePermissionPrompt=true permissions="unset"
+clean-room settings: {"outputStyle":"Attention-kind"}

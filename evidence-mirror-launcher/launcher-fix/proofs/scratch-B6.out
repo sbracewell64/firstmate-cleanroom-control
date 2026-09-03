@@ -1,0 +1,13 @@
+PROOF-START B6
+ console will open read-only until that session ends
+enter-firstmate: note: the console record does not name this pane; launch fields not recorded
+enter-firstmate: console: claude fresh session; permissions --dangerously-skip-permissions [QUALIFIED]; style
+ /home/OPERATOR/.firstmate-cleanroom/config/claude-settings.json
+shim-claude argv: --dangerously-skip-permissions --settings /home/OPERATOR/.firstmate-cleanroom/config/claude-se
+ttings.json
+shim-claude: fresh launch FAILS on purpose
+enter-firstmate: console: claude exited rc=3 after 0s; this pane ends with it (no interactive shell is left b
+ehind as a nominal success) - relaunch from the Desktop shortcut, or read /home/OPERATOR/.firstmate-cleanroom/en
+ter-firstmate.sh --doctor
+console rc=3
+PROOF-END B6

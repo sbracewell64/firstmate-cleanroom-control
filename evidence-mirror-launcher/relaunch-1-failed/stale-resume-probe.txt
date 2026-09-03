@@ -1,0 +1,8 @@
+probe: timeout 20 claude --resume 7887031a-392d-404c-b588-96106286a759 </dev/null (2026-09-03, from the recovery session)
+stdout+stderr: No conversation found with session ID: 7887031a-392d-404c-b588-96106286a759
+rc=1
+
+claude session store for cwd /mnt/e/FirstMate-Cleanroom/upstream/firstmate:
+drwxr-xr-x   3 shane shane    4096 Sep  3 17:22 455c55cd-6938-4493-88a4-c5c60905e751
+-rw-------   1 shane shane  872885 Sep  3 17:32 455c55cd-6938-4493-88a4-c5c60905e751.jsonl
+drwxr-xr-x   3 shane shane    4096 Sep  3 06:20 7887031a-392d-404c-b588-96106286a759

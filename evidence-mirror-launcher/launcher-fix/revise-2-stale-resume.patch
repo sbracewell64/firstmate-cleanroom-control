@@ -1,0 +1,560 @@
+--- /home/OPERATOR/.firstmate-cleanroom/state/enter-firstmate.sh.pre-control8-revise2.20260903T213808Z	2026-09-03 16:34:03.959678051 -0400
++++ /home/OPERATOR/.firstmate-cleanroom/enter-firstmate.sh	2026-09-03 17:38:54.930261641 -0400
+@@ -95,6 +95,54 @@
+ # state/ which is refused outright because no lock, beacon, or ledger could be
+ # recorded. --doctor reports the whole posture and still starts nothing.
+ #
++# CONSOLE LAUNCH CONTRACT AND STALE RESUME (2026-09-03, control issue #8
++# REVISE 2, after live relaunch 1 FAILED at 21:16Z). Herdr persists each pane's
++# Claude session id (source herdr:claude, reported by its own Claude SessionStart
++# hook) and, when its server restarts, its native resume-on-restore types
++# `claude --resume <id>` into the restored pane BEFORE this launcher can act
++# (global config.toml `[session] resume_agents_on_restore`, default true).
++# Observed: the persisted id was stale, Claude exited with `No conversation
++# found`, the console pane sat at a bare shell, and this launcher still reported
++# the recorded pane as `existing`, because "the pane exists" was its entire
++# liveness predicate. The repair keeps ONE owner (this file), adds no session
++# store and no second resume registry:
++#   * --console owns resume. The candidate id is Herdr's own pane record, or an
++#     explicit --resume passed by the convergence path below. It is resumed only
++#     when Claude's native session store holds that transcript, and the harness
++#     runs as this shell's FOREGROUND CHILD so `--resume` success is OBSERVED:
++#     a resume that exits non-zero within FM_ENTRY_RESUME_WINDOW seconds falls
++#     back exactly once to a fresh session with the identical canonical argv
++#     (same harness, style settings, permission policy, environment, and the
++#     supervision arm already verified above it). A failing fresh launch exits
++#     loudly; --console never returns to an interactive shell as a nominal
++#     successful startup.
++#   * The Desktop launch classifies the recorded console pane by its OBSERVED
++#     foreground (herdr pane process-info, plus the upstream idle-shell proof)
++#     against the console record's console_pid: canonical (the harness whose
++#     parent is the --console shell) -> reuse; a bare idle shell -> the console
++#     contract is typed into that pane again (bounded, once per two minutes);
++#     a harness this launcher did not start -> when THIS launch started the
++#     server (Herdr's restore is then the only possible author) it is exited
++#     with the harness's own exit command through the upstream verified submit
++#     core and relaunched canonically with the SAME session id, otherwise it is
++#     left untouched and reported loudly (never typed into).
++# Every launch decision is one line in state/console-launch.log, fields in the
++# console record, and a block in the doctor's "captain console" section.
++#
++# HARNESS PERMISSION POLICY (2026-09-03, control issue #7 ruling 3, explicit
++# captain authorization; applied in the recovery session after the live proof).
++# The primary console launches Claude with --dangerously-skip-permissions on
++# every start, resume, and fallback. The policy owner is the permission_policy_*
++# block below (this launcher), consumed by the --console argv composer, asserted
++# on the composed argv before launch (launch-byte watched red), and rendered by
++# the doctor. Worker and secondmate harnesses keep the upstream spawn compiler's
++# own equivalents (<code-root>/bin/fm-spawn.sh launch templates); this file only
++# READS that file to prove each expected token is still present (drift watched
++# red) and never duplicates a flag into a spawn. The policy removes interactive
++# approval prompts only: FirstMate authority, merge and landing rules, gates,
++# validators, and credential handling are untouched, and machine-global harness
++# settings are never written.
++#
+ # Usage:  enter-firstmate.sh [harness arguments...]     start/attach the console inside Herdr
+ #         enter-firstmate.sh --doctor                    print every effective identity, start nothing
+ #         enter-firstmate.sh --console [harness args]    (internal) run the harness in the current clean-room pane
+@@ -104,7 +152,11 @@
+ #                                                        (internal) detached cold-start arm owner, started by --console
+ #         FM_ENTRY_ARM_TIMEOUT=<s>                       bound for the pre-exec watcher verification (default 40)
+ #         FM_ENTRY_DELIVER_WAIT=<s>                      bound the arm owner waits for a ready composer (default 900)
+-#         FM_ENTRY_LIB=1 . enter-firstmate.sh            load only the pure cold-start decision functions (tests)
++#         enter-firstmate.sh --console --resume <id>   (internal) same, resuming Claude session <id> when its transcript exists
++#         FM_ENTRY_RESUME_WINDOW=<s>                     a resume that exits non-zero within this bound is stale (default 20)
++#         FM_ENTRY_RESTORE_SETTLE=<s>                    bound waited for Herdr's restore to settle after this launch started the server (default 12)
++#         FM_ENTRY_EXIT_WAIT=<s>                         bound for a restored non-canonical harness to exit before the canonical relaunch (default 45)
++#         FM_ENTRY_LIB=1 . enter-firstmate.sh            load only the pure decision functions (tests)
+ set -eu
+ 
+ FM_CODE_ROOT=/mnt/e/FirstMate-Cleanroom/upstream/firstmate
+@@ -187,6 +239,133 @@
+     "Run bin/fm-wake-drain.sh first, handle the wake, then run its exact WAKE_ACK_REQUIRED --ack-through command. This wake was captured by the console launcher's cold-start supervision arm before your first turn; from your first turn on the Stop hook owns watcher continuity - do NOT run bin/fm-watch-arm.sh after an ordinary wake."
+ }
+ 
++# --- Harness permission policy (control issue #7 ruling 3): pure table ----------
++# Tested by enter-firstmate-launch.test.sh (FM_ENTRY_LIB=1 loads this block).
++# The clean-room's ONE permission-policy owner. claude's primary posture is
++# owned here and composed into the console argv; each worker harness's posture
++# names the upstream spawn compiler's own launch-template token so the doctor
++# can prove it is still present in <code-root>/bin/fm-spawn.sh.
++permission_policy_state() {  # <harness> -> QUALIFIED | NOT_APPLICABLE | CNO
++  case "${1:-}" in
++    claude|codex|opencode|grok|kimi|cursor|muse) echo QUALIFIED ;;
++    pi|pi-signed) echo CNO ;;
++    bash) echo NOT_APPLICABLE ;;
++    *) echo CNO ;;
++  esac
++}
++permission_policy_posture() {  # <harness> -> the flag/config that removes interactive approval, or a reason
++  case "${1:-}" in
++    claude) echo '--dangerously-skip-permissions' ;;
++    codex) echo '--dangerously-bypass-approvals-and-sandbox' ;;
++    opencode) echo 'OPENCODE_CONFIG_CONTENT={"permission":{"*":"allow"}}' ;;
++    grok) echo '--always-approve' ;;
++    kimi) echo '--auto' ;;
++    cursor) echo '--trust --yolo' ;;
++    muse) echo '--yolo' ;;
++    pi|pi-signed) echo 'none: the upstream spawn template passes no permission flag and a separate pi approval gate is not documented; not invented' ;;
++    bash) echo 'none: evidence harness without an approval gate' ;;
++    *) echo 'none: not a verified harness' ;;
++  esac
++}
++permission_policy_owner() {  # <harness>
++  case "${1:-}" in
++    claude) echo 'this launcher (primary console argv) + fm-spawn (workers)' ;;
++    codex|opencode|grok|kimi|cursor|muse) echo 'fm-spawn (workers and secondmates)' ;;
++    *) echo none ;;
++  esac
++}
++permission_policy_spawn_token() {  # <harness> -> exact bytes expected in bin/fm-spawn.sh's launch template ('' = none)
++  case "${1:-}" in
++    claude) echo 'claude --dangerously-skip-permissions' ;;
++    codex) echo '--dangerously-bypass-approvals-and-sandbox' ;;
++    opencode) echo '{"permission":{"*":"allow"}}' ;;
++    grok) echo 'grok --always-approve' ;;
++    kimi) echo '__KIMIBIN__ __MODELFLAG__--auto' ;;
++    cursor) echo '__CURSORBIN__ --trust --yolo' ;;
++    muse) echo '__MUSEBIN__ --yolo' ;;
++    *) echo '' ;;
++  esac
++}
++permission_policy_harnesses() { echo 'claude codex opencode pi pi-signed grok kimi cursor muse'; }
++
++# --- Console launch contract (control issue #8 REVISE 2): pure decisions --------
++# console_harness_argv <harness> <settings-file|""> <resume-id|""> [passthrough...]
++# prints the console argv one element per line. claude always leads with the
++# captain-authorized permission posture, then the private style settings, then
++# the validated resume target, then the captain's own arguments. Any other
++# harness gets only the passthrough (bash is the evidence harness).
++console_harness_argv() {
++  local harness=$1 settings=$2 resume=$3
++  shift 3
++  if [ "$harness" = claude ]; then
++    permission_policy_posture claude
++    [ -z "$settings" ] || printf '%s\n%s\n' --settings "$settings"
++    [ -z "$resume" ] || printf '%s\n%s\n' --resume "$resume"
++  fi
++  [ $# -eq 0 ] || printf '%s\n' "$@"
++}
++# console_resume_id_valid <id>: the only shape ever passed to --resume.
++console_resume_id_valid() {
++  case "${1:-}" in
++    [0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]-[0-9a-f][0-9a-f][0-9a-f][0-9a-f]-[0-9a-f][0-9a-f][0-9a-f][0-9a-f]-[0-9a-f][0-9a-f][0-9a-f][0-9a-f]-[0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f][0-9a-f]) return 0 ;;
++  esac
++  return 1
++}
++# console_session_store_dir <claude-config-dir> <cwd>: Claude Code's native
++# per-project transcript directory (every '/' and '.' of the cwd becomes '-';
++# observed: /mnt/e/FirstMate-Cleanroom/upstream/firstmate ->
++# ~/.claude/projects/-mnt-e-FirstMate-Cleanroom-upstream-firstmate).
++console_session_store_dir() {
++  local enc
++  enc=$(printf '%s' "$2" | sed 's#[/.]#-#g')
++  printf '%s/projects/%s' "$1" "$enc"
++}
++# console_resume_candidate <claude-config-dir> <cwd> <id> -> valid | invalid-id | no-transcript
++console_resume_candidate() {
++  local f
++  console_resume_id_valid "$3" || { echo invalid-id; return 0; }
++  f="$(console_session_store_dir "$1" "$2")/$3.jsonl"
++  if [ -s "$f" ]; then echo valid; else echo no-transcript; fi
++}
++# console_launch_outcome <resume-attempted 0|1> <rc> <elapsed-s> <window-s>
++# -> fallback-fresh (exactly the stale-resume shape) | exited (everything else,
++# including a failed fresh launch: there is no second fallback, ever).
++console_launch_outcome() {
++  local attempted=${1:-0} rc=${2:-0} elapsed=${3:-0} window=${4:-20}
++  if [ "$attempted" = 1 ] && [ "$rc" != 0 ] && [ "$elapsed" -lt "$window" ]; then echo fallback-fresh; else echo exited; fi
++}
++# console_pane_classify <fg-name> <fg-pid> <fg-ppid> <console-pid> <console-pid-alive 0|1> <harness-name>
++# -> canonical | starting | foreign-harness | shell | other
++#   canonical       the harness runs as the recorded --console shell's child (or is that pid)
++#   starting        the recorded --console shell itself is in the foreground (arming, probing)
++#   foreign-harness the harness runs but this launcher did not start it (Herdr restore, a hand-typed harness)
++#   shell           a recognized shell is in the foreground (a stranded pane); the caller still requires the upstream idle proof
++#   other           anything else: never typed into
++console_pane_classify() {
++  local name=${1:-} pid=${2:-0} ppid=${3:-0} cpid=${4:-0} alive=${5:-0} harness=${6:-claude}
++  name=${name##*/}
++  if [ "$alive" = 1 ] && [ "$cpid" != 0 ] && [ "$pid" = "$cpid" ]; then
++    if [ "$name" = "$harness" ]; then echo canonical; else echo starting; fi
++    return 0
++  fi
++  if [ "$name" = "$harness" ]; then
++    if [ "$alive" = 1 ] && [ "$cpid" != 0 ] && [ "$ppid" = "$cpid" ]; then echo canonical; else echo foreign-harness; fi
++    return 0
++  fi
++  case "$name" in sh|bash|zsh|dash|ksh|fish) echo shell ;; *) echo other ;; esac
++}
++# console_converge_action <class> <session-started-now 0|1> <composer> <resume-id>
++# -> reuse | restart | converge | leave
++console_converge_action() {
++  local cls=${1:-other} started=${2:-0} composer=${3:-unknown} sid=${4:-}
++  case "$cls" in
++    canonical|starting) echo reuse ;;
++    shell) echo restart ;;
++    foreign-harness) if [ "$started" = 1 ] && [ "$composer" = empty ] && [ -n "$sid" ]; then echo converge; else echo leave; fi ;;
++    *) echo leave ;;
++  esac
++}
++
+ # Library load for the test file beside this launcher: only the pure functions
+ # above exist, nothing below runs.
+ # shellcheck disable=SC2317 # `return` serves a sourced load; `exit` covers a direct run.
+@@ -221,6 +400,29 @@
+   *[!A-Za-z0-9._-]*) die "config/herdr-session contains characters Herdr does not accept in a session name: $FM_HERDR_SESSION" ;;
+ esac
+ 
++# --- Console record and launch log (this home's own console identity) -------------
++CONSOLE_RECORD=$FM_HOME/state/captain-console.json
++CONSOLE_LOG=$FM_HOME/state/console-launch.log
++CONSOLE_RESUME_WINDOW=${FM_ENTRY_RESUME_WINDOW:-20}
++CONSOLE_RESTORE_SETTLE=${FM_ENTRY_RESTORE_SETTLE:-12}
++CONSOLE_EXIT_WAIT=${FM_ENTRY_EXIT_WAIT:-45}
++case "$CONSOLE_RESUME_WINDOW" in ''|*[!0-9]*) CONSOLE_RESUME_WINDOW=20 ;; esac
++case "$CONSOLE_RESTORE_SETTLE" in ''|*[!0-9]*) CONSOLE_RESTORE_SETTLE=12 ;; esac
++case "$CONSOLE_EXIT_WAIT" in ''|*[!0-9]*) CONSOLE_EXIT_WAIT=45 ;; esac
++console_log() { printf '%s pid=%s %s\n' "$(date -u +%FT%TZ)" "$$" "$*" 2>/dev/null >> "$CONSOLE_LOG" || true; }
++console_record_field() { jq -r --arg k "$1" '.[$k] // empty' "$CONSOLE_RECORD" 2>/dev/null || true; }
++# console_record_update <json-object>: merge launch fields into the record, only
++# when it names the pane this --console runs in (a hand-run --console in some
++# other pane never becomes the captain's console by writing here).
++console_record_update() {
++  local tmp
++  [ -f "$CONSOLE_RECORD" ] || return 1
++  [ "$(console_record_field pane_id)" = "${HERDR_PANE_ID:-}" ] || return 1
++  [ "$(console_record_field session)" = "$FM_HERDR_SESSION" ] || return 1
++  tmp=$(mktemp "$FM_HOME/state/.captain-console.XXXXXX") || return 1
++  if jq --argjson add "$1" '. + $add' "$CONSOLE_RECORD" > "$tmp" 2>/dev/null; then mv "$tmp" "$CONSOLE_RECORD"; else rm -f "$tmp"; return 1; fi
++}
++
+ # --- Herdr ancestry -----------------------------------------------------------
+ # Herdr injects HERDR_ENV/HERDR_PANE_ID/HERDR_SOCKET_PATH/HERDR_TAB_ID/
+ # HERDR_WORKSPACE_ID into every process it manages a pane for, and the upstream
+@@ -244,6 +446,14 @@
+ if [ "$MODE" = console-run ]; then
+   [ -n "${HERDR_PANE_ID:-}" ] || die "--console must run inside a pane of the clean-room Herdr session '$FM_HERDR_SESSION'; it was started with no Herdr ancestry"
+   [ "$FM_HERDR_ANCESTRY" = kept ] || die "--console refuses a foreign Herdr ancestry: $FM_HERDR_ANCESTRY"
++  # Claim the console record FIRST, before the identity probes below take their
++  # seconds, so the Desktop launch classifies this pane as `starting` (never as
++  # a stranded shell) from the moment the contract is running here.
++  if console_record_update "$(jq -n --arg pid "$$" --arg t "$(date -u +%FT%TZ)" '{console_pid:($pid|tonumber), launch_stage:"starting", started_at:$t, launch_mode:"", resume_id:"", exit_rc:null}')"; then
++    console_log "console: starting in pane $HERDR_PANE_ID (record claimed)"
++  else
++    console_log "console: starting in pane $HERDR_PANE_ID but the console record names another pane or is absent; launch fields not recorded"
++  fi
+ fi
+ 
+ # --- Tool PATH --------------------------------------------------------------
+@@ -291,18 +501,19 @@
+ console_workspaces() {  # workspace ids carrying the console label, one per line
+   hs workspace list 2>/dev/null | jq -r --arg l "$FM_CONSOLE_LABEL" '.result.workspaces[]? | select(.label==$l) | .workspace_id' 2>/dev/null
+ }
++SESSION_STARTED_NOW=0   # 1 when THIS launch started the server: Herdr's restore is then in flight
+ ensure_session() {
+   session_running && return 0
+   local log="$FM_HOME/state/herdr-server.log"
+   mkdir -p "$FM_HOME/state"
+   ( setsid herdr server --session "$FM_HERDR_SESSION" >>"$log" 2>&1 < /dev/null & )
++  SESSION_STARTED_NOW=1
+   for _ in $(seq 1 30); do
+     session_running && return 0
+     sleep 0.5
+   done
+   die "the clean-room Herdr session '$FM_HERDR_SESSION' did not come up within 15s (see $log)"
+ }
+-CONSOLE_RECORD=$FM_HOME/state/captain-console.json
+ console_record_pane() {  # prints "<ws> <pane>" from the record if that pane still exists in this session
+   local ws pane rec_harness
+   [ -f "$CONSOLE_RECORD" ] || return 1
+@@ -324,7 +535,7 @@
+   # the upstream adapter also creates a "firstmate"-labeled workspace for a
+   # worker spawned from outside Herdr, and a label cannot tell the two apart.
+   if rec=$(console_record_pane); then
+-    printf '%s existing\n' "$rec"
++    console_converge "${rec% *}" "${rec#* }"
+     return 0
+   fi
+   out=$(hs workspace create --cwd "$FM_CODE_ROOT" --label "$FM_CONSOLE_LABEL" --focus \
+@@ -653,6 +864,220 @@
+   exit 1
+ }
+ 
++# --- Console launch contract: runtime (control issue #8 REVISE 2; see the header) ---
++# console_backend <function> [args...]: run ONE upstream backend helper in its
++# own bash (the upstream libraries are not `set -e` clean), printing its stdout.
++console_backend() {
++  FM_HOME="$FM_HOME" HERDR_SESSION="$FM_HERDR_SESSION" bash -c '
++    set +e
++    root=$1; shift
++    . "$root/bin/fm-wake-lib.sh" >/dev/null 2>&1 || exit 1
++    . "$root/bin/fm-backend.sh" >/dev/null 2>&1 || exit 1
++    fm_backend_source herdr >/dev/null 2>&1 || exit 1
++    "$@"
++  ' _ "$FM_CODE_ROOT" "$@"
++}
++console_pane_process() {  # <pane> -> "name=<n> pid=<p> ppid=<pp> shell_pid=<s> count=<c>" or nothing when the pane is unreadable
++  local info name pid ppid shell_pid count
++  info=$(hs pane process-info --pane "$1" 2>/dev/null) || return 1
++  printf '%s' "$info" | jq -e --arg pane "$1" '.result.type == "pane_process_info" and .result.process_info.pane_id == $pane' >/dev/null 2>&1 || return 1
++  name=$(printf '%s' "$info" | jq -r '.result.process_info.foreground_processes[0].name // empty')
++  pid=$(printf '%s' "$info" | jq -r '.result.process_info.foreground_processes[0].pid // empty')
++  shell_pid=$(printf '%s' "$info" | jq -r '.result.process_info.shell_pid // empty')
++  count=$(printf '%s' "$info" | jq -r '.result.process_info.foreground_processes | length')
++  ppid=''
++  [ -z "$pid" ] || ppid=$(ps -o ppid= -p "$pid" 2>/dev/null | tr -d '[:space:]' || true)
++  printf 'name=%s pid=%s ppid=%s shell_pid=%s count=%s\n' "${name:-none}" "${pid:-0}" "${ppid:-0}" "${shell_pid:-0}" "${count:-0}"
++}
++console_pane_recorded_session_of() {  # <pane> -> Herdr's own persisted claude session id for the pane, if any
++  hs pane get "$1" 2>/dev/null | jq -r '.result.pane.agent_session // empty | select(.agent=="claude" and .kind=="id") | .value // empty' 2>/dev/null || true
++}
++# console_pane_state <pane>: the observed class of the recorded console pane.
++console_pane_state() {
++  local pane=$1 proc cpid alive=0 cls
++  proc=$(console_pane_process "$pane") || { echo absent; return 0; }
++  cpid=$(console_record_field console_pid); case "$cpid" in ''|*[!0-9]*) cpid=0 ;; esac
++  [ "$cpid" = 0 ] || ! kill -0 "$cpid" 2>/dev/null || alive=1
++  cls=$(console_pane_classify "$(cold_arm_field "$proc" name)" "$(cold_arm_field "$proc" pid)" "$(cold_arm_field "$proc" ppid)" "$cpid" "$alive" "${FM_HARNESS##*/}")
++  if [ "$cls" = shell ]; then
++    # The upstream idle-shell proof (one lone recognized shell, no child, sleeping)
++    # is the only thing that turns "a shell is in the foreground" into "stranded".
++    console_backend fm_backend_herdr_pane_idle_shell_pid "$FM_HERDR_SESSION" "$pane" >/dev/null 2>&1 || cls=other
++  fi
++  echo "$cls"
++}
++# console_restore_settle <pane>: after THIS launch started the server, wait for
++# Herdr's restore to settle on the recorded pane: the pane must exist and its
++# foreground must read the same for three consecutive seconds (a native resume
++# that fails takes about 1.5 s to fall back to the shell).
++console_restore_settle() {
++  local pane=$1 deadline last='' same=0 proc key
++  deadline=$(( $(date +%s) + CONSOLE_RESTORE_SETTLE ))
++  while [ "$(date +%s)" -lt "$deadline" ]; do
++    if proc=$(console_pane_process "$pane"); then
++      key="$(cold_arm_field "$proc" name):$(cold_arm_field "$proc" pid)"
++      if [ "$key" = "$last" ]; then same=$((same + 1)); else same=0; last=$key; fi
++      [ "$same" -lt 2 ] || { console_log "converge: restore settled on pane $pane ($proc)"; return 0; }
++    fi
++    sleep 1
++  done
++  console_log "converge: restore did not settle on pane $pane within ${CONSOLE_RESTORE_SETTLE}s (last: ${last:-unreadable})"
++  return 0
++}
++# console_restart_in_pane <ws> <pane> <resume-id|""> <why>: type the canonical
++# console contract into the stranded pane's shell, once per two minutes.
++console_restart_in_pane() {
++  local ws=$1 pane=$2 sid=$3 why=$4 marker cmd old_cpid new_cpid deadline age
++  marker="$FM_HOME/state/.console-restart.$(printf '%s' "$pane" | tr -c 'A-Za-z0-9' '_')"
++  if [ -f "$marker" ]; then
++    age=$(( $(date +%s) - $(cat "$marker" 2>/dev/null || echo 0) ))
++    [ "$age" -ge 120 ] || die "the console was already restarted in pane $pane ${age}s ago and is not canonical yet ($why); refusing a second restart within two minutes (no retry loop) - inspect with $FM_HOME/enter-firstmate.sh --doctor"
++  fi
++  cmd="exec '$FM_HOME/enter-firstmate.sh' --console"
++  if [ -n "$sid" ]; then console_resume_id_valid "$sid" || die "refusing to pass a malformed resume id to --console: $sid"; cmd="$cmd --resume '$sid'"; fi
++  old_cpid=$(console_record_field console_pid)
++  date +%s > "$marker"
++  hs pane run "$pane" "$cmd" >/dev/null 2>&1 || die "could not restart the console in pane $pane"
++  console_log "converge: restarted the console contract in pane $pane ($why) resume=${sid:-none}"
++  deadline=$(( $(date +%s) + 20 ))
++  while [ "$(date +%s)" -lt "$deadline" ]; do
++    new_cpid=$(console_record_field console_pid)
++    if [ -n "$new_cpid" ] && [ "$new_cpid" != "$old_cpid" ] && kill -0 "$new_cpid" 2>/dev/null; then
++      printf 'enter-firstmate: console restarted in pane %s (%s); the console contract is running there as pid %s\n' "$pane" "$why" "$new_cpid" >&2
++      printf '%s %s restarted\n' "$ws" "$pane"
++      return 0
++    fi
++    sleep 0.5
++  done
++  printf 'enter-firstmate: WARNING: the console contract was typed into pane %s (%s) but did not claim the console record within 20s; watch that pane\n' "$pane" "$why" >&2
++  printf '%s %s restart-unconfirmed\n' "$ws" "$pane"
++}
++# console_converge <ws> <pane>: the recorded pane exists; decide from what is
++# OBSERVED in it whether the canonical console is live, and converge if not.
++console_converge() {
++  local ws=$1 pane=$2 target cls sid composer action verdict deadline proc
++  target="$FM_HERDR_SESSION:$pane"
++  [ "$SESSION_STARTED_NOW" = 0 ] || console_restore_settle "$pane"
++  cls=$(console_pane_state "$pane")
++  sid=''; composer=unknown
++  if [ "$cls" = foreign-harness ]; then
++    sid=$(console_pane_recorded_session_of "$pane")
++    composer=$(console_backend fm_backend_composer_state herdr "$target" 2>/dev/null || echo unknown)
++  fi
++  action=$(console_converge_action "$cls" "$SESSION_STARTED_NOW" "$composer" "$sid")
++  console_log "converge: pane=$pane class=$cls session_started_now=$SESSION_STARTED_NOW composer=$composer herdr_session_id=${sid:-none} action=$action"
++  case "$action" in
++    reuse)
++      printf '%s %s existing\n' "$ws" "$pane"
++      return 0 ;;
++    restart)
++      console_restart_in_pane "$ws" "$pane" "" "pane was stranded at an idle shell; the previous console pid $(console_record_field console_pid) is gone"
++      return 0 ;;
++    converge)
++      # Herdr's native resume-on-restore put a harness this launcher did not start
++      # into the console pane (only possible right after THIS launch started the
++      # server). Its composer is provably empty, so exit it the way fm-control
++      # does, then relaunch the SAME conversation under the canonical contract.
++      printf 'enter-firstmate: console pane %s runs %s restored natively by Herdr (session %s), not by this launcher; exiting it and relaunching that session under the canonical console contract\n' "$pane" "$FM_HARNESS" "$sid" >&2
++      verdict=$(console_backend fm_backend_send_text_submit herdr "$target" "$(console_exit_command)" 3 0.5 1.2 2>/dev/null || echo send-failed)
++      [ "$verdict" != send-failed ] || die "could not send the exit command into pane $pane; leaving it alone - exit it by hand and click the launcher again"
++      deadline=$(( $(date +%s) + CONSOLE_EXIT_WAIT ))
++      while [ "$(date +%s)" -lt "$deadline" ]; do
++        if proc=$(console_pane_process "$pane"); then
++          case "$(cold_arm_field "$proc" name)" in sh|bash|zsh|dash|ksh|fish) break ;; esac
++        fi
++        sleep 1
++      done
++      [ "$(console_pane_state "$pane")" = shell ] || die "pane $pane did not return to an idle shell within ${CONSOLE_EXIT_WAIT}s after the exit command (submit verdict: $verdict); leaving it alone - inspect it and click the launcher again"
++      console_restart_in_pane "$ws" "$pane" "$sid" "Herdr's native resume of session $sid was exited (verdict $verdict)"
++      return 0 ;;
++    *)
++      case "$cls" in
++        foreign-harness)
++          printf 'enter-firstmate: WARNING: console pane %s runs %s NOT started by this launcher (no cold-start arm, style, or permission policy applied)%s; it is left untouched. Exit it (%s) and click the launcher again, or read %s --doctor\n' \
++            "$pane" "$FM_HARNESS" "$( [ "$SESSION_STARTED_NOW" = 1 ] && printf ' - composer %s, herdr session id %s' "$composer" "${sid:-none}" || printf ' - the server was already running, so this may be a live session' )" "$(console_exit_command)" "$FM_HOME/enter-firstmate.sh" >&2 ;;
++        absent)
++          printf 'enter-firstmate: WARNING: console pane %s vanished while converging; click the launcher again\n' "$pane" >&2 ;;
++        *)
++          printf 'enter-firstmate: WARNING: console pane %s foreground is neither the canonical console nor an idle shell (%s); it is left untouched - inspect it\n' "$pane" "$cls" >&2 ;;
++      esac
++      printf '%s %s existing-%s\n' "$ws" "$pane" "$cls"
++      return 0 ;;
++  esac
++}
++console_exit_command() {  # the harness's own exit command, as bin/fm-control-lib.sh's fm_control_exit_command
++  case "$FM_HARNESS" in codex|pi|pi-signed) printf '/quit' ;; *) printf '/exit' ;; esac
++}
++console_pane_recorded_session() { console_pane_recorded_session_of "$HERDR_PANE_ID"; }
++# console_run [harness args...]: --console's launch step, after the supervision
++# arm. Owns the resume decision, the argv, the record, and the observed
++# stale-resume fallback. Never returns: it exits with the harness's status.
++console_run() {
++  local resume='' origin='' verdict argv=() fresh=() started rc elapsed outcome policy_state style
++  local -a passthrough=()
++  while [ $# -gt 0 ]; do
++    case "$1" in
++      --resume) [ $# -ge 2 ] || die "--console --resume needs a session id"; resume=$2; origin=explicit; shift 2 ;;
++      --resume=*) resume=${1#--resume=}; origin=explicit; shift ;;
++      *) passthrough+=("$1"); shift ;;
++    esac
++  done
++  if [ -z "$resume" ] && [ "$FM_HARNESS" = claude ]; then
++    resume=$(console_pane_recorded_session || true)
++    [ -z "$resume" ] || origin=herdr-record
++  fi
++  if [ -n "$resume" ]; then
++    if [ "$FM_HARNESS" != claude ]; then
++      console_log "resume-skipped id=$resume origin=$origin verdict=harness-$FM_HARNESS"; resume=''
++    else
++      verdict=$(console_resume_candidate "${CLAUDE_CONFIG_DIR:-$HOME/.claude}" "$FM_CODE_ROOT" "$resume")
++      if [ "$verdict" != valid ]; then
++        printf 'enter-firstmate: console: not resuming Claude session %s (%s: %s); starting a fresh session under the same contract\n' "$resume" "$origin" "$verdict" >&2
++        console_log "resume-skipped id=$resume origin=$origin verdict=$verdict"
++        resume=''
++      fi
++    fi
++  fi
++  policy_state=$(permission_policy_state "$FM_HARNESS")
++  style=${HARNESS_STYLE_SETTINGS:-}
++  mapfile -t fresh < <(console_harness_argv "$FM_HARNESS" "$style" "" "${passthrough[@]}")
++  if [ -n "$resume" ]; then mapfile -t argv < <(console_harness_argv "$FM_HARNESS" "$style" "$resume" "${passthrough[@]}"); else argv=("${fresh[@]}"); fi
++  # Launch-byte watched red (control #7): the primary claude console can never
++  # start without the captain-authorized posture, whatever composed the argv.
++  if [ "$FM_HARNESS" = claude ]; then
++    case " ${argv[*]} " in *" $(permission_policy_posture claude) "*) ;; *) die "console argv lost the captain-authorized permission posture ($(permission_policy_posture claude)); refusing to start an approval-prompting console" ;; esac
++  fi
++  console_record_update "$(jq -n --arg pid "$$" --arg mode "$( [ -n "$resume" ] && echo resume || echo fresh )" --arg id "$resume" --arg t "$(date -u +%FT%TZ)" --arg argv "${argv[*]}" --arg pol "$policy_state" \
++    '{console_pid:($pid|tonumber), launch_stage:"launching", launch_mode:$mode, resume_id:$id, launched_at:$t, argv:$argv, permission_state:$pol}')" \
++    || printf 'enter-firstmate: note: the console record does not name this pane; launch fields not recorded\n' >&2
++  printf 'enter-firstmate: console: %s %s; permissions %s [%s]; style %s\n' "$FM_HARNESS" \
++    "$( [ -n "$resume" ] && printf 'resuming session %s (%s)' "$resume" "$origin" || printf 'fresh session' )" \
++    "$(permission_policy_posture "$FM_HARNESS")" "$policy_state" "${style:-off}" >&2
++  console_log "launch harness=$FM_HARNESS mode=$( [ -n "$resume" ] && echo resume || echo fresh ) resume=${resume:-none} origin=${origin:-none} permission=$policy_state argv=${argv[*]}"
++  started=$(date +%s)
++  set +e
++  "$FM_HARNESS" "${argv[@]}"; rc=$?
++  set -e
++  elapsed=$(( $(date +%s) - started ))
++  outcome=$(console_launch_outcome "$( [ -n "$resume" ] && echo 1 || echo 0 )" "$rc" "$elapsed" "$CONSOLE_RESUME_WINDOW")
++  if [ "$outcome" = fallback-fresh ]; then
++    printf 'enter-firstmate: console: STALE RESUME - %s exited rc=%s after %ss while resuming session %s (%s); starting ONE fresh session under the identical contract (no further retry)\n' "$FM_HARNESS" "$rc" "$elapsed" "$resume" "$origin" >&2
++    console_log "stale-resume-fallback id=$resume origin=$origin rc=$rc elapsed=${elapsed}s -> fresh"
++    console_record_update "$(jq -n --arg t "$(date -u +%FT%TZ)" --arg argv "${fresh[*]}" '{launch_mode:"fresh-after-stale-resume", resume_id:"", launched_at:$t, argv:$argv}')" || true
++    started=$(date +%s)
++    set +e
++    "$FM_HARNESS" "${fresh[@]}"; rc=$?
++    set -e
++    elapsed=$(( $(date +%s) - started ))
++    console_log "exited mode=fresh-after-stale-resume rc=$rc elapsed=${elapsed}s"
++  else
++    console_log "exited mode=$( [ -n "$resume" ] && echo resume || echo fresh ) rc=$rc elapsed=${elapsed}s"
++  fi
++  console_record_update "$(jq -n --arg rc "$rc" --arg t "$(date -u +%FT%TZ)" '{launch_stage:"exited", exit_rc:($rc|tonumber), exited_at:$t}')" || true
++  [ "$rc" -eq 0 ] || printf 'enter-firstmate: console: %s exited rc=%s after %ss; this pane ends with it (no interactive shell is left behind as a nominal success) - relaunch from the Desktop shortcut, or read %s --doctor\n' "$FM_HARNESS" "$rc" "$elapsed" "$FM_HOME/enter-firstmate.sh" >&2
++  exit "$rc"
++}
++
+ if [ "$MODE" = arm-owner ]; then
+   [ "$#" -eq 3 ] || die "--arm-owner needs <backend> <target> <handoff-file>"
+   cold_arm_owner "$1" "$2" "$3"
+@@ -711,6 +1136,33 @@
+   echo "  console command:   $FM_HOME/enter-firstmate.sh --console  (typed into the workspace's root pane; no worker spawned)"
+   echo "  console record:    $CONSOLE_RECORD"
+   echo "  '$FM_CONSOLE_LABEL' workspaces: ${console_labeled:-none}  (label is not identity; the record is)"
++  if rec=$(console_record_pane 2>/dev/null); then
++    doc_pane=${rec#* }
++    doc_proc=$(console_pane_process "$doc_pane" 2>/dev/null || echo 'unreadable')
++    echo "  observed pane:     ${doc_proc}"
++    echo "  console class:     $(console_pane_state "$doc_pane" 2>/dev/null || echo COULD-NOT-OBSERVE)  (canonical = harness started by --console pid $(console_record_field console_pid); shell = stranded; foreign-harness = not started by this launcher)"
++    echo "  last launch:       stage=$(console_record_field launch_stage) mode=$(console_record_field launch_mode) resume=$(console_record_field resume_id) at=$(console_record_field launched_at) rc=$(console_record_field exit_rc) permission=$(console_record_field permission_state)"
++    doc_sid=$(console_pane_recorded_session_of "$doc_pane")
++    echo "  herdr session id:  ${doc_sid:-none}  (Herdr's own pane record; the resume candidate for the next --console)$( [ -z "$doc_sid" ] || printf ' -> %s' "$(console_resume_candidate "${CLAUDE_CONFIG_DIR:-$HOME/.claude}" "$FM_CODE_ROOT" "$doc_sid")")"
++  fi
++  echo "  fresh console argv: $FM_HARNESS $(console_harness_argv "$FM_HARNESS" "$( [ "$FM_HARNESS" = claude ] && [ -f "$FM_HOME/config/claude-settings.json" ] && printf '%s' "$FM_HOME/config/claude-settings.json" )" "" | tr '\n' ' ')"
++  echo "  resume window:     ${CONSOLE_RESUME_WINDOW}s (a resume exiting non-zero inside it falls back ONCE to a fresh session)   restore settle: ${CONSOLE_RESTORE_SETTLE}s   exit wait: ${CONSOLE_EXIT_WAIT}s"
++  echo "  herdr native resume: $(grep -E '^\s*resume_agents_on_restore\s*=' "$HOME/.config/herdr/config.toml" 2>/dev/null | tail -1 | tr -d ' ' || true)$(grep -qE '^\s*resume_agents_on_restore\s*=' "$HOME/.config/herdr/config.toml" 2>/dev/null || printf 'unset -> default true')  (global ~/.config/herdr/config.toml; shared with the other live home, so not changed by this launcher)"
++  echo "  launch log:        $CONSOLE_LOG$( [ -f "$CONSOLE_LOG" ] && printf '  last: %s' "$(tail -1 "$CONSOLE_LOG" | cut -c1-200)" || printf '  (absent)')"
++  echo
++  echo "-- harness permission policy (control issue #7 ruling 3; owner: this launcher's permission_policy_* block)"
++  echo "  primary ($FM_HARNESS): $(permission_policy_posture "$FM_HARNESS")  [$(permission_policy_state "$FM_HARNESS")]  owner: $(permission_policy_owner "$FM_HARNESS")"
++  for h in $(permission_policy_harnesses); do
++    tok=$(permission_policy_spawn_token "$h")
++    if [ -n "$tok" ]; then
++      if grep -qF -- "$tok" "$FM_CODE_ROOT/bin/fm-spawn.sh" 2>/dev/null; then drift="present in bin/fm-spawn.sh"; else drift="DRIFT: token '$tok' NOT in bin/fm-spawn.sh"; fi
++    else
++      drift="no spawn token (nothing to prove)"
++    fi
++    printf '  %-10s %-14s %s  <- %s\n' "$h:" "$(permission_policy_state "$h")" "$(permission_policy_posture "$h")" "$drift"
++  done
++  echo "  scope:             interactive approval prompts only; FirstMate authority, merge/landing rules, gates, validators, credentials unchanged"
++  echo "  global untouched:  ~/.claude/settings.json skipDangerousModePermissionPrompt=$(jq -r '.skipDangerousModePermissionPrompt // "unset"' "$HOME/.claude/settings.json" 2>/dev/null)  permissions.defaultMode=$(jq -r '.permissions.defaultMode // "unset"' "$HOME/.claude/settings.json" 2>/dev/null)  (read only; never written here)"
+   echo
+   echo "-- runtime backend and herdr identity"
+   echo "  config/backend:    $FM_BACKEND_CONFIGURED"
+@@ -814,9 +1266,9 @@
+   if ! cmp -s "$STYLE_CANON" "$STYLE_MATERIALIZED"; then cp "$STYLE_CANON" "$STYLE_MATERIALIZED"; fi
+   cmp -s "$STYLE_CANON" "$STYLE_MATERIALIZED"
+ }
+-HARNESS_STYLE_ARGS=()
++HARNESS_STYLE_SETTINGS=''
+ if [ "$FM_HARNESS" = claude ] && [ -f "$STYLE_SETTINGS" ] && style_materialize; then
+-  HARNESS_STYLE_ARGS=(--settings "$STYLE_SETTINGS")
++  HARNESS_STYLE_SETTINGS=$STYLE_SETTINGS
+ fi
+ 
+ # --- console run (inside the clean-room session's own pane) ---------------------
+@@ -824,7 +1276,12 @@
+   # Supervision first (control issue #8): the watcher is verified live, or the
+   # degraded banner is printed, before the harness replaces this shell.
+   cold_arm_ensure herdr "$FM_HERDR_SESSION:$HERDR_PANE_ID"
+-  exec "$FM_HARNESS" "${HARNESS_STYLE_ARGS[@]}" "$@"
++  # Then the launch contract (control issue #8 REVISE 2, control issue #7):
++  # validated resume or fresh, permission policy on the argv, observed
++  # stale-resume fallback. console_run exits with the harness's status.
++  console_run "$@"
++  # shellcheck disable=SC2317 # console_run always exits; this is the belt.
++  die "console_run returned; this is a launcher bug"
+ fi
+ 
+ # --- console launch (outside Herdr, or after dropping a foreign ancestry) ------

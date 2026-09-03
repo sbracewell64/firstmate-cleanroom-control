@@ -1,0 +1,5 @@
+    PID    PPID    PGID     SID ELAPSED CMD
+ 219863  206183  219863  219863     554 /bin/bash
+ 219960  219863  219960  219863     554 claude --resume 455c55cd-6938-4493-88a4-c5c60905e751
+{"foreground_process_group_id":219960,"foreground_processes":[{"argv":["claude","--resume","455c55cd-6938-4493-88a4-c5c60905e751"],"cmdline":"claude --resume 455c55cd-6938-4493-88a4-c5c60905e751","cwd":"/mnt/e/FirstMate-Cleanroom/upstream/firstmate","name":"claude","pid":219960}],"pane_id":"w5:p1","shell_pid":219863}
+{"agent":"claude","agent_session":{"agent":"claude","kind":"id","source":"herdr:claude","value":"455c55cd-6938-4493-88a4-c5c60905e751"},"agent_status":"working"}

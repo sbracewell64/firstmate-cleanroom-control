@@ -1,0 +1,14 @@
+PROOF-START B4
+enter-firstmate: supervision: NOT armed by the launcher - a live session (harness pid 2650242) already holds
+this home's session lock and its own between-turn arm owns the watcher (watcher NOT live, beacon 1646s); this
+ console will open read-only until that session ends
+enter-firstmate: console: not resuming Claude session ../x;rm (explicit: invalid-id); starting a fresh sessio
+n under the same contract
+enter-firstmate: note: the console record does not name this pane; launch fields not recorded
+enter-firstmate: console: claude fresh session; permissions --dangerously-skip-permissions [QUALIFIED]; style
+ /home/OPERATOR/.firstmate-cleanroom/config/claude-settings.json
+shim-claude argv: --dangerously-skip-permissions --settings /home/OPERATOR/.firstmate-cleanroom/config/claude-se
+ttings.json
+shim-claude: fresh session started
+console rc=0
+PROOF-END B4

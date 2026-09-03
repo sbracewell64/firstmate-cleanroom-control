@@ -1,0 +1,8 @@
+2026-09-03T22:06:40Z pid=1203610 converge-owner: waiting up to 120s for pane w8:p1 to materialize (Herdr spawns restored panes on TUI attach)
+2026-09-03T22:06:40Z pid=1203610 converge-owner: pane w8:p1 materialized; settling and classifying
+2026-09-03T22:06:42Z pid=1203610 converge: restore settled on pane w8:p1 (name=claude pid=1200175 ppid=1200042 shell_pid=1200042 count=1)
+2026-09-03T22:06:43Z pid=1203610 converge: pane=w8:p1 class=foreign-harness session_started_now=1 composer=empty herdr_session_id=4ceb01fb-3d42-4b72-ba57-fc201d3b6ca5 action=converge
+2026-09-03T22:06:45Z pid=1203610 converge: restarted the console contract in pane w8:p1 (Herdr's native resume of session 4ceb01fb-3d42-4b72-ba57-fc201d3b6ca5 was exited (verdict unknown)) resume=4ceb01fb-3d42-4b72-ba57-fc201d3b6ca5
+2026-09-03T22:06:45Z pid=1200042 console: starting in pane w8:p1 but the console record names another pane or is absent; launch fields not recorded
+2026-09-03T22:06:54Z pid=1200042 resume-skipped id=4ceb01fb-3d42-4b72-ba57-fc201d3b6ca5 origin=explicit verdict=no-transcript
+2026-09-03T22:06:54Z pid=1200042 launch harness=claude mode=fresh resume=none origin=explicit permission=QUALIFIED argv=--dangerously-skip-permissions --settings /home/OPERATOR/.firstmate-cleanroom/config/claude-settings.json

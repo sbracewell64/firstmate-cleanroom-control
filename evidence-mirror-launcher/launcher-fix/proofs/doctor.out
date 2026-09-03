@@ -1,0 +1,115 @@
+=== FirstMate-Cleanroom :: effective identity (doctor; nothing was started) ===
+
+-- host
+  wsl distro:        Ubuntu
+  uname:             Linux 6.18.33.2-microsoft-standard-WSL2
+  date:              2026-09-03T18:08:26-04:00
+
+-- firstmate
+  code root:         /mnt/e/FirstMate-Cleanroom/upstream/firstmate
+  code head:         41d0ab3
+  code worktree:     clean
+  FM_HOME:           /home/OPERATOR/.firstmate-cleanroom
+  cwd:               /mnt/e/FirstMate-Cleanroom/upstream/firstmate
+  harness:           /home/OPERATOR/.local/bin/claude
+
+-- captain console
+  captain_console_transport: herdr-session   (was: plain-terminal before 2026-09-02)
+  console session:   firstmate-cleanroom
+  console workspace: present: workspace w5 pane w5:p1 (this home's recorded console)
+  console command:   /home/OPERATOR/.firstmate-cleanroom/enter-firstmate.sh --console  (typed into the workspace's root pane; no worker spawned)
+  console record:    /home/OPERATOR/.firstmate-cleanroom/state/captain-console.json
+  'firstmate' workspaces: w5   (label is not identity; the record is)
+  observed pane:     name=claude pid=219960 ppid=219863 shell_pid=219863 count=1
+  console class:     foreign-harness  (canonical = harness started by --console pid ; shell = stranded; foreign-harness = not started by this launcher)
+  last launch:       stage= mode= resume= at= rc= permission=
+  herdr session id:  455c55cd-6938-4493-88a4-c5c60905e751  (Herdr's own pane record; the resume candidate for the next --console) -> valid
+  fresh console argv: claude --dangerously-skip-permissions --settings /home/OPERATOR/.firstmate-cleanroom/config/claude-settings.json 
+  resume window:     20s (a resume exiting non-zero inside it falls back ONCE to a fresh session)   restore settle: 12s   exit wait: 90s
+  herdr native resume: unset -> default true  (global ~/.config/herdr/config.toml; shared with the other live home, so not changed by this launcher)
+  launch log:        /home/OPERATOR/.firstmate-cleanroom/state/console-launch.log  last: 2026-09-03T22:07:08Z pid=1200042 exited mode=fresh rc=0 elapsed=14s
+
+-- harness permission policy (control issue #7 ruling 3; owner: this launcher's permission_policy_* block)
+  primary (claude): --dangerously-skip-permissions  [QUALIFIED]  owner: this launcher (primary console argv) + fm-spawn (workers)
+  claude:    QUALIFIED      --dangerously-skip-permissions  <- present in bin/fm-spawn.sh
+  codex:     QUALIFIED      --dangerously-bypass-approvals-and-sandbox  <- present in bin/fm-spawn.sh
+  opencode:  QUALIFIED      OPENCODE_CONFIG_CONTENT={"permission":{"*":"allow"}}  <- present in bin/fm-spawn.sh
+  pi:        CNO            none: the upstream spawn template passes no permission flag and a separate pi approval gate is not documented; not invented  <- no spawn token (nothing to prove)
+  pi-signed: CNO            none: the upstream spawn template passes no permission flag and a separate pi approval gate is not documented; not invented  <- no spawn token (nothing to prove)
+  grok:      QUALIFIED      --always-approve  <- present in bin/fm-spawn.sh
+  kimi:      QUALIFIED      --auto  <- present in bin/fm-spawn.sh
+  cursor:    QUALIFIED      --trust --yolo  <- present in bin/fm-spawn.sh
+  muse:      QUALIFIED      --yolo  <- present in bin/fm-spawn.sh
+  scope:             interactive approval prompts only; FirstMate authority, merge/landing rules, gates, validators, credentials unchanged
+  global untouched:  ~/.claude/settings.json skipDangerousModePermissionPrompt=true  permissions.defaultMode=unset  (read only; never written here)
+
+-- runtime backend and herdr identity
+  config/backend:    herdr
+  HERDR_SESSION:     firstmate-cleanroom   (from config/herdr-session)
+  herdr binary:      /home/OPERATOR/.local/bin/herdr
+  herdr client:      v0.7.5 protocol 17
+  herdr server:      running v0.7.5
+  adapter floors:    protocol>=14 events>=16 workspace-move>=16 presentation>=19 (herdr 0.8.0)
+  session socket:    /home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/herdr.sock
+  workspace label:   firstmate  (constant for every primary home; isolated here by the session, not the label)
+  parent pane:       kept
+
+-- tools (policy projected from the pinned upstream floors; repair is always clean-room-scoped)
+  PATH head:         /mnt/e/FirstMate-Cleanroom/tools/bin:/mnt/e/FirstMate-Cleanroom/tools/bin:/usr/local/sbin
+  tools first:       yes (/mnt/e/FirstMate-Cleanroom/tools/bin)
+  UNVERSIONED          node                 22.22.1  floor=-       /usr/bin/node 
+  UNVERSIONED          git                  2.53.0   floor=-       /usr/bin/git 
+  UNVERSIONED          gh                   2.96.0   floor=-       /usr/bin/gh 
+  QUALIFIED            no-mistakes          1.61.0   floor=1.46.0  /mnt/e/FirstMate-Cleanroom/tools/bin/no-mistakes [clean-room surface]
+  QUALIFIED            gh-axi               0.1.35   floor=0.1.29  /mnt/e/FirstMate-Cleanroom/tools/bin/gh-axi [clean-room surface]
+  UNVERSIONED          chrome-devtools-axi  0.1.33   floor=-       /mnt/e/FirstMate-Cleanroom/tools/bin/chrome-devtools-axi [clean-room surface]
+  QUALIFIED            lavish-axi           0.1.63   floor=0.1.46  /mnt/e/FirstMate-Cleanroom/tools/bin/lavish-axi [clean-room surface]
+  QUALIFIED            tasks-axi            0.2.5    floor=0.2.4   /mnt/e/FirstMate-Cleanroom/tools/bin/tasks-axi [clean-room surface]
+  QUALIFIED            quota-axi            0.1.35   floor=0.1.29  /mnt/e/FirstMate-Cleanroom/tools/bin/quota-axi [clean-room surface]
+  repair-path          /mnt/e/FirstMate-Cleanroom/tools/pin-axi-tools.sh  (clean-room-scoped pins; never npm install -g)
+  policy-verdict       ALL_QUALIFIED
+  jq / python3:      /usr/bin/jq / /usr/bin/python3
+
+-- no-mistakes isolation
+  NM_HOME:           /home/OPERATOR/.firstmate-cleanroom/no-mistakes
+  shared root:       /home/OPERATOR/.no-mistakes  (never used from here; daemon pid 3349937 untouched)
+  client:            /mnt/e/FirstMate-Cleanroom/tools/bin/no-mistakes  no-mistakes version v1.61.0 (0af0be6) 2026-08-31T14:04:25Z  [QUALIFIED]
+  clean-room daemon: running (pid 2897548)
+  root distinct:     yes
+
+-- captain presentation (output style; private activation, global untouched)
+  canonical copy:    /home/OPERATOR/.firstmate-cleanroom/config/output-styles/attention-kind.md  sha256 475c154e8847701b
+  donor pin:         alexgreensh/attention-span@8a0a7762 (0.7) output-styles/attention-kind.md sha256 475c154e8847701b AGPL-3.0
+  materialized:      /home/OPERATOR/.claude/output-styles/attention-kind.md  byte-identical
+  activation owner:  /home/OPERATOR/.firstmate-cleanroom/config/claude-settings.json -> outputStyle=Attention-kind  (passed as --settings by --console only)
+  global settings:   ~/.claude/settings.json outputStyle=unset   legacy home: unset
+
+-- control plane (projected through the single resolver; never re-authored here)
+  resolver:          /mnt/e/FirstMate-Cleanroom/artifacts/control/gen3/bin/fsc3_config.py
+  owner:             /home/OPERATOR/.firstmate-cleanroom/config/control-plane.yaml
+  protocol:          fm-sol-control/v2
+  repository:        sbracewell64/firstmate-cleanroom-control
+  browser sol proj:  FirstMate-Cleanroom
+  browser sol thread:Cleanroom Control
+  routing:           firstmate -> browser-sol  [control/escalation / to/browser-sol]
+  config generation: 912f6238d94dfdf8afd672bc7f28a445b66138c14a5a08fa266a77837346c2aa
+  schema generation: 43c1faa9ff8485ac7392b363a4d83729cd84ae4c1ab1a606e128ca20781342a8  (generation 3)
+  listener:          {"check_script_abspath":"/home/OPERATOR/.firstmate-cleanroom/state/cleanroom-control-v2.check.sh","check_script_path":"state/cleanroom-control-v2.check.sh","home":"/home/OPERATOR/.firstmate-cleanroom","id":"cleanroom-control-v2","record_abspath":"/home/OPERATOR/.firstmate-cleanroom/state/cleanroom-control-v2
+  inbound monitor:   cleanroom-control-v2-inbound cleanroom-control-v2-inbound none       0
+
+-- supervision (cold-start arm posture; the doctor arms nothing)
+  required:          true  (in-flight 1, event sources 1, relay poll no)
+  watcher:           NOT live (lock pid none alive=0; beacon 1111s ago)
+  arm owner ledger:  generation 27 owner pid 180464 (alive=0) outcome arming; claim open: 0  (/home/OPERATOR/.firstmate-cleanroom/state/.claude-autoarm-epoch, shared with the Stop hook)
+  session lock:      live (pid 219960)   away mode: off   state writable: 1
+  cold-start arm:    would 'defer-live-session' at the next --console launch (bound 40s; deliver wait 900s)
+  arm log:           /home/OPERATOR/.firstmate-cleanroom/state/cold-start-arm.log  last: 2026-09-03T22:06:54Z pid=1200042 ensure backend=herdr target=firstmate-cleanroom:w8:p1 decision=defer-live-session needed=true in_flight=1 sources=1 relay=no af
+
+-- non-adoption of the other live FirstMate home
+  its home:          /home/OPERATOR/kun-agent-workspace  (not on this launch path)
+  its herdr session: default           (this launch uses 'firstmate-cleanroom')
+  FM_HOME leak:      none
+  PATH leak:         none
+  NM_HOME leak:      none
+
+=== end doctor ===

@@ -1,0 +1,44 @@
+2026-09-03T21:12:57.900142Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="stream_closed" request_id="fm-eventwait" method="events.subscribe"
+2026-09-03T21:13:14.799950Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="stream_closed" request_id="fm-eventwait" method="events.subscribe"
+2026-09-03T21:14:42.909702Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w5" tab_id="w5:t8"
+2026-09-03T21:14:47.912014Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/session.json workspaces=1
+2026-09-03T21:14:56.566121Z  INFO herdr::logging: tab focused event="tab.focus" subsystem="tab" outcome="ok" workspace_id="w5" tab_id="w5:t1"
+2026-09-03T21:15:01.568728Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/session.json workspaces=1
+2026-09-03T21:15:10.066669Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="stream_closed" request_id="fm-eventwait" method="events.subscribe"
+2026-09-03T21:15:26.004263Z  INFO herdr::logging: api request completed event="api.request.complete" subsystem="api" outcome="stream_closed" request_id="fm-eventwait" method="events.subscribe"
+2026-09-03T21:15:51.451624Z  INFO herdr::server::headless: server shutdown initiated
+2026-09-03T21:15:51.501803Z  INFO herdr::server::headless: completing server shutdown
+2026-09-03T21:15:51.552628Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/session.json workspaces=1
+2026-09-03T21:15:51.552654Z  INFO herdr::server::headless: headless server exiting
+2026-09-03T21:15:52.113406Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=20 status="ExitStatus { code: 1, signal: Some(\"Killed\") }"
+2026-09-03T21:15:52.117759Z  INFO herdr::pane: pane session terminated pane=20 pid=3566567 signal=Kill
+2026-09-03T21:15:52.118702Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=27 status="ExitStatus { code: 1, signal: Some(\"Hangup\") }"
+2026-09-03T21:15:52.119693Z  INFO herdr::pane: pane session terminated pane=27 pid=215183 signal=Hangup
+2026-09-03T21:15:52.123256Z  INFO herdr::logging: herdr exiting event="app.shutdown" subsystem="server" outcome="completed" pid=1015725
+2026-09-03T21:16:26.977380Z  INFO herdr::api::server: api server listening path=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/herdr.sock
+2026-09-03T21:16:26.992343Z  INFO herdr::logging: session restore evaluated event="persist.restore" subsystem="persist" outcome="ok" workspaces=1
+2026-09-03T21:16:26.992451Z  INFO herdr::app: using pane scrollback configuration pane_scrollback_limit_bytes=10000000
+2026-09-03T21:16:27.937071Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-03T21:16:27.939111Z  INFO herdr::server::headless: client protocol socket listening path=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/herdr-client.sock
+2026-09-03T21:16:27.939156Z  INFO herdr::server::headless: herdr server started api_socket=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/herdr.sock client_socket=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/herdr-client.sock
+2026-09-03T21:16:27.939273Z  INFO herdr::logging: herdr starting event="app.startup" subsystem="server" outcome="started" pid=2278112
+2026-09-03T21:16:28.191777Z  INFO herdr::server::headless: client connected client_id=2 cols=120 rows=30 cell_width_px=0 cell_height_px=0 render_encoding=SemanticFrame
+2026-09-03T21:16:28.210158Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=1 rows=29 cols=94 scrollback_limit_bytes=10000000
+2026-09-03T21:16:28.211409Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=1 pid=2279288
+2026-09-03T21:16:28.211611Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=2 rows=29 cols=93 scrollback_limit_bytes=10000000
+2026-09-03T21:16:28.212484Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=2 pid=2279293
+2026-09-03T21:16:28.267403Z  INFO herdr::logging: update available event="update.available" subsystem="update" outcome="ok" version="0.8.2"
+2026-09-03T21:16:28.267456Z  INFO herdr::update: new stable build available at https://github.com/herdrdev/herdr/releases/download/v0.8.2/herdr-linux-x86_64
+2026-09-03T21:16:28.267975Z  INFO herdr::update: auto-update check: 0.8.2 available, waiting for explicit install
+2026-09-03T21:16:28.326937Z  WARN herdr::detect::manifest_update: skipping unknown remote manifest agent agent="qwen"
+2026-09-03T21:16:28.763997Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(Claude) process=claude pgid=Some(2279368)
+2026-09-03T21:16:28.765221Z  INFO herdr::pane: agent changed pane=2 previous_agent=None agent=Some(Claude) process=claude pgid=Some(2279370)
+2026-09-03T21:16:29.971275Z  INFO herdr::pane: agent changed pane=2 previous_agent=Some(Claude) agent=None pgid=Some(2279293)
+2026-09-03T21:16:30.270654Z  INFO herdr::pane: agent changed pane=1 previous_agent=Some(Claude) agent=None pgid=Some(2279288)
+2026-09-03T21:16:34.970432Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/session.json workspaces=1
+2026-09-03T21:16:44.810338Z  INFO herdr::server::headless: client resize client_id=2 cols=136 rows=70 cell_width_px=0 cell_height_px=0
+2026-09-03T21:18:53.668282Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(Claude) process=claude pgid=Some(2419636)
+2026-09-03T21:18:59.299572Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/session.json workspaces=1
+2026-09-03T21:22:31.397193Z  INFO herdr::pane: agent changed pane=1 previous_agent=Some(Claude) agent=None pgid=Some(2279288)
+2026-09-03T21:22:34.908407Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(Claude) process=claude pgid=Some(2650242)
+2026-09-03T21:22:40.746145Z  INFO herdr::logging: session saved event="persist.save" subsystem="persist" outcome="ok" path=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/session.json workspaces=1

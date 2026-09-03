@@ -1,0 +1,133 @@
+--- /home/OPERATOR/.firstmate-cleanroom/state/enter-firstmate.sh.pre-control8-revise2b.20260903T220522Z	2026-09-03 17:38:54.930261641 -0400
++++ /home/OPERATOR/.firstmate-cleanroom/enter-firstmate.sh	2026-09-03 18:05:22.681293208 -0400
+@@ -128,6 +128,16 @@
+ #     left untouched and reported loudly (never typed into).
+ # Every launch decision is one line in state/console-launch.log, fields in the
+ # console record, and a block in the doctor's "captain console" section.
++# Live relaunch 2 (21:50Z) showed the timing that the inline classification
++# cannot see: a headless Herdr server evaluates its restore at start but SPAWNS
++# the restored console pane's terminal only when a TUI client attaches (server
++# log: `client connected` then `pane.spawn.start` 13 s after startup), and this
++# launcher attaches LAST (`exec herdr --session`). The inline convergence saw an
++# unreadable pane for its whole settle window and left it; the native resume
++# then ran unopposed. So when THIS launch started the server, the convergence
++# is delegated to ONE detached owner (`--converge-owner`, the arm owner's
++# setsid idiom) that waits for the pane to materialize after the attach, lets
++# the restore settle, and applies exactly the same classification and actions.
+ #
+ # HARNESS PERMISSION POLICY (2026-09-03, control issue #7 ruling 3, explicit
+ # captain authorization; applied in the recovery session after the live proof).
+@@ -155,7 +165,10 @@
+ #         enter-firstmate.sh --console --resume <id>   (internal) same, resuming Claude session <id> when its transcript exists
+ #         FM_ENTRY_RESUME_WINDOW=<s>                     a resume that exits non-zero within this bound is stale (default 20)
+ #         FM_ENTRY_RESTORE_SETTLE=<s>                    bound waited for Herdr's restore to settle after this launch started the server (default 12)
+-#         FM_ENTRY_EXIT_WAIT=<s>                         bound for a restored non-canonical harness to exit before the canonical relaunch (default 45)
++#         FM_ENTRY_EXIT_WAIT=<s>                         bound for a restored non-canonical harness to exit before the canonical relaunch (default 90)
++#         enter-firstmate.sh --converge-owner <ws> <pane>  (internal) detached post-attach convergence owner, started by a launch that started the server
++#         FM_ENTRY_ATTACH_WAIT=<s>                       bound the convergence owner waits for the restored pane to materialize (default 120)
++#         FM_ENTRY_COMPOSER_WAIT=<s>                     bound the convergence waits for a just-restored harness's composer to read empty (default 60)
+ #         FM_ENTRY_LIB=1 . enter-firstmate.sh            load only the pure decision functions (tests)
+ set -eu
+ 
+@@ -175,6 +188,7 @@
+   --doctor) DOCTOR=1; shift ;;
+   --console) MODE=console-run; shift ;;
+   --arm-owner) MODE=arm-owner; shift ;;
++  --converge-owner) MODE=converge-owner; shift ;;
+ esac
+ [ -z "$DOCTOR" ] || MODE=doctor
+ 
+@@ -354,6 +368,11 @@
+   fi
+   case "$name" in sh|bash|zsh|dash|ksh|fish) echo shell ;; *) echo other ;; esac
+ }
++# console_converge_plan <session-started-now 0|1> -> inline | deferred
++# A server this launch started restores the console pane's terminal only when
++# the TUI attaches, after the launch path's last step, so its convergence runs
++# in the detached post-attach owner; a running server has a readable pane now.
++console_converge_plan() { if [ "${1:-0}" = 1 ]; then echo deferred; else echo inline; fi; }
+ # console_converge_action <class> <session-started-now 0|1> <composer> <resume-id>
+ # -> reuse | restart | converge | leave
+ console_converge_action() {
+@@ -405,10 +424,14 @@
+ CONSOLE_LOG=$FM_HOME/state/console-launch.log
+ CONSOLE_RESUME_WINDOW=${FM_ENTRY_RESUME_WINDOW:-20}
+ CONSOLE_RESTORE_SETTLE=${FM_ENTRY_RESTORE_SETTLE:-12}
+-CONSOLE_EXIT_WAIT=${FM_ENTRY_EXIT_WAIT:-45}
++CONSOLE_EXIT_WAIT=${FM_ENTRY_EXIT_WAIT:-90}
++CONSOLE_ATTACH_WAIT=${FM_ENTRY_ATTACH_WAIT:-120}
++CONSOLE_COMPOSER_WAIT=${FM_ENTRY_COMPOSER_WAIT:-60}
+ case "$CONSOLE_RESUME_WINDOW" in ''|*[!0-9]*) CONSOLE_RESUME_WINDOW=20 ;; esac
+ case "$CONSOLE_RESTORE_SETTLE" in ''|*[!0-9]*) CONSOLE_RESTORE_SETTLE=12 ;; esac
+-case "$CONSOLE_EXIT_WAIT" in ''|*[!0-9]*) CONSOLE_EXIT_WAIT=45 ;; esac
++case "$CONSOLE_EXIT_WAIT" in ''|*[!0-9]*) CONSOLE_EXIT_WAIT=90 ;; esac
++case "$CONSOLE_ATTACH_WAIT" in ''|*[!0-9]*) CONSOLE_ATTACH_WAIT=120 ;; esac
++case "$CONSOLE_COMPOSER_WAIT" in ''|*[!0-9]*) CONSOLE_COMPOSER_WAIT=60 ;; esac
+ console_log() { printf '%s pid=%s %s\n' "$(date -u +%FT%TZ)" "$$" "$*" 2>/dev/null >> "$CONSOLE_LOG" || true; }
+ console_record_field() { jq -r --arg k "$1" '.[$k] // empty' "$CONSOLE_RECORD" 2>/dev/null || true; }
+ # console_record_update <json-object>: merge launch fields into the record, only
+@@ -535,7 +558,10 @@
+   # the upstream adapter also creates a "firstmate"-labeled workspace for a
+   # worker spawned from outside Herdr, and a label cannot tell the two apart.
+   if rec=$(console_record_pane); then
+-    console_converge "${rec% *}" "${rec#* }"
++    case "$(console_converge_plan "$SESSION_STARTED_NOW")" in
++      deferred) printf '%s deferred\n' "$rec" ;;   # the launch path starts the post-attach owner
++      *) console_converge "${rec% *}" "${rec#* }" ;;
++    esac
+     return 0
+   fi
+   out=$(hs workspace create --cwd "$FM_CODE_ROOT" --label "$FM_CONSOLE_LABEL" --focus \
+@@ -963,6 +989,15 @@
+   if [ "$cls" = foreign-harness ]; then
+     sid=$(console_pane_recorded_session_of "$pane")
+     composer=$(console_backend fm_backend_composer_state herdr "$target" 2>/dev/null || echo unknown)
++    # A harness Herdr has just restored is still drawing its UI and running its
++    # session-start hooks; give its composer a bounded chance to read empty
++    # before deciding it cannot be converged.
++    if [ "$SESSION_STARTED_NOW" = 1 ] && [ "$composer" != empty ]; then
++      deadline=$(( $(date +%s) + CONSOLE_COMPOSER_WAIT ))
++      while [ "$composer" != empty ] && [ "$(date +%s)" -lt "$deadline" ]; do
++        sleep 2; composer=$(console_backend fm_backend_composer_state herdr "$target" 2>/dev/null || echo unknown)
++      done
++    fi
+   fi
+   action=$(console_converge_action "$cls" "$SESSION_STARTED_NOW" "$composer" "$sid")
+   console_log "converge: pane=$pane class=$cls session_started_now=$SESSION_STARTED_NOW composer=$composer herdr_session_id=${sid:-none} action=$action"
+@@ -1084,6 +1119,20 @@
+   # shellcheck disable=SC2317 # every owner path exits itself; this is the belt.
+   exit 1
+ fi
++# --- Post-attach convergence owner (control issue #8 REVISE 2, live relaunch 2) ---
++if [ "$MODE" = converge-owner ]; then
++  [ "$#" -eq 2 ] || die "--converge-owner needs <workspace> <pane>"
++  SESSION_STARTED_NOW=1
++  console_log "converge-owner: waiting up to ${CONSOLE_ATTACH_WAIT}s for pane $2 to materialize (Herdr spawns restored panes on TUI attach)"
++  deadline=$(( $(date +%s) + CONSOLE_ATTACH_WAIT ))
++  until console_pane_process "$2" >/dev/null 2>&1; do
++    if [ "$(date +%s)" -ge "$deadline" ]; then console_log "converge-owner: pane $2 never materialized within ${CONSOLE_ATTACH_WAIT}s; nothing done"; exit 0; fi
++    sleep 1
++  done
++  console_log "converge-owner: pane $2 materialized; settling and classifying"
++  console_converge "$1" "$2"
++  exit 0
++fi
+ # --- Doctor -----------------------------------------------------------------
+ if [ "$MODE" = doctor ]; then
+   control() {  # <fsc3_config.py argument...>
+@@ -1292,6 +1341,15 @@
+ case "$sock" in "$HOME/.config/herdr/herdr.sock") die "the clean-room session resolved to the DEFAULT server socket; refusing to attach to the legacy session" ;; esac
+ read -r ws pane how <<< "$(ensure_console_workspace)"
+ printf 'enter-firstmate: console workspace %s pane %s (%s) in session %s at %s\n' "$ws" "$pane" "$how" "$FM_HERDR_SESSION" "$sock" >&2
++if [ "$how" = deferred ]; then
++  # This launch started the server: Herdr will spawn the restored console pane
++  # only once the TUI below attaches, so the convergence (restart a stranded
++  # shell, or exit a natively resumed harness and relaunch it canonically) is
++  # owned by one detached process that acts after that attach.
++  ( setsid "$COLD_ARM_SELF" --converge-owner "$ws" "$pane" </dev/null >>"$CONSOLE_LOG" 2>&1 & )
++  console_log "launch: server started by this launch; convergence of pane $pane deferred to a post-attach owner"
++  printf 'enter-firstmate: the server was started by this launch, so Herdr restores the console pane only when the TUI attaches; a detached owner converges it through the console contract right after (log: %s)\n' "$CONSOLE_LOG" >&2
++fi
+ # Evidence capture only: FM_ENTRY_NO_ATTACH=1 stops here, after the session and
+ # console exist, so a non-interactive run can prove the placement without a tty.
+ [ -z "${FM_ENTRY_NO_ATTACH:-}" ] || { printf 'enter-firstmate: FM_ENTRY_NO_ATTACH set; not attaching the TUI\n' >&2; exit 0; }

@@ -1,0 +1,14 @@
+-- harness permission policy (control issue #7 ruling 3; owner: this launcher's permission_policy_* block)
+  primary (claude): --dangerously-skip-permissions  [QUALIFIED]  owner: this launcher (primary console argv) + fm-spawn (workers)
+  claude:    QUALIFIED      --dangerously-skip-permissions  <- present in bin/fm-spawn.sh
+  codex:     QUALIFIED      --dangerously-bypass-approvals-and-sandbox  <- present in bin/fm-spawn.sh
+  opencode:  QUALIFIED      OPENCODE_CONFIG_CONTENT={"permission":{"*":"allow"}}  <- present in bin/fm-spawn.sh
+  pi:        CNO            none: the upstream spawn template passes no permission flag and a separate pi approval gate is not documented; not invented  <- no spawn token (nothing to prove)
+  pi-signed: CNO            none: the upstream spawn template passes no permission flag and a separate pi approval gate is not documented; not invented  <- no spawn token (nothing to prove)
+  grok:      QUALIFIED      --always-approve  <- present in bin/fm-spawn.sh
+  kimi:      QUALIFIED      --auto  <- present in bin/fm-spawn.sh
+  cursor:    QUALIFIED      --trust --yolo  <- present in bin/fm-spawn.sh
+  muse:      QUALIFIED      --yolo  <- present in bin/fm-spawn.sh
+  scope:             interactive approval prompts only; FirstMate authority, merge/landing rules, gates, validators, credentials unchanged
+  global untouched:  ~/.claude/settings.json skipDangerousModePermissionPrompt=true  permissions.defaultMode=unset  (read only; never written here)
+

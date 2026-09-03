@@ -1,0 +1,3 @@
+enter-firstmate: WARNING: console pane w5:p1 runs claude NOT started by this launcher (no cold-start arm, style, or permission policy applied) - the server was already running, so this may be a live session; it is left untouched. Exit it (/exit) and click the launcher again, or read /home/OPERATOR/.firstmate-cleanroom/enter-firstmate.sh --doctor
+enter-firstmate: console workspace w5 pane w5:p1 (existing-foreign-harness) in session firstmate-cleanroom at /home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/herdr.sock
+enter-firstmate: FM_ENTRY_NO_ATTACH set; not attaching the TUI

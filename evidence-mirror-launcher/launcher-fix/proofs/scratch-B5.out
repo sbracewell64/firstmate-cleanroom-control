@@ -1,0 +1,16 @@
+PROOF-START B5
+ console will open read-only until that session ends
+enter-firstmate: note: the console record does not name this pane; launch fields not recorded
+enter-firstmate: console: claude resuming session 9999abcd-0123-4567-89ab-0123456789ab (explicit); permission
+s --dangerously-skip-permissions [QUALIFIED]; style /home/OPERATOR/.firstmate-cleanroom/config/claude-settings.j
+son
+shim-claude argv: --dangerously-skip-permissions --settings /home/OPERATOR/.firstmate-cleanroom/config/claude-se
+ttings.json --resume 9999abcd-0123-4567-89ab-0123456789ab
+No conversation found with session ID: 9999abcd-0123-4567-89ab-0123456789ab
+enter-firstmate: console: STALE RESUME - claude exited rc=1 after 0s while resuming session 9999abcd-0123-456
+7-89ab-0123456789ab (explicit); starting ONE fresh session under the identical contract (no further retry)
+shim-claude argv: --dangerously-skip-permissions --settings /home/OPERATOR/.firstmate-cleanroom/config/claude-se
+ttings.json
+shim-claude: fresh session started
+console rc=0
+PROOF-END B5
