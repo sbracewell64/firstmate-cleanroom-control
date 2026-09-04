@@ -1,0 +1,13 @@
+diff --git a/README.md b/README.md
+index a0064a8..6a441ad 100644
+--- a/README.md
++++ b/README.md
+@@ -18,7 +18,7 @@ content is a vehicle: the proof is about the path, not the parser.
+ 
+ | Path | What it is |
+ |---|---|
+-| `fmproof/semver.py` | SemVer 2.0.0 parsing, and version precedence comparison |
++| `fmproof/semver.py` | SemVer 2.0.0 parsing, version precedence comparison, and core-part bumping |
+ | `tests/` | `unittest` suite, run by both CI and the pipeline's test step |
+ | `.no-mistakes.yaml` | pipeline commands, read only from the trusted default-branch copy |
+ | `.github/workflows/ci.yml` | the `test` required status check |
