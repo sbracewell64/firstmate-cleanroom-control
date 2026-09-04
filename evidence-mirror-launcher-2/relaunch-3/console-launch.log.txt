@@ -1,0 +1,11 @@
+2026-09-03T22:51:01Z pid=4036257 launch: server started by this launch; convergence of pane w5:p1 deferred to a post-attach owner
+2026-09-03T22:51:08Z pid=4046809 converge-owner: waiting up to 120s for pane w5:p1 to materialize (Herdr spawns restored panes on TUI attach)
+2026-09-03T22:51:09Z pid=4046809 converge-owner: pane w5:p1 materialized; settling and classifying
+2026-09-03T22:51:11Z pid=4046809 converge: restore settled on pane w5:p1 (name=claude pid=4047250 ppid=4047204 shell_pid=4047204 count=1)
+2026-09-03T22:51:11Z pid=4046809 converge: pane=w5:p1 class=foreign-harness session_started_now=1 composer=empty herdr_session_id=455c55cd-6938-4493-88a4-c5c60905e751 action=converge
+enter-firstmate: console pane w5:p1 runs claude restored natively by Herdr (session 455c55cd-6938-4493-88a4-c5c60905e751), not by this launcher; exiting it and relaunching that session under the canonical console contract
+2026-09-03T22:51:15Z pid=4046809 converge: restarted the console contract in pane w5:p1 (Herdr's native resume of session 455c55cd-6938-4493-88a4-c5c60905e751 was exited (verdict unknown)) resume=455c55cd-6938-4493-88a4-c5c60905e751
+2026-09-03T22:51:15Z pid=4047204 console: starting in pane w5:p1 (record claimed)
+enter-firstmate: console restarted in pane w5:p1 (Herdr's native resume of session 455c55cd-6938-4493-88a4-c5c60905e751 was exited (verdict unknown)); the console contract is running there as pid 4047204
+w5 w5:p1 restarted
+2026-09-03T22:51:24Z pid=4047204 launch harness=claude mode=resume resume=455c55cd-6938-4493-88a4-c5c60905e751 origin=explicit permission=QUALIFIED argv=--dangerously-skip-permissions --settings /home/OPERATOR/.firstmate-cleanroom/config/claude-settings.json --resume 455c55cd-6938-4493-88a4-c5c60905e751

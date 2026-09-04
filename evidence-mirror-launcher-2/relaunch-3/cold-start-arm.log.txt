@@ -1,0 +1,2 @@
+2026-09-03T22:51:24Z pid=4047204 ensure backend=herdr target=firstmate-cleanroom:w5:p1 decision=defer-open-claim needed=true in_flight=1 sources=1 relay=no afk=0 writable=1 lock_pid=219960 lock_state=stale foreign_live_lock=0 healthy=1 watcher_pid=2589225 watch_lock_pid=2589225 watch_lock_alive=1 beacon=7 watch_lock_held=1 claim_open=1 ledger_gen=32 ledger_owner=2588837 ledger_owner_alive=1 ledger_outcome=arming ledger_age=1378
+2026-09-03T22:51:24Z pid=4047204 ensure: attached to generation 32 owner 2588837 watcher 2589225

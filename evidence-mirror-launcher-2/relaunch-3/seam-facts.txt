@@ -1,0 +1,10 @@
+captured 2026-09-03T23:44:56Z
+queued wakes for seq 13:
+1788478012	84	check	procevent:cleanroom-control-v2-inbound:13	check: procevent cleanroom-control-v2-inbound cleanroom-control-v2-inbound 13
+1788478012	85	check	procevent:cleanroom-control-v2-inbound:13	check: procevent cleanroom-control-v2-inbound cleanroom-control-v2-inbound 13
+1788478024	86	check	procevent:cleanroom-control-v2-inbound:13	check: procevent cleanroom-control-v2-inbound cleanroom-control-v2-inbound 13
+watcher-down: pending:handling:2163223.1788478012.4S4BlQ
+owner 2588837 cmdline (from ledger identity hex): bash .../bin/fm-claude-stop-autoarm.sh
+owner 2588837 alive now: no
+watcher 2589225 alive now: no
+cold_arm_deliver invocations in cold-start-arm.log: 0

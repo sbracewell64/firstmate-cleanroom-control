@@ -1,0 +1,11 @@
+ok - FM_ENTRY_LIB=1 defines the launch and policy functions and runs nothing else
+ok - permission policy: claude exact flag, seven QUALIFIED equivalents, pi CNO, unknown CNO
+ok - every QUALIFIED worker posture is still present in /mnt/e/FirstMate-Cleanroom/upstream/firstmate/bin/fm-spawn.sh (no drift)
+ok - console argv: claude always leads with --dangerously-skip-permissions; bash gets passthrough only
+ok - resume candidate: exact id shape, Claude's native per-project transcript store, no cross-project adoption
+ok - launch outcome: exactly one stale-resume fallback, a failed fresh launch exits
+ok - pane classification: canonical, starting, foreign-harness, shell, other
+ok - convergence: restart a stranded shell, converge only a just-restored idle harness, otherwise leave
+ok - convergence plan: deferred after a server start, inline otherwise
+ok - claim deliverability: only a live cold-start arm-owner is a valid cold-start defer target
+all console launch and permission policy tests passed

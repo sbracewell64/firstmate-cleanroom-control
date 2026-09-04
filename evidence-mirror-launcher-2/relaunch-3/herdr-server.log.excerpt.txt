@@ -1,0 +1,26 @@
+2026-09-03T22:50:45.338274Z  INFO herdr::server::headless: server shutdown initiated
+2026-09-03T22:50:45.388439Z  INFO herdr::server::headless: completing server shutdown
+2026-09-03T22:50:45.439261Z  INFO herdr::server::headless: headless server exiting
+2026-09-03T22:50:45.440657Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=1 status="ExitStatus { code: 1, signal: Some(\"Hangup\") }"
+2026-09-03T22:50:46.004326Z  INFO herdr::pane: pane session terminated pane=1 pid=219863 signal=Kill
+2026-09-03T22:50:46.005000Z  INFO herdr::logging: pane child exited event="pane.exit" subsystem="pane" outcome="completed" pane_id=2 status="ExitStatus { code: 1, signal: Some(\"Hangup\") }"
+2026-09-03T22:50:46.006209Z  INFO herdr::pane: pane session terminated pane=2 pid=206307 signal=Hangup
+2026-09-03T22:50:46.008624Z  INFO herdr::logging: herdr exiting event="app.shutdown" subsystem="server" outcome="completed" pid=206183
+2026-09-03T22:51:00.950299Z  INFO herdr::api::server: api server listening path=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/herdr.sock
+2026-09-03T22:51:00.953021Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=2 rows=24 cols=80 scrollback_limit_bytes=10000000
+2026-09-03T22:51:00.953815Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=2 pid=4045549
+2026-09-03T22:51:00.966518Z  INFO herdr::logging: session restore evaluated event="persist.restore" subsystem="persist" outcome="ok" workspaces=1
+2026-09-03T22:51:00.966544Z  INFO herdr::app: using pane scrollback configuration pane_scrollback_limit_bytes=10000000
+2026-09-03T22:51:01.959758Z  INFO herdr::logging: checking for updates event="update.check.start" subsystem="update" outcome="started"
+2026-09-03T22:51:01.961471Z  INFO herdr::server::headless: client protocol socket listening path=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/herdr-client.sock
+2026-09-03T22:51:01.961498Z  INFO herdr::server::headless: herdr server started api_socket=/home/OPERATOR/.config/herdr/sessions/firstmate-cleanroom/herdr.sock client_socket=/home/OPERATOR/.config/herdr/ses
+2026-09-03T22:51:01.961555Z  INFO herdr::logging: herdr starting event="app.startup" subsystem="server" outcome="started" pid=4045446
+2026-09-03T22:51:02.208304Z  INFO herdr::logging: update available event="update.available" subsystem="update" outcome="ok" version="0.8.2"
+2026-09-03T22:51:02.208327Z  INFO herdr::update: new stable build available at https://github.com/herdrdev/herdr/releases/download/v0.8.2/herdr-linux-x86_64
+2026-09-03T22:51:02.208510Z  INFO herdr::update: auto-update check: 0.8.2 available, waiting for explicit install
+2026-09-03T22:51:02.209026Z  INFO herdr::server::headless: client connected client_id=2 cols=136 rows=70 cell_width_px=0 cell_height_px=0 render_encoding=SemanticFrame
+2026-09-03T22:51:02.227252Z  INFO herdr::logging: spawning pane terminal event="pane.spawn.start" subsystem="pane" outcome="started" pane_id=1 rows=69 cols=110 scrollback_limit_bytes=10000000
+2026-09-03T22:51:02.229072Z  INFO herdr::logging: pane child spawned event="pane.spawned" subsystem="pane" outcome="ok" pane_id=1 pid=4047204
+2026-09-03T22:51:02.781626Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(Claude) process=claude pgid=Some(4047250)
+2026-09-03T22:51:14.231243Z  INFO herdr::pane: agent changed pane=1 previous_agent=Some(Claude) agent=None pgid=Some(4047204)
+2026-09-03T22:51:24.775101Z  INFO herdr::pane: agent changed pane=1 previous_agent=None agent=Some(Claude) process=claude pgid=Some(4047204)

@@ -1,0 +1,123 @@
+--- /home/OPERATOR/.firstmate-cleanroom/state/enter-firstmate.sh.pre-control8-revise2c.20260903T234822Z	2026-09-03 18:05:22.681293208 -0400
++++ /home/OPERATOR/.firstmate-cleanroom/enter-firstmate.sh	2026-09-03 19:48:22.470814553 -0400
+@@ -128,6 +128,19 @@
+ #     left untouched and reported loudly (never typed into).
+ # Every launch decision is one line in state/console-launch.log, fields in the
+ # console record, and a block in the doctor's "captain console" section.
++# Live relaunch 3 (22:51Z) showed a THIRD seam, in delivery rather than launch:
++# an auto-arm generation owned by a Stop-hook auto-arm (bin/fm-claude-stop-autoarm.sh)
++# from the PRE-relaunch harness incarnation survived the server stop and stayed
++# healthy. cold_arm_ensure saw an open, healthy claim and chose defer-open-claim,
++# trusting that owner to deliver its close "to this console". But a Stop-hook
++# auto-arm delivers ONLY by exit-2 rewake into ITS OWN harness, which the relaunch
++# had already killed; the captured wake was queued and never typed into the new
++# console (L7 FAIL, control #8). The rule: at cold-start (this incarnation has
++# taken zero turns) only a LIVE cold-start arm-owner - which delivers by typing a
++# watcher-kind operational input into the composer - can deliver here. A Stop-hook
++# or dead/foreign owner is stale-for-this-console; the launcher supersedes that
++# generation (cold_arm_supersede_stale) and arms its own typed-delivery owner,
++# which attaches to the still-healthy watcher rather than starting a second one.
+ # Live relaunch 2 (21:50Z) showed the timing that the inline classification
+ # cannot see: a headless Herdr server evaluates its restore at start but SPAWNS
+ # the restored console pane's terminal only when a TUI client attaches (server
+@@ -385,6 +398,49 @@
+   esac
+ }
+ 
++# cold_arm_claim_deliverable <owner-kind>: can the open auto-arm claim deliver a
++# captured wake to a freshly (re)launched, turn-idle console? Only a LIVE
++# cold-start arm-owner types its close into the composer (deliverable). A live
++# Stop-hook auto-arm delivers only by exit-2 rewake into its own harness, which a
++# cold-start relaunch has replaced; a dead/foreign/unknown owner cannot deliver
++# either. <owner-kind> is the probe's ledger_owner_kind token:
++#   cold-start  a live process whose argv contains --arm-owner (this launcher's owner)
++#   stop-hook   a live bin/fm-claude-stop-autoarm.sh (exit-2 rewake owner)
++#   other       a live process that is neither
++#   gone        the owner pid is not alive
++cold_arm_claim_deliverable() {
++  case "${1:-}" in
++    cold-start) echo deliverable ;;
++    *) echo stale ;;
++  esac
++}
++
++# cold_arm_supersede_stale <gen> <owner-pid>: flip an open (outcome=arming) claim
++# that this launcher has proven stale-for-this-console to outcome=superseded,
++# under the SAME micro-mutex and epoch format bin/fm-wake-lib.sh uses, and ONLY
++# while the ledger still names exactly <gen>/<owner-pid> arming. That makes
++# fm_autoarm_claim_open false so the launcher's own owner can claim gen+1; the
++# orphan owner's fm_autoarm_still_owner then returns false and it stands down at
++# its next close instead of an exit-2 rewake to a dead harness. Prints
++# superseded | not-open | contended.
++cold_arm_supersede_stale() {  # <gen> <owner-pid>
++  FM_HOME="$FM_HOME" bash -c '
++    set +e
++    root=$1 gen=$2 owner=$3
++    . "$root/bin/fm-wake-lib.sh" >/dev/null 2>&1 || { echo contended; exit 1; }
++    state="$FM_HOME/state"; lock="$state/.claude-autoarm.lock"; epoch="$state/.claude-autoarm-epoch"
++    fm_lock_try_acquire "$lock" || { echo contended; exit 1; }
++    if fm_autoarm_ledger_read "$state"       && [ "$FM_AUTOARM_GEN" = "$gen" ] && [ "$FM_AUTOARM_OWNER" = "$owner" ] && [ "$FM_AUTOARM_OUTCOME" = arming ]; then
++      tmp="$epoch.supersede.$$"
++      if { printf "epoch=%s owner_pid=%s outcome=superseded updated_at=%s\n" "$gen" "$owner" "$(date +%s)";            [ -z "$FM_AUTOARM_IDENTITY" ] || printf "%s\n" "$FM_AUTOARM_IDENTITY"; } > "$tmp" 2>/dev/null          && mv -f "$tmp" "$epoch" 2>/dev/null; then out=superseded; else rm -f "$tmp" 2>/dev/null; out=contended; fi
++    else
++      out=not-open
++    fi
++    fm_lock_release "$lock"
++    echo "$out"
++  ' _ "$FM_CODE_ROOT" "$1" "$2"
++}
++
+ # Library load for the test file beside this launcher: only the pure functions
+ # above exist, nothing below runs.
+ # shellcheck disable=SC2317 # `return` serves a sourced load; `exit` covers a direct run.
+@@ -629,12 +685,18 @@
+     gen=; owner=; outcome=
+     if fm_autoarm_ledger_read "$state"; then gen=$FM_AUTOARM_GEN; owner=$FM_AUTOARM_OWNER; outcome=$FM_AUTOARM_OUTCOME; fi
+     owner_alive=0; fm_pid_alive "$owner" && owner_alive=1
++    owner_kind=gone
++    if [ "$owner_alive" = 1 ]; then
++      if grep -qa "fm-claude-stop-autoarm" "/proc/$owner/cmdline" 2>/dev/null; then owner_kind=stop-hook
++      elif grep -qa "arm-owner" "/proc/$owner/cmdline" 2>/dev/null; then owner_kind=cold-start
++      else owner_kind=other; fi
++    fi
+     ledger_age=never; [ -e "$state/.claude-autoarm-epoch" ] && ledger_age=$(fm_path_age "$state/.claude-autoarm-epoch")
+-    printf "needed=%s in_flight=%s sources=%s relay=%s afk=%s writable=%s lock_pid=%s lock_state=%s foreign_live_lock=%s healthy=%s watcher_pid=%s watch_lock_pid=%s watch_lock_alive=%s beacon=%s watch_lock_held=%s claim_open=%s ledger_gen=%s ledger_owner=%s ledger_owner_alive=%s ledger_outcome=%s ledger_age=%s\n" \
++    printf "needed=%s in_flight=%s sources=%s relay=%s afk=%s writable=%s lock_pid=%s lock_state=%s foreign_live_lock=%s healthy=%s watcher_pid=%s watch_lock_pid=%s watch_lock_alive=%s beacon=%s watch_lock_held=%s claim_open=%s ledger_gen=%s ledger_owner=%s ledger_owner_alive=%s ledger_outcome=%s ledger_age=%s ledger_owner_kind=%s\n" \
+       "$FM_SUP_NEEDED" "$FM_SUP_IN_FLIGHT" "$FM_SUP_SOURCES" "$relay" "$afk" "$writable" \
+       "${lock_pid:-none}" "$lock_state" "$foreign" "$healthy" "${watcher_pid:-none}" \
+       "${watch_lock_pid:-none}" "$watch_lock_alive" "$beacon" "$watch_lock_held" "$claim_open" \
+-      "${gen:-none}" "${owner:-none}" "$owner_alive" "${outcome:-none}" "$ledger_age"
++      "${gen:-none}" "${owner:-none}" "$owner_alive" "${outcome:-none}" "$ledger_age" "$owner_kind"
+   ' _ "$FM_CODE_ROOT"
+ }
+ cold_arm_field() {  # <probe-line> <key>
+@@ -669,6 +731,20 @@
+   local backend=$1 target=$2 probe decision handoff deadline armline reasons owner_line owner_pid why
+   probe=$(cold_arm_probe) || die "cold-start supervision probe failed: upstream libraries under $FM_CODE_ROOT/bin are unreadable"
+   decision=$(cold_arm_decision_from_probe "$probe")
++  # Control #8 revise-2c: a cold-start open claim is only a valid defer target
++  # when a live cold-start arm-owner (typed-composer delivery) holds it. A
++  # Stop-hook or dead owner cannot deliver to this turn-idle console, so supersede
++  # it and let the launcher arm its own typed-delivery owner (which attaches to
++  # the existing healthy watcher, never a second one).
++  if [ "$decision" = defer-open-claim ] \
++    && [ "$(cold_arm_claim_deliverable "$(cold_arm_field "$probe" ledger_owner_kind)")" = stale ]; then
++    cold_arm_log "ensure: open claim gen=$(cold_arm_field "$probe" ledger_gen) owner=$(cold_arm_field "$probe" ledger_owner) kind=$(cold_arm_field "$probe" ledger_owner_kind) cannot deliver to this freshly launched console; superseding"
++    printf 'enter-firstmate: supervision: the open auto-arm generation belongs to a prior console incarnation and cannot deliver a wake to this one; taking over supervision delivery\n' >&2
++    sup=$(cold_arm_supersede_stale "$(cold_arm_field "$probe" ledger_gen)" "$(cold_arm_field "$probe" ledger_owner)")
++    cold_arm_log "ensure: supersede stale claim -> $sup"
++    probe=$(cold_arm_probe) || true
++    decision=$(cold_arm_decision_from_probe "$probe")
++  fi
+   cold_arm_log "ensure backend=$backend target=$target decision=$decision $probe"
+   case "$decision" in
+     skip-not-needed)
+@@ -1266,7 +1342,7 @@
+     else
+       echo "  watcher:           NOT live (lock pid $(cold_arm_field "$arm_probe" watch_lock_pid) alive=$(cold_arm_field "$arm_probe" watch_lock_alive); beacon $(cold_arm_field "$arm_probe" beacon)$( [ "$(cold_arm_field "$arm_probe" beacon)" = never ] || printf 's ago'))"
+     fi
+-    echo "  arm owner ledger:  generation $(cold_arm_field "$arm_probe" ledger_gen) owner pid $(cold_arm_field "$arm_probe" ledger_owner) (alive=$(cold_arm_field "$arm_probe" ledger_owner_alive)) outcome $(cold_arm_field "$arm_probe" ledger_outcome); claim open: $(cold_arm_field "$arm_probe" claim_open)  ($FM_HOME/state/.claude-autoarm-epoch, shared with the Stop hook)"
++    echo "  arm owner ledger:  generation $(cold_arm_field "$arm_probe" ledger_gen) owner pid $(cold_arm_field "$arm_probe" ledger_owner) (alive=$(cold_arm_field "$arm_probe" ledger_owner_alive), kind $(cold_arm_field "$arm_probe" ledger_owner_kind)) outcome $(cold_arm_field "$arm_probe" ledger_outcome); claim open: $(cold_arm_field "$arm_probe" claim_open); deliverable to a cold-start console: $(cold_arm_claim_deliverable "$(cold_arm_field "$arm_probe" ledger_owner_kind)")  ($FM_HOME/state/.claude-autoarm-epoch, shared with the Stop hook)"
+     echo "  session lock:      $(cold_arm_field "$arm_probe" lock_state) (pid $(cold_arm_field "$arm_probe" lock_pid))   away mode: $( [ "$(cold_arm_field "$arm_probe" afk)" = 1 ] && echo on || echo off)   state writable: $(cold_arm_field "$arm_probe" writable)"
+     echo "  cold-start arm:    would '$arm_decision' at the next --console launch (bound ${COLD_ARM_TIMEOUT}s; deliver wait ${COLD_ARM_DELIVER_WAIT}s)"
+   else

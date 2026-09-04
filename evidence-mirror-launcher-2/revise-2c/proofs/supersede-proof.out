@@ -1,0 +1,7 @@
+ok - seeded a live Stop-hook orphan holding open gen 32 with a fresh beacon (relaunch-3 shape)
+ok - the orphan claim is judged stale-for-this-console (would defer under the OLD launcher, the L7 bug)
+ok - supersede flipped gen 32 to superseded; the claim is no longer open
+ok - the launcher's own typed-delivery owner claims gen 33 (delivery path restored)
+ok - the orphan is no longer the ledger owner; its next close self-stands-down (no exit-2 to a dead harness)
+ok - negative control: a live cold-start arm-owner claim stays deliverable and is left to deliver
+all supersede-seam proofs passed

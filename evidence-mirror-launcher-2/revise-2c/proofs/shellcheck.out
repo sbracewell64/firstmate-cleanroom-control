@@ -1,0 +1,23 @@
+
+In /tmp/claude-1000/-mnt-e-FirstMate-Cleanroom-upstream-firstmate/455c55cd-6938-4493-88a4-c5c60905e751/scratchpad/prove-supersede.sh line 65:
+newowner=$(sed -n 's/^.*owner_pid=\([0-9]*\).*/\1/p' "$state/.claude-autoarm-epoch" | head -1)
+                                                      ^----^ SC2031 (info): state was modified in a subshell. That change might be lost.
+
+
+In /tmp/claude-1000/-mnt-e-FirstMate-Cleanroom-upstream-firstmate/455c55cd-6938-4493-88a4-c5c60905e751/scratchpad/prove-supersede.sh line 76:
+printf 'epoch=40 owner_pid=%s outcome=arming updated_at=%s\n%s\n' "$CS" "$(date +%s)" "$csident" > "$state/.claude-autoarm-epoch"
+                                                                                                    ^----^ SC2031 (info): state was modified in a subshell. That change might be lost.
+
+
+In /tmp/claude-1000/-mnt-e-FirstMate-Cleanroom-upstream-firstmate/455c55cd-6938-4493-88a4-c5c60905e751/scratchpad/prove-supersede.sh line 77:
+: > "$state/.last-watcher-beat"
+     ^----^ SC2031 (info): state was modified in a subshell. That change might be lost.
+
+
+In /tmp/claude-1000/-mnt-e-FirstMate-Cleanroom-upstream-firstmate/455c55cd-6938-4493-88a4-c5c60905e751/scratchpad/prove-supersede.sh line 78:
+cskind=$(grep -qa 'fm-claude-stop-autoarm' "/proc/$CS/cmdline" && echo stop-hook || (grep -qa 'arm-owner' "/proc/$CS/cmdline" && echo cold-start || echo other))
+                                                               ^-- SC2015 (info): Note that A && B || C is not if-then-else. C may run when A is true.
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2015 -- Note that A && B || C is not if-t...
+  https://www.shellcheck.net/wiki/SC2031 -- state was modified in a subshell....
