@@ -1,3 +1,4 @@
+RUN-TO-CANDIDATE BINDING run_at=2026-09-05T11:41:14Z freeze_sha256=5fffb56036048bf65b53de0169960aaf5f2eae6c026fea54f41c60538495aace gen4_schema_sha256=e722b5f4dd36d0cec6ba2e8c3614a9318b0f823c1e2c5e3c1b24d6292f3fe11f applier_sha256=12dea07f9eb9ea829dcc285f0fa55041cbf3045c8aeb6bd85ab3aa5dbe6cdf26
 PASS   activation request is a schema-valid gen-3 request 0 errors
 PASS   valid activation succeeds once                     ACTIVATED: active generation advanced 3 -> 4
 PASS   active generation derived as 4 from the one record active=4

@@ -229,6 +229,15 @@ def roundtrip():
         results.append((name, bool(ok), detail))
         print("%-6s %-50s %s" % ("PASS" if ok else "FAIL", name, str(detail)[:74]))
 
+    # RUN-TO-CANDIDATE BINDING: this transcript names the EXACT frozen candidate bytes it was run
+    # against, so it cannot be an inherited stale blob. Browser Sol recomputes the committed
+    # FREEZE.json sha256 and the gen-4 schema sha256 and confirms they equal the values printed here;
+    # the UTC run time shows the run happened after the final freeze. (control#19 provenance gap.)
+    import datetime as _dt
+    _run_at = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    print("RUN-TO-CANDIDATE BINDING run_at=%s freeze_sha256=%s gen4_schema_sha256=%s applier_sha256=%s" % (
+        _run_at, sha_file(GEN4_FREEZE), sha_file(GEN4_SCHEMA), sha_file(os.path.abspath(__file__))))
+
     # Build a REAL gen-3 request shape for the activation, with gen-3-admitted immutable locators.
     commit = os.environ.get("FSC4_CANDIDATE_COMMIT", "24b5ab062b6fb0d6bf1b86b271ee50d07d4686e3")
     gen3_vocab = sha_file(GEN3_SCHEMA_PATH)
