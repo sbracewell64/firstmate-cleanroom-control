@@ -1,0 +1,1 @@
+{"acquired_at": "2026-09-05T19:19:14Z", "correlation_id": "c", "expires_at": "2026-09-05T19:34:14Z", "holder_token": "rX", "lease_generation": 1, "request_id": "test-race-fix-1788635953", "schema": "fm-emission-lease/v1", "state": "held"}
