@@ -65,15 +65,40 @@ def build(commit):
         "kind": "commit", "locator": "https://github.com/%s/commit/%s" % (REPO, commit),
         "sha256": hashlib.sha256(("https://github.com/%s/commit/%s" % (REPO, commit)).encode()).hexdigest(),
         "digest_basis": "locator_identity"}]
+    import datetime, re as _re
+    now = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
+    # resolve the CURRENT gen-3 control configuration immediately before emission (not inherited)
     ccg, _c, _n = fsc4_config.generation()
     gen3_vocab = sha_file(GEN3_SCHEMA)
-    policy_digest = hashlib.sha256(b"activation-policy-A/B-v1").hexdigest()
-    # start from the proven gen-3 request structure, retarget to the activation decision
+    # acceptance_policy digest = hash of the ACTUAL immutable policy bytes named in inputs
+    policy_input_rel = "TRANSITION-CONTRACT.md"
+    policy_digest = sha_file(os.path.join(GEN4, policy_input_rel))
+    redacted_owner = _re.sub(r"(?<![A-Za-z0-9_.-])/home/[A-Za-z0-9._-]+", "/home/OPERATOR", str(ccg["owner_path"]))
+    # scaffold from the proven gen-3 request STRUCTURE, then rebuild EVERY activation fact freshly
     req = json.loads(open(os.path.join(CONTROL_DIR, "gen3", "transaction-9", "evidence", "request.json")).read())
     req["work_id"] = "cleanroom-gen4-activation-transition"
     req["work_generation"] = 1
-    req["request_generation"] = 1
-    req["control_config_generation"]["digest"] = ccg["digest"]
+    req["request_generation"] = 2   # supersedes the prior #16 activation request (request_generation 1)
+    req["created_at"] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    req["expires_at"] = (now + datetime.timedelta(hours=48)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    req["requester"] = {"login": REPO.split("/")[0], "kind": "agent", "provenance_class": "self_asserted_descriptor",
+                        "session_ref": "clean-room FirstMate primary; gen-3 -> gen-4 activation-transition recovery compiler (control#15)"}
+    req["control_config_generation"] = {"owner_path": redacted_owner, "digest": ccg["digest"],
+                                        "resolver_digest": ccg["resolver_digest"], "resolved_at": ccg["resolved_at"]}
+    req["decision_class"] = "DELEGATED_ENGINEERING"
+    req["boundary_evidence"] = [
+        {"predicate": "this is a bounded control-tooling generation-3 -> generation-4 activation transition, not new spend, "
+         "not a security or privacy weakening, not a credential exposure, not a destructive or materially irreversible act, "
+         "and not a personal or product preference",
+         "value": "observed-good", "measured": "DELEGATED_ENGINEERING; captain_required=false; control#15 recovery"},
+        {"predicate": "consuming Option A advances control_config_generation exactly once, atomically, after effect-boundary "
+         "revalidation; generations 1/2/3 and all historical transactions are preserved unchanged",
+         "value": "observed-good", "measured": "single crash-safe activation record via the dedicated applier"},
+        {"predicate": "the target is exactly the unactivated frozen generation-4 candidate at the bound immutable commit",
+         "value": "observed-good", "measured": "document_package subject binds the candidate schema + FREEZE members at commit %s" % commit},
+        {"predicate": "maker/checker independence at the principal level on this venue",
+         "value": "could-not-observe", "measured": "one forge account fronts both sides of the transport (issue #3 independence ruling: grade cap, not blocker)"},
+    ]
     req["vocabulary_digest"] = gen3_vocab
     req["subject"] = {"kind": "document_package", "identity_line": subject_line, "members": members}
     req["acceptance_policy"] = {"generation": "cleanroom-gen4-activation-v1", "digest": policy_digest,
@@ -95,7 +120,7 @@ def build(commit):
                           "subject_identity_line": subject_line, "subject_head_sha": commit, "subject_state": "published"}
     req["candidate"] = None
     req["candidate_state"] = "NOT_APPLICABLE"
-    req["supersedes_request_id"] = None
+    req["supersedes_request_id"] = "fscr2-393b68835bed6dae9e1bbe525a0d9378"  # supersede the prior #16 activation request
     req["correlation_id"] = fsc3.derive("correlation_id", req)
     req["request_id"] = fsc3.derive("request_id", req)
     return req, refs
@@ -106,15 +131,36 @@ def main():
     req, refs = build(commit)
     schema = json.loads(open(GEN3_SCHEMA, "rb").read())
     errs = [e.message for e in Draft202012Validator(schema).iter_errors(req)]
-    # independent identity/law proofs over the as-built request
+    ccg_now, _c, _n = fsc4_config.generation()
+    members = req["subject"]["members"]
+    import re as _re
+    _admitted = _re.compile(r"^https://raw\.githubusercontent\.com/[^/]+/[^/]+/[0-9a-f]{40}/"
+                            r"|^https://github\.com/[^/]+/[^/]+/commit/[0-9a-f]{40}$")
+    def yn(b):
+        return "observed-good" if b else "observed-bad"
+    # independent proof over the AS-BUILT request of EVERY required binding
     proofs = {
-        "schema_validation": {"value": "observed-good" if not errs else "observed-bad", "errors": errs[:4]},
+        "schema_validation": {"value": yn(not errs), "errors": errs[:4]},
         "request_id_recomputes": {"carried": req["request_id"], "derived": fsc3.derive("request_id", req),
-                                  "value": "observed-good" if req["request_id"] == fsc3.derive("request_id", req) else "observed-bad"},
+                                  "value": yn(req["request_id"] == fsc3.derive("request_id", req))},
         "correlation_id_recomputes": {"carried": req["correlation_id"], "derived": fsc3.derive("correlation_id", req),
-                                      "value": "observed-good" if req["correlation_id"] == fsc3.derive("correlation_id", req) else "observed-bad"},
+                                      "value": yn(req["correlation_id"] == fsc3.derive("correlation_id", req))},
+        "current_gen3_control_generation": {"carried": req["control_config_generation"]["digest"], "resolved_now": ccg_now["digest"],
+                                            "value": yn(req["control_config_generation"]["digest"] == ccg_now["digest"] == req["valid_while"]["control_config_generation_digest"])},
+        "work_and_request_generations": {"work_generation": req["work_generation"], "request_generation": req["request_generation"],
+                                         "supersedes_request_id": req["supersedes_request_id"],
+                                         "value": yn(req["work_generation"] == 1 and req["request_generation"] == 2 and req["supersedes_request_id"] == "fscr2-393b68835bed6dae9e1bbe525a0d9378")},
+        "subject_identity_recomputes": {"carried": req["subject"]["identity_line"], "recomputed": doc_package_identity(members),
+                                        "value": yn(req["subject"]["identity_line"] == doc_package_identity(members) == req["valid_while"]["subject_identity_line"])},
+        "policy_digest_binds_cited_input": {"carried": req["acceptance_policy"]["digest"], "inputs": req["acceptance_policy"]["inputs"],
+                                            "sha256_of_TRANSITION-CONTRACT.md": sha_file(os.path.join(GEN4, "TRANSITION-CONTRACT.md")),
+                                            "value": yn(req["acceptance_policy"]["digest"] == sha_file(os.path.join(GEN4, "TRANSITION-CONTRACT.md")) == req["valid_while"]["policy_digest"])},
+        "expiry_after_creation_rfc3339": {"created_at": req["created_at"], "expires_at": req["expires_at"],
+                                          "value": yn(req["expires_at"] > req["created_at"] and req["created_at"].endswith("Z"))},
+        "evidence_locators_immutable": {"all_admitted": all(bool(_admitted.match(r["locator"])) for r in refs),
+                                        "value": yn(all(bool(_admitted.match(r["locator"])) for r in refs))},
         "evidence_digest_is_gen3_3tuple": {"carried": req["valid_while"]["evidence_digest"], "recomputed_3tuple": three_tuple(refs),
-                                           "value": "observed-good" if req["valid_while"]["evidence_digest"] == three_tuple(refs) else "observed-bad"},
+                                           "value": yn(req["valid_while"]["evidence_digest"] == three_tuple(refs))},
         "differential_vs_canonical_producer": {
             "note": "The canonical gen-3 producer computes evidence_digest as the 4-tuple; this recovery "
                     "compiler computes the schema-mandated 3-tuple. That is the ONLY field that differs.",

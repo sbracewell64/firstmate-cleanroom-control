@@ -140,15 +140,36 @@ def _target_from_request(request):
             "subject_line": subj.get("identity_line"), "members": members}
 
 
-def apply_activation(request, ruling, universe, active_gen_file, record_out):
-    """Apply ONLY on an applicable ruling, complete universe, and green effect boundary."""
-    # complete, non-truncated universe + no ambiguity/lineage fork
+def active_generation_of(record_path):
+    """The ONE authoritative source of the active generation: derived from the single activation
+    record. A valid gen-4 record => generation 4; anything else (absent/partial/unreadable) =>
+    generation 3. There is no second pointer file, so there is no partial-write window between two
+    files, and a crash either leaves the record fully written (os.replace is atomic) or absent."""
+    if not os.path.exists(record_path):
+        return 3
+    try:
+        r = json.load(open(record_path))
+    except (OSError, ValueError):
+        return 3
+    return 4 if r.get("active_generation") == 4 and r.get("manifest_digest") else 3
+
+
+def apply_activation(request, ruling, universe, record_path):
+    """Apply ONLY on an applicable ruling, a complete universe with EXACTLY ONE member ruling equal
+    to the supplied ruling, and a green effect boundary. ONE crash-safe atomic state file."""
+    # complete, non-truncated universe
     if universe.get("truncated") is True:
         return False, "CNO_TRUNCATED_RESPONSE: ruling universe not seen whole"
     terminal = [r for r in universe.get("rulings", []) if isinstance(r, dict) and r.get("kind") == "ruling"]
     applicable_here = [r for r in terminal if r.get("in_reply_to") == request.get("request_id")]
+    # EXACTLY ONE applicable ruling in the observed universe (not zero, not many)
+    if len(applicable_here) == 0:
+        return False, "REFUSED_AMBIGUOUS: no ruling for this request in the observed universe"
     if len(applicable_here) > 1:
         return False, "REFUSED_AMBIGUOUS: more than one ruling for this request (lineage fork)"
+    # the supplied ruling MUST BE that observed universe member (no out-of-universe injection)
+    if ruling != applicable_here[0]:
+        return False, "REFUSED_MISMATCH: supplied ruling is not the observed universe member"
     ok, reason = applicable(request, ruling)
     if not ok:
         return False, reason
@@ -158,21 +179,18 @@ def apply_activation(request, ruling, universe, active_gen_file, record_out):
     # subject integrity: the document_package identity_line recomputes from its members
     if tgt["subject_line"] != document_package_identity(tgt["members"]):
         return False, "REFUSED_MISMATCH: subject identity_line does not recompute from its members"
-    # REPLAY (before the old-config gate): exact target already activated -> zero effects
-    if os.path.exists(record_out):
+    # REPLAY: the one authoritative record already activates this exact target -> zero effects
+    if os.path.exists(record_path):
         try:
-            ex = json.load(open(record_out))
+            ex = json.load(open(record_path))
             if ex.get("active_generation") == 4 and ex.get("manifest_digest") == tgt["manifest"] and ex.get("candidate_commit") == tgt["commit"]:
                 return True, "REPLAY_NOOP: already activated for this exact target; zero effects"
+            return False, "REFUSED_STALE: an activation record already exists for a different target"
         except (OSError, ValueError):
-            pass
-    # effect boundary: source generation still 3
-    try:
-        active_now = json.load(open(active_gen_file)).get("active_generation") if os.path.exists(active_gen_file) else 3
-    except (OSError, ValueError):
-        return False, "CNO: active-generation record unreadable"
-    if active_now != 3:
-        return False, "REFUSED_STALE: active generation moved off 3 (old-config stale)"
+            return False, "CNO: activation record unreadable"
+    # effect boundary: source generation still 3 (derived from the one record, which is absent here)
+    if active_generation_of(record_path) != 3:
+        return False, "REFUSED_STALE: active generation is not 3"
     # source control-config digest still what the request bound
     ccg, _c, _n = fsc4_config.generation()
     if tgt["from_cfg"] != ccg["digest"]:
@@ -187,18 +205,16 @@ def apply_activation(request, ruling, universe, active_gen_file, record_out):
     vf = os.path.join(GEN4, "bin", "fsc4-verify-freeze.sh")
     if subprocess.run(["bash", vf], capture_output=True).returncode != 0:
         return False, "REFUSED_STALE: target gen-4 candidate failed freeze-verify"
-    # one atomic advance
+    # ONE atomic advance: a single canonical record, written by one os.replace. active_generation is
+    # derived from THIS record, so there is no second file to fall out of sync on a crash.
     record = {"active_generation": 4, "manifest_digest": tgt["manifest"],
               "vocabulary_digest": tgt["gen4_vocab"], "candidate_commit": tgt["commit"],
               "consumes_ruling_id": ruling.get("ruling_id"), "in_reply_to": request.get("request_id")}
-    tmp = record_out + ".tmp"
+    tmp = record_path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as fh:
         json.dump(record, fh, indent=2, sort_keys=True)
-    os.replace(tmp, record_out)
-    atmp = active_gen_file + ".tmp"
-    with open(atmp, "w", encoding="utf-8") as fh:
-        json.dump({"active_generation": 4, "manifest_digest": tgt["manifest"]}, fh, sort_keys=True)
-    os.replace(atmp, active_gen_file)
+        fh.flush(); os.fsync(fh.fileno())
+    os.replace(tmp, record_path)
     return True, "ACTIVATED: active generation advanced 3 -> 4"
 
 
@@ -276,37 +292,57 @@ def roundtrip():
     good = ruling_for(req)
     universe = {"truncated": False, "rulings": [good]}
     scratch = tempfile.mkdtemp(prefix="fsc4-activation-")
-    active = os.path.join(scratch, "active.json"); rec = os.path.join(scratch, "rec.json")
+    rp = lambda n: os.path.join(scratch, n + ".json")   # a fresh single record per test
+    # a universe that contains exactly the supplied ruling (so applicability, not membership, is tested)
+    uni = lambda rl: {"truncated": False, "rulings": [rl]}
 
-    ok, msg = apply_activation(req, good, universe, active, rec); check("valid activation succeeds once", ok and "ACTIVATED" in msg, msg)
-    check("active pointer now gen-4", json.load(open(active))["active_generation"] == 4, "active=4")
-    ok2, m2 = apply_activation(req, good, universe, active, rec); check("replay zero-effect no-op", ok2 and "REPLAY_NOOP" in m2, m2)
-    a2 = os.path.join(scratch, "a2.json")
-    ok3, m3 = apply_activation(req, ruling_for(req, in_reply_to="fscr2-"+"0"*32), universe, a2, os.path.join(scratch, "r3.json")); check("wrong in_reply_to -> MISMATCH", (not ok3) and "MISMATCH" in m3, m3)
-    ok4, m4 = apply_activation(req, ruling_for(req, correlation_id="fsc2-"+"0"*32), universe, a2, os.path.join(scratch, "r4.json")); check("wrong correlation_id -> MISMATCH", (not ok4) and "MISMATCH" in m4, m4)
+    rec = rp("main")
+    ok, msg = apply_activation(req, good, universe, rec); check("valid activation succeeds once", ok and "ACTIVATED" in msg, msg)
+    check("active generation derived as 4 from the one record", active_generation_of(rec) == 4, "active=4")
+    ok2, m2 = apply_activation(req, good, universe, rec); check("replay zero-effect no-op", ok2 and "REPLAY_NOOP" in m2, m2)
+    # applicability negatives (universe contains the supplied mutated ruling, so membership passes)
+    bad_ir = ruling_for(req, in_reply_to="fscr2-" + "0"*32)
+    ok3, m3 = apply_activation(req, bad_ir, uni(bad_ir), rp("r3")); check("wrong in_reply_to -> refused", (not ok3) and ("AMBIGUOUS" in m3 or "MISMATCH" in m3), m3)
+    bad_corr = ruling_for(req, correlation_id="fsc2-" + "0"*32)
+    ok4, m4 = apply_activation(req, bad_corr, uni(bad_corr), rp("r4")); check("wrong correlation_id -> MISMATCH", (not ok4) and "MISMATCH" in m4, m4)
     badap = ruling_for(req); badap["applies_to"]["evidence_digest"] = "0"*64
-    ok5, m5 = apply_activation(req, badap, universe, a2, os.path.join(scratch, "r5.json")); check("mutated applies_to.evidence_digest -> STALE", (not ok5) and "STALE" in m5, m5)
+    ok5, m5 = apply_activation(req, badap, uni(badap), rp("r5")); check("mutated applies_to.evidence_digest -> STALE", (not ok5) and "STALE" in m5, m5)
     badcfg = ruling_for(req); badcfg["control_config_generation_digest"] = "0"*64
-    ok6, m6 = apply_activation(req, badcfg, universe, a2, os.path.join(scratch, "r6.json")); check("mutated control-config digest -> STALE_CONFIG", (not ok6) and "STALE_CONFIG" in m6, m6)
+    ok6, m6 = apply_activation(req, badcfg, uni(badcfg), rp("r6")); check("mutated control-config digest -> STALE_CONFIG", (not ok6) and "STALE_CONFIG" in m6, m6)
     badvoc = ruling_for(req); badvoc["vocabulary_digest"] = "0"*64
-    ok7, m7 = apply_activation(req, badvoc, universe, a2, os.path.join(scratch, "r7.json")); check("mutated vocabulary_digest -> STALE", (not ok7) and "STALE" in m7, m7)
-    ok8, m8 = apply_activation(req, ruling_for(req, single_writer_assertion=False), universe, a2, os.path.join(scratch, "r8.json")); check("single_writer_assertion false -> refused (fail closed)", (not ok8) and ("AMBIGUOUS" in m8 or "MALFORMED" in m8), m8)
-    ok9, m9 = apply_activation(req, ruling_for(req, option_id="B"), universe, a2, os.path.join(scratch, "r9.json")); check("non-activation option -> MISMATCH", (not ok9) and "MISMATCH" in m9, m9)
+    ok7, m7 = apply_activation(req, badvoc, uni(badvoc), rp("r7")); check("mutated vocabulary_digest -> STALE", (not ok7) and "STALE" in m7, m7)
+    swf = ruling_for(req, single_writer_assertion=False)
+    ok8, m8 = apply_activation(req, swf, uni(swf), rp("r8")); check("single_writer_assertion false -> refused", (not ok8) and ("AMBIGUOUS" in m8 or "MALFORMED" in m8), m8)
+    optb = ruling_for(req, option_id="B")
+    ok9, m9 = apply_activation(req, optb, uni(optb), rp("r9")); check("non-activation option -> MISMATCH", (not ok9) and "MISMATCH" in m9, m9)
+    # NEW: exactly-one-in-universe + supplied==observed-member
+    okZ, mZ = apply_activation(req, good, {"truncated": False, "rulings": []}, rp("rZ")); check("zero-ruling universe -> refused (no ruling)", (not okZ) and "AMBIGUOUS" in mZ, mZ)
+    injected = ruling_for(req, ruling_id="out-of-universe-injected")
+    okY, mY = apply_activation(req, injected, universe, rp("rY")); check("out-of-universe injected ruling -> MISMATCH", (not okY) and "not the observed universe member" in mY, mY)
     dup = {"truncated": False, "rulings": [good, ruling_for(req, ruling_id="dup")]}
-    okA, mA = apply_activation(req, good, dup, a2, os.path.join(scratch, "rA.json")); check("duplicate rulings (lineage fork) -> AMBIGUOUS", (not okA) and "AMBIGUOUS" in mA, mA)
-    okB, mB = apply_activation(req, good, {"truncated": True, "rulings": []}, a2, os.path.join(scratch, "rB.json")); check("truncated universe -> CNO_TRUNCATED", (not okB) and "TRUNCATED" in mB, mB)
-    # old-config movement: pre-move the active pointer to 4
-    json.dump({"active_generation": 4}, open(a2, "w"))
-    okC, mC = apply_activation(req, good, universe, a2, os.path.join(scratch, "rC.json")); check("old-config moved -> STALE", (not okC) and "STALE" in mC, mC)
-    # target-manifest movement: tamper the subject's manifest
+    okA, mA = apply_activation(req, good, dup, rp("rA")); check("duplicate rulings (lineage fork) -> AMBIGUOUS", (not okA) and "AMBIGUOUS" in mA, mA)
+    okB, mB = apply_activation(req, good, {"truncated": True, "rulings": []}, rp("rB")); check("truncated universe -> CNO_TRUNCATED", (not okB) and "TRUNCATED" in mB, mB)
+    # NEW: crash safety of the single record. A partial/corrupt record must derive gen-3 (never a
+    # false gen-4), and must NOT be treated as a replay of the real target.
+    crashp = rp("crash")
+    open(crashp, "w").write('{"active_generation": 4}')   # partial: missing manifest_digest
+    check("partial/corrupt record derives gen-3 (no false activation)", active_generation_of(crashp) == 3, "partial=>3")
+    okX, mX = apply_activation(req, good, universe, crashp); check("apply over a partial record -> refused, not false replay", (not okX) and "STALE" in mX, mX)
+    check("no record derives gen-3", active_generation_of(rp("absent")) == 3, "absent=>3")
+    # source control-config movement: request binds a from_cfg that no longer matches current config
+    req_badcfg = json.loads(json.dumps(req)); req_badcfg["valid_while"]["control_config_generation_digest"] = "0"*64
+    req_badcfg["control_config_generation"]["digest"] = "0"*64
+    req_badcfg["correlation_id"] = fsc3.derive("correlation_id", req_badcfg); req_badcfg["request_id"] = fsc3.derive("request_id", req_badcfg)
+    okC, mC = apply_activation(req_badcfg, ruling_for(req_badcfg), {"truncated": False, "rulings": [ruling_for(req_badcfg)]}, rp("rC")); check("source control-config moved -> STALE_CONFIG", (not okC) and "STALE_CONFIG" in mC, mC)
+    # target-manifest movement: tamper the subject's FREEZE member digest
     req_badm = json.loads(json.dumps(req))
     for m in req_badm["subject"]["members"]:
         if m["path"].endswith("schema/FREEZE.json"):
-            m["sha256"] = "0" * 64  # bind a manifest that no longer matches the local candidate
+            m["sha256"] = "0" * 64
     req_badm["subject"]["identity_line"] = document_package_identity(req_badm["subject"]["members"])
     req_badm["valid_while"]["subject_identity_line"] = req_badm["subject"]["identity_line"]
     req_badm["correlation_id"] = fsc3.derive("correlation_id", req_badm); req_badm["request_id"] = fsc3.derive("request_id", req_badm)
-    okD, mD = apply_activation(req_badm, ruling_for(req_badm), {"truncated": False, "rulings": [ruling_for(req_badm)]}, os.path.join(scratch, "aD.json"), os.path.join(scratch, "rD.json")); check("target-manifest moved -> STALE", (not okD) and "STALE" in mD, mD)
+    okD, mD = apply_activation(req_badm, ruling_for(req_badm), {"truncated": False, "rulings": [ruling_for(req_badm)]}, rp("rD")); check("target-manifest moved -> STALE", (not okD) and "STALE" in mD, mD)
     # 3T vs 4T both ways
     check("request carries the gen-3 3-tuple (Sol-acceptable)", req["valid_while"]["evidence_digest"] == three(refs), "3-tuple")
     check("a 4-tuple digest differs from the carried 3-tuple", fsc4.evidence_digest(refs) != three(refs), "4tuple!=3tuple")
