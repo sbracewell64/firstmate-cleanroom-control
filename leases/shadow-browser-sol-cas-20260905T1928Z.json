@@ -1,0 +1,11 @@
+{
+  "schema": "fm-emission-lease/v1",
+  "lease_generation": 1,
+  "request_id": "shadow-browser-sol-cas-20260905T1928Z",
+  "correlation_id": "shadow-browser-sol-cas",
+  "holder_token": "browser-sol-interactive-shadow-a",
+  "acquired_at": "2026-09-05T19:28:30Z",
+  "expires_at": "2026-09-05T19:33:30Z",
+  "state": "HELD",
+  "authority": "NONE_SHADOW_TEST"
+}
