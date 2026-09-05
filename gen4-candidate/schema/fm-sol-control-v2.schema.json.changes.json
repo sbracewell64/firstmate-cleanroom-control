@@ -1,0 +1,16 @@
+{
+  "gen3_sha256": "43c1faa9ff8485ac7392b363a4d83729cd84ae4c1ab1a606e128ca20781342a8",
+  "gen4_sha256": "baa9d2d0033a51131306308d7edc477dcece5b0a8798457578a35e02626950c3",
+  "changes": [
+    {
+      "id": "G4-0",
+      "source": "lineage",
+      "change": "generation 4 declared, generation 3 digest recorded in $defs.schema_generation"
+    },
+    {
+      "id": "G4-1",
+      "source": "Browser Sol control#15 transport-recovery disposition",
+      "change": "evidence_digest declared as ONE canonical four-tuple law in $defs.evidence_digest_derivation; valid_while.$comment points at it; $defs.envelope_verifier covers evidence_digest recomputation; digest_basis made load-bearing and schema-visible"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+PASS   R1a canonical law is the 4-tuple                     kind	locator	sha256	digest_basis
+PASS   R1b producer computes the 4-tuple, not the 3-tuple   d4=5e1fc072f729 d3=b23b6fd5a9e1
+PASS   R1c carried 3-tuple is refused by the canonical recompute recompute!=3tuple
+PASS   R1d carried 4-tuple is accepted by the canonical recompute recompute==4tuple
+PASS   R2 digest_basis-only mutation moves evidence_digest  closes observer 4.5 (fetched_bytes->locator_identity is bound)
+PASS   R3a verifier declares + implements evidence_digest recompute declared=True impl=True
+PASS   R3b mismatch folds observed-bad (fail closed)        3-tuple carried -> not equal -> observed-bad
+PASS   R4a consumer L3 exact match on the 4-tuple           L3 exact
+PASS   R4b consumer L3 refuses a stale/mismatched digest    3-tuple valid_while -> REFUSED_STALE
+PASS   R4c ruling V10 applies_to==valid_while (both 4-tuple) V10 exact
+PASS   R5 exclusive-create claim is schema-required (replay guard) claim_mechanism const=exclusive_create required=True
+PASS   R6 truncated read forces CNO_TRUNCATED_RESPONSE (schema guard) receipt allOf pins the truncation fold
+PASS   R7 gen2 frozen artifacts byte-unchanged              checked 12 artifact(s); exit 0 (rc=0)
+PASS   R7 gen3 frozen artifacts byte-unchanged              checked 17 artifact(s); exit 0 (rc=0)
+
+14/14 reds green
