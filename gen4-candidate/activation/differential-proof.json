@@ -1,0 +1,63 @@
+{
+  "correlation_id_recomputes": {
+    "carried": "fsc2-fb7a422cbca5dd01102e186c68500f24",
+    "derived": "fsc2-fb7a422cbca5dd01102e186c68500f24",
+    "value": "observed-good"
+  },
+  "current_gen3_control_generation": {
+    "carried": "912f6238d94dfdf8afd672bc7f28a445b66138c14a5a08fa266a77837346c2aa",
+    "resolved_now": "912f6238d94dfdf8afd672bc7f28a445b66138c14a5a08fa266a77837346c2aa",
+    "value": "observed-good"
+  },
+  "differential_vs_canonical_producer": {
+    "canonical_4tuple": "020db34c90b922b30a53aa03307f9fbe6a379446b85eb028f289ad90d6e9bbb6",
+    "differs": true,
+    "note": "The canonical gen-3 producer computes evidence_digest as the 4-tuple; this recovery compiler computes the schema-mandated 3-tuple. That is the ONLY field that differs.",
+    "recovery_3tuple": "31e78b9630d1a503ff7ba165bfafae01833b44b09f2862431dbdac32fecc2fba"
+  },
+  "effect_incapability": {
+    "note": "This compiler writes only the request + this proof; it changes no control_config_generation, applies no ruling, lands no code, publishes to no venue."
+  },
+  "evidence_digest_is_gen3_3tuple": {
+    "carried": "31e78b9630d1a503ff7ba165bfafae01833b44b09f2862431dbdac32fecc2fba",
+    "recomputed_3tuple": "31e78b9630d1a503ff7ba165bfafae01833b44b09f2862431dbdac32fecc2fba",
+    "value": "observed-good"
+  },
+  "evidence_locators_immutable": {
+    "all_admitted": true,
+    "value": "observed-good"
+  },
+  "expiry_after_creation_rfc3339": {
+    "created_at": "2026-09-05T11:41:30Z",
+    "expires_at": "2026-09-07T11:41:30Z",
+    "value": "observed-good"
+  },
+  "policy_digest_binds_cited_input": {
+    "carried": "4bd404409ec9a35a170ce7800f7e402b680031f93c4c7b0d4f4a320f86d7c3ae",
+    "inputs": [
+      "gen4-candidate/TRANSITION-CONTRACT.md"
+    ],
+    "sha256_of_TRANSITION-CONTRACT.md": "4bd404409ec9a35a170ce7800f7e402b680031f93c4c7b0d4f4a320f86d7c3ae",
+    "value": "observed-good"
+  },
+  "request_id_recomputes": {
+    "carried": "fscr2-27827310eba5b9483ec1d92c1c8eed46",
+    "derived": "fscr2-27827310eba5b9483ec1d92c1c8eed46",
+    "value": "observed-good"
+  },
+  "schema_validation": {
+    "errors": [],
+    "value": "observed-good"
+  },
+  "subject_identity_recomputes": {
+    "carried": "sha256:7f8edd727a95648cf5e929ceaf70d83768c4175421297be1df5eea4a8b4a0921",
+    "recomputed": "sha256:7f8edd727a95648cf5e929ceaf70d83768c4175421297be1df5eea4a8b4a0921",
+    "value": "observed-good"
+  },
+  "work_and_request_generations": {
+    "request_generation": 5,
+    "supersedes_request_id": "fscr2-52ee25bf7b2a19188f59347c1ed27ad6",
+    "value": "observed-good",
+    "work_generation": 1
+  }
+}

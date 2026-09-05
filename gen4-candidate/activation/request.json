@@ -1,0 +1,197 @@
+{
+  "acceptance_policy": {
+    "digest": "4bd404409ec9a35a170ce7800f7e402b680031f93c4c7b0d4f4a320f86d7c3ae",
+    "generation": "cleanroom-gen4-activation-v1",
+    "inputs": [
+      "gen4-candidate/TRANSITION-CONTRACT.md"
+    ]
+  },
+  "boundary_evidence": [
+    {
+      "measured": "DELEGATED_ENGINEERING; captain_required=false; control#15 recovery",
+      "predicate": "this is a bounded control-tooling generation-3 -> generation-4 activation transition, not new spend, not a security or privacy weakening, not a credential exposure, not a destructive or materially irreversible act, and not a personal or product preference",
+      "value": "observed-good"
+    },
+    {
+      "measured": "fsc4-transition.py's sole effect is one fsync+os.replace of the single active-tooling-generation record; the applier re-resolves control_config_generation at the effect boundary and REFUSES if it moved (it never moves it)",
+      "predicate": "consuming Option A advances ONLY the active control-tooling/schema generation from 3 to 4, exactly once, through the single atomic activation record; control_config_generation (the sha256 of the normalized control-plane YAML) does NOT move and is not reinterpreted as the active tooling generation; generations 1/2/3 and all historical transactions are preserved unchanged",
+      "value": "observed-good"
+    },
+    {
+      "measured": "document_package subject binds the candidate schema + FREEZE members at commit d6faa3182ec001175acc02b6acfc48353e3e7d49",
+      "predicate": "the target is exactly the unactivated frozen generation-4 candidate at the bound immutable commit",
+      "value": "observed-good"
+    },
+    {
+      "measured": "one forge account fronts both sides of the transport (issue #3 independence ruling: grade cap, not blocker)",
+      "predicate": "maker/checker independence at the principal level on this venue",
+      "value": "could-not-observe"
+    }
+  ],
+  "candidate": null,
+  "candidate_state": "NOT_APPLICABLE",
+  "control_config_generation": {
+    "digest": "912f6238d94dfdf8afd672bc7f28a445b66138c14a5a08fa266a77837346c2aa",
+    "owner_path": "/home/OPERATOR/.firstmate-cleanroom/config/control-plane.yaml",
+    "resolved_at": "2026-09-05T11:41:30Z",
+    "resolver_digest": "6bc5e5673d8db78b927ccc382a510a65bb0d28ded7389d48ea2cc370ee340f3f"
+  },
+  "correlation_id": "fsc2-fb7a422cbca5dd01102e186c68500f24",
+  "created_at": "2026-09-05T11:41:30Z",
+  "decision_class": "DELEGATED_ENGINEERING",
+  "evidence_refs": [
+    {
+      "bytes": 71237,
+      "digest_basis": "fetched_bytes",
+      "kind": "blob",
+      "locator": "https://raw.githubusercontent.com/sbracewell64/firstmate-cleanroom-control/d6faa3182ec001175acc02b6acfc48353e3e7d49/gen4-candidate/schema/fm-sol-control-v2.schema.json",
+      "sha256": "e722b5f4dd36d0cec6ba2e8c3614a9318b0f823c1e2c5e3c1b24d6292f3fe11f"
+    },
+    {
+      "bytes": 6678,
+      "digest_basis": "fetched_bytes",
+      "kind": "blob",
+      "locator": "https://raw.githubusercontent.com/sbracewell64/firstmate-cleanroom-control/d6faa3182ec001175acc02b6acfc48353e3e7d49/gen4-candidate/schema/FREEZE.json",
+      "sha256": "5fffb56036048bf65b53de0169960aaf5f2eae6c026fea54f41c60538495aace"
+    },
+    {
+      "digest_basis": "locator_identity",
+      "kind": "commit",
+      "locator": "https://github.com/sbracewell64/firstmate-cleanroom-control/commit/d6faa3182ec001175acc02b6acfc48353e3e7d49",
+      "sha256": "ff4b7ef6ccad7ea806ee8eaf068dc1f9e9311adc36474ff9d8dc0f078d1a048d"
+    }
+  ],
+  "expires_at": "2026-09-07T11:41:30Z",
+  "kind": "request",
+  "project": "FirstMate-Cleanroom",
+  "protocol_generation": {
+    "protocol": "fm-sol-control/v2",
+    "renderer_digest": "ab8d7cd522dd3ceb8a465156220f0b3a579d6fcac899091aabf2a81f17af3aea",
+    "schema_locator": "https://raw.githubusercontent.com/sbracewell64/firstmate-cleanroom-control/4828d023a55d2300bffe64eb4d35216a70042000/schema-gen3/fm-sol-control-v2.schema.json",
+    "schema_sha256": "43c1faa9ff8485ac7392b363a4d83729cd84ae4c1ab1a606e128ca20781342a8"
+  },
+  "publication_redaction": {
+    "classes_applied": [
+      "posix_home",
+      "wsl_windows_userprofile",
+      "windows_userprofile",
+      "macos_home",
+      "unc_wsl_home"
+    ],
+    "policy_digest": "6ba6a9a9755e65e51ec925c33983b80d39cfba17878bf050bbd5db89cbfc20fb",
+    "policy_id": "cleanroom-operator-path-redaction-v2",
+    "residue_count": 0,
+    "scan": {
+      "measured": "residue_count 0",
+      "predicate": "published evidence carries no operator-local user-profile path",
+      "value": "observed-good"
+    }
+  },
+  "question": {
+    "body_markdown": "Activate exactly the unactivated generation-4 candidate published at gen4-candidate/@d6faa3182ec001175acc02b6acfc48353e3e7d49 (schema-visible 4-tuple evidence_digest law), via the dedicated transition applier, or keep generation 3 active and return the candidate for revision. Consuming Option A advances ONLY the active control-tooling/schema generation 3 -> 4 through the single atomic activation record, after effect-boundary revalidation; control_config_generation (the normalized control-plane YAML digest) does NOT move.",
+    "key": "gen4-activation-transition-disposition",
+    "options": [
+      {
+        "consequence": "one atomic advance of the ACTIVE control-tooling/schema generation 3 -> 4 via the single activation record; the schema-visible 4-tuple law becomes active; control_config_generation is unchanged",
+        "id": "A",
+        "paths": [],
+        "reversibility": "reversible",
+        "summary": "Activate exactly the successor frozen generation-4 candidate via the dedicated transition applier."
+      },
+      {
+        "consequence": "no advance",
+        "id": "B",
+        "paths": [],
+        "reversibility": "reversible",
+        "summary": "Keep generation 3 active; return the candidate for revision."
+      }
+    ],
+    "title": "[FM->SOL] fm-sol-control/v2 request: generation-3 -> generation-4 activation transition"
+  },
+  "reply_contract": {
+    "renderer_digest": "ab8d7cd522dd3ceb8a465156220f0b3a579d6fcac899091aabf2a81f17af3aea",
+    "required_fields": [
+      "schema",
+      "kind",
+      "ruling_id",
+      "in_reply_to",
+      "correlation_id",
+      "vocabulary_digest",
+      "control_config_generation_digest",
+      "ruled_at",
+      "ruler",
+      "applies_to",
+      "inspection",
+      "directive",
+      "single_writer_assertion"
+    ],
+    "schema_locator": "https://raw.githubusercontent.com/sbracewell64/firstmate-cleanroom-control/4828d023a55d2300bffe64eb4d35216a70042000/schema-gen3/fm-sol-control-v2.schema.json",
+    "schema_sha256": "43c1faa9ff8485ac7392b363a4d83729cd84ae4c1ab1a606e128ca20781342a8"
+  },
+  "repo": {
+    "name": "firstmate-cleanroom-control",
+    "owner": "sbracewell64",
+    "url": "https://github.com/sbracewell64/firstmate-cleanroom-control"
+  },
+  "request_generation": 5,
+  "request_id": "fscr2-27827310eba5b9483ec1d92c1c8eed46",
+  "requester": {
+    "kind": "agent",
+    "login": "sbracewell64",
+    "provenance_class": "self_asserted_descriptor",
+    "session_ref": "clean-room FirstMate primary; gen-3 -> gen-4 activation-transition recovery compiler (control#15)"
+  },
+  "routing_labels": [
+    "control/escalation",
+    "to/browser-sol"
+  ],
+  "schema": "fm-sol-control/v2",
+  "subject": {
+    "identity_line": "sha256:7f8edd727a95648cf5e929ceaf70d83768c4175421297be1df5eea4a8b4a0921",
+    "kind": "document_package",
+    "members": [
+      {
+        "bytes": 71237,
+        "evidence_ref": {
+          "bytes": 71237,
+          "digest_basis": "fetched_bytes",
+          "kind": "blob",
+          "locator": "https://raw.githubusercontent.com/sbracewell64/firstmate-cleanroom-control/d6faa3182ec001175acc02b6acfc48353e3e7d49/gen4-candidate/schema/fm-sol-control-v2.schema.json",
+          "sha256": "e722b5f4dd36d0cec6ba2e8c3614a9318b0f823c1e2c5e3c1b24d6292f3fe11f"
+        },
+        "path": "gen4-candidate/schema/fm-sol-control-v2.schema.json",
+        "sha256": "e722b5f4dd36d0cec6ba2e8c3614a9318b0f823c1e2c5e3c1b24d6292f3fe11f"
+      },
+      {
+        "bytes": 6678,
+        "evidence_ref": {
+          "bytes": 6678,
+          "digest_basis": "fetched_bytes",
+          "kind": "blob",
+          "locator": "https://raw.githubusercontent.com/sbracewell64/firstmate-cleanroom-control/d6faa3182ec001175acc02b6acfc48353e3e7d49/gen4-candidate/schema/FREEZE.json",
+          "sha256": "5fffb56036048bf65b53de0169960aaf5f2eae6c026fea54f41c60538495aace"
+        },
+        "path": "gen4-candidate/schema/FREEZE.json",
+        "sha256": "5fffb56036048bf65b53de0169960aaf5f2eae6c026fea54f41c60538495aace"
+      }
+    ]
+  },
+  "supersedes_request_id": "fscr2-52ee25bf7b2a19188f59347c1ed27ad6",
+  "valid_while": {
+    "control_config_generation_digest": "912f6238d94dfdf8afd672bc7f28a445b66138c14a5a08fa266a77837346c2aa",
+    "evidence_digest": "31e78b9630d1a503ff7ba165bfafae01833b44b09f2862431dbdac32fecc2fba",
+    "policy_digest": "4bd404409ec9a35a170ce7800f7e402b680031f93c4c7b0d4f4a320f86d7c3ae",
+    "subject_head_sha": "d6faa3182ec001175acc02b6acfc48353e3e7d49",
+    "subject_identity_line": "sha256:7f8edd727a95648cf5e929ceaf70d83768c4175421297be1df5eea4a8b4a0921",
+    "subject_state": "published",
+    "vocabulary_digest": "43c1faa9ff8485ac7392b363a4d83729cd84ae4c1ab1a606e128ca20781342a8"
+  },
+  "venue": {
+    "name": "firstmate-cleanroom-control",
+    "owner": "sbracewell64",
+    "url": "https://github.com/sbracewell64/firstmate-cleanroom-control"
+  },
+  "vocabulary_digest": "43c1faa9ff8485ac7392b363a4d83729cd84ae4c1ab1a606e128ca20781342a8",
+  "work_generation": 1,
+  "work_id": "cleanroom-gen4-activation-transition"
+}
