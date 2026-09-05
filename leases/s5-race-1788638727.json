@@ -1,1 +1,0 @@
-{"acquired_at": "2026-09-05T20:05:28Z", "correlation_id": "corr-s5-race-1788638727", "expires_at": "2026-09-05T20:20:28Z", "holder_token": "surfaceY", "lease_generation": 1, "released_at": "2026-09-05T20:05:30Z", "request_id": "s5-race-1788638727", "schema": "fm-emission-lease/v1", "state": "released"}
