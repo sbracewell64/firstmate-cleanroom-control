@@ -1,21 +1,26 @@
 PASS   activation request is a schema-valid gen-3 request 0 errors
 PASS   valid activation succeeds once                     ACTIVATED: active generation advanced 3 -> 4
-PASS   active pointer now gen-4                           active=4
+PASS   active generation derived as 4 from the one record active=4
 PASS   replay zero-effect no-op                           REPLAY_NOOP: already activated for this exact target; zero effects
-PASS   wrong in_reply_to -> MISMATCH                      REFUSED_MISMATCH: in_reply_to != request_id
+PASS   wrong in_reply_to -> refused                       REFUSED_AMBIGUOUS: no ruling for this request in the observed universe
 PASS   wrong correlation_id -> MISMATCH                   REFUSED_MISMATCH: correlation_id mismatch
 PASS   mutated applies_to.evidence_digest -> STALE        REFUSED_STALE: evidence_digest mismatch
 PASS   mutated control-config digest -> STALE_CONFIG      REFUSED_STALE_CONFIG: control_config_generation_digest mismatch
 PASS   mutated vocabulary_digest -> STALE                 REFUSED_STALE: vocabulary_digest mismatch
-PASS   single_writer_assertion false -> refused (fail closed) REFUSED_MALFORMED: ruling not gen-3 schema-valid: {'schema': 'fm-sol-contr
+PASS   single_writer_assertion false -> refused           REFUSED_MALFORMED: ruling not gen-3 schema-valid: {'schema': 'fm-sol-contr
 PASS   non-activation option -> MISMATCH                  REFUSED_MISMATCH: adopted option is not the activation option A
+PASS   zero-ruling universe -> refused (no ruling)        REFUSED_AMBIGUOUS: no ruling for this request in the observed universe
+PASS   out-of-universe injected ruling -> MISMATCH        REFUSED_MISMATCH: supplied ruling is not the observed universe member
 PASS   duplicate rulings (lineage fork) -> AMBIGUOUS      REFUSED_AMBIGUOUS: more than one ruling for this request (lineage fork)
 PASS   truncated universe -> CNO_TRUNCATED                CNO_TRUNCATED_RESPONSE: ruling universe not seen whole
-PASS   old-config moved -> STALE                          REFUSED_STALE: active generation moved off 3 (old-config stale)
+PASS   partial/corrupt record derives gen-3 (no false activation) partial=>3
+PASS   apply over a partial record -> refused, not false replay REFUSED_STALE: an activation record already exists for a different target
+PASS   no record derives gen-3                            absent=>3
+PASS   source control-config moved -> STALE_CONFIG        REFUSED_STALE_CONFIG: source control-config generation moved since the req
 PASS   target-manifest moved -> STALE                     REFUSED_STALE: target gen-4 manifest moved
 PASS   request carries the gen-3 3-tuple (Sol-acceptable) 3-tuple
 PASS   a 4-tuple digest differs from the carried 3-tuple  4tuple!=3tuple
 PASS   digest_basis-only mutation moves the 4-tuple digest observer 4.5
 PASS   gen-2 and gen-3 freeze-verify green, byte-unchanged historical immutable
 
-19/19 activation-seam checks green
+24/24 activation-seam checks green
