@@ -1,6 +1,11 @@
 {
   "activated": false,
   "artifacts": {
+    "activation_compiler": {
+      "bytes": 9184,
+      "path": "artifacts/control/gen4/bin/fsc4-activation-compiler.py",
+      "sha256": "32ac899ff268df729da04d09d70ce2c5c2792a2ebdf30f801a0e1f1b1bc65840"
+    },
     "consumer": {
       "bytes": 28956,
       "path": "artifacts/control/gen4/bin/fsc4-consume.py",
@@ -32,9 +37,9 @@
       "sha256": "021ff5888b1a77d83a592fabf2208c5120bf7ec5806a10e4e7c24f0ae48fcf40"
     },
     "redactor": {
-      "bytes": 6321,
+      "bytes": 6328,
       "path": "artifacts/control/gen4/bin/fsc4-redact.py",
-      "sha256": "f6b034404f2f9a0177e96eb442b9945d237f17e2182adbece6b8c2ae87745025"
+      "sha256": "5b3279429e21fda1d0fd166748a20158560fe14f7b30c60081f2b91a74247aab"
     },
     "renderer": {
       "bytes": 11575,
@@ -57,24 +62,29 @@
       "sha256": "6fec16aba4cdb96c3ec63085165bee34c7bc1142445f0bad4a6ceb6147112671"
     },
     "resolver": {
-      "bytes": 8776,
+      "bytes": 8779,
       "path": "artifacts/control/gen4/bin/fsc4_config.py",
-      "sha256": "0bd959dba19d6250b185f82f5c9d0087e3e45ed4f53e85c46d96ef0715151850"
+      "sha256": "6bc5e5673d8db78b927ccc382a510a65bb0d28ded7389d48ea2cc370ee340f3f"
     },
     "schema": {
-      "bytes": 71092,
+      "bytes": 71237,
       "path": "artifacts/control/gen4/schema/fm-sol-control-v2.schema.json",
-      "sha256": "baa9d2d0033a51131306308d7edc477dcece5b0a8798457578a35e02626950c3"
+      "sha256": "e722b5f4dd36d0cec6ba2e8c3614a9318b0f823c1e2c5e3c1b24d6292f3fe11f"
     },
     "schema_builder": {
-      "bytes": 9002,
+      "bytes": 9224,
       "path": "artifacts/control/gen4/bin/build-gen4-schema.py",
-      "sha256": "204718bb30d0cf84e54589a659da79564167b917ee6c7e16d3206d3d7fb9c8a5"
+      "sha256": "24a63a75ed75f0d63f20b0a572e26fb40c1a9a002ca453b3fef460377a569477"
+    },
+    "transition_applier": {
+      "bytes": 22033,
+      "path": "artifacts/control/gen4/bin/fsc4-transition.py",
+      "sha256": "8585b09023d70c7df57fdd4c3b7b01ccfa9e973b7701a590c08c39fa2a379772"
     },
     "watched_reds": {
-      "bytes": 45971,
+      "bytes": 45989,
       "path": "artifacts/control/gen4/reds/watched-reds.py",
-      "sha256": "3d96b1b1f87c2141e4e01ad944cfbf8e8641bf671afbb34901faffbbb641c970"
+      "sha256": "d952f5310c1ffadfc08d12a14698d6c0897a012b8c5fab9413001773c6516d53"
     },
     "watched_reds_evidence_digest": {
       "bytes": 6948,
@@ -92,11 +102,11 @@
     "digest": "912f6238d94dfdf8afd672bc7f28a445b66138c14a5a08fa266a77837346c2aa",
     "note": "Recorded so a reader can see which configuration was in force at the freeze, and NOT as a freeze constraint. Generation 4 does NOT move the control-config generation; activation is a separate Browser Sol disposition.",
     "owner_path": "/home/OPERATOR/.firstmate-cleanroom/config/control-plane.yaml",
-    "resolver_digest": "0bd959dba19d6250b185f82f5c9d0087e3e45ed4f53e85c46d96ef0715151850"
+    "resolver_digest": "6bc5e5673d8db78b927ccc382a510a65bb0d28ded7389d48ea2cc370ee340f3f"
   },
   "enforcement": "Enforcement is DIGEST COMPARISON ONLY -- detective, not preventive -- through bin/fsc4-verify-freeze.sh, which re-hashes every artifact above and refuses on any drift. The drvfs mount carries no file modes, so write-once cannot be enforced by permission; this is a real limit, recorded rather than assumed away.",
   "freeze_ordering": "FROZEN as an UNACTIVATED candidate. No fm-sol-control/v2 generation-4 envelope has been emitted; generation-3 authority-bearing delivery remains fail-closed until activation is separately dispositioned by Browser Sol (control#15). The gen4 evidence-digest watched-red suite was run green against these exact bytes.",
-  "frozen_at": "2026-09-05T06:18:31Z",
+  "frozen_at": "2026-09-05T08:18:51Z",
   "protocol": "fm-sol-control/v2",
   "record": "fm-sol-control-v2-schema-freeze/v4",
   "recovery_basis": "control#15: generation 3 carried two disagreeing evidence_digest definitions -- the schema text declared the 3-tuple while fsc3.evidence_digest computed the 4-tuple, and evidence_digest was not verifier-covered, so the disagreement was invisible at emit and only surfaced at consume (REFUSED_STALE on #15). Generation 4 makes evidence_digest ONE declared, schema-visible, verifier-covered canonical law ($defs.evidence_digest_derivation), adopting the 4-tuple deliberately (digest_basis load-bearing; observer 4.5).",

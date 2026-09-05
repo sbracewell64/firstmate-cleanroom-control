@@ -1,36 +1,32 @@
 #!/usr/bin/env python3
-"""Pre-activation generation-transition contract (gen-3 -> gen-4), control#15.
+"""Generation-transition APPLIER (gen-3 -> gen-4) + fake-forge seam proof, control#15.
 
-The smallest explicit typed mechanism that can authorize the atomic control-tooling
-transition from the currently-active generation 3 to the frozen generation-4 candidate,
-WITHOUT pre-activating generation 4 to make the request possible.
+CORRECTED per Browser Sol's transition-contract review:
+  * The transition is carried by an ORDINARY frozen-gen-3 `kind="request"` (built by the
+    quarantined one-use recovery compiler `fsc4-activation-compiler.py`), NOT a custom envelope
+    kind. This module does NOT build that request.
+  * The applier accepts ONLY a full schema-valid gen-3 `fm-sol-control/v2` ruling with
+    directive=ADOPT_OPTION selecting the activation option, and revalidates EXACT applicability
+    on every binding before any effect. It obtains the complete ruling universe and refuses
+    ambiguity / lineage forks. Replay is zero-effect.
+  * The only effect, on an applicable ruling and after effect-boundary revalidation, is ONE
+    atomic advance of the active control-tooling generation from 3 to 4 (a digest-bound
+    activation record). Nothing else.
 
-Why a dedicated contract (the observed bootstrap defect):
-  The generation-3 canonical producer (fsc3-emit-request.py) computes the 4-tuple
-  evidence_digest, which Browser Sol's generation-3 queue-processor refuses (it recomputes
-  the 3-tuple the gen-3 schema text declares). So the canonical gen-3 producer cannot author
-  a Sol-acceptable request AT ALL -- it is itself the broken component. A transition request
-  therefore honors the gen-3 SCHEMA law (the 3-tuple the schema actually declares, which Sol
-  accepts, as it ruled on #15), and is consumed NOT by the deadlocked gen-3 consumer but by
-  the dedicated applier below, which recomputes under the same declared law. This is not a
-  bypass by prose: it is a typed contract, watched-red below, that Browser Sol dispositions.
-
-Contract fields (a gen-3-vocabulary request; no gen-4 vocabulary is used pre-activation):
-  from_generation: {generation:3, vocabulary_digest:<gen3 schema sha>, control_config_digest:<current>}
-  to_generation:   {generation:4, vocabulary_digest:<gen4 schema sha>, manifest_digest:<gen4 FREEZE sha>,
-                    candidate_commit:<immutable control-repo commit>}
-  effect: on an applicable Browser Sol ruling ONLY, atomically advance the active generation
-          to 4 by writing a digest-bound activation record; revalidated at apply time.
-
-Effect-boundary revalidation (apply time, all must still hold or the apply is refused):
-  - the current active generation is still 3 (old-config has not moved);
-  - the target gen-4 manifest still verifies byte-for-byte (freeze-verify green);
-  - the ruling applies_to the exact transition subject line.
+The activation request encodes the target in ordinary gen-3 vocabulary:
+  work_id                     = "cleanroom-gen4-activation-transition"
+  subject                     = document_package over the gen-4 candidate files; the member for
+                                schema/....json binds the target gen-4 vocabulary and the member for
+                                schema/FREEZE.json binds the target manifest; identity_line is the
+                                sorted 'sha256  path' manifest digest
+  valid_while.subject_head_sha= the immutable candidate commit; .control_config_generation_digest = source config
+  acceptance_policy.digest    = the published activation policy (Option A/B)
+  evidence_refs               = the candidate files at immutable raw locators + the commit
+  valid_while.evidence_digest = the gen-3 SCHEMA 3-tuple (kind\\tlocator\\tsha256)
 
 Usage:
-  fsc4-transition.py build <out-request.json>
-  fsc4-transition.py apply <request.json> <ruling.json> <activation-record-out.json> [--active-gen-file F]
-  fsc4-transition.py roundtrip           run the bounded fake-forge seam proof (exit 0 = all green)
+  fsc4-transition.py apply <request.json> <ruling.json> <universe.json> <active-gen-file> <record-out>
+  fsc4-transition.py roundtrip     bounded fake-forge proof over REAL gen-3 request + ruling shapes
 """
 import hashlib
 import json
@@ -40,188 +36,296 @@ import tempfile
 
 BIN = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BIN)
-import fsc4          # noqa: E402
 import fsc4_config   # noqa: E402
+from jsonschema import Draft202012Validator  # noqa: E402
 
 GEN4 = fsc4_config.CONTROL_ROOT
 CONTROL_DIR = os.path.dirname(GEN4)
-GEN3_SCHEMA = os.path.join(CONTROL_DIR, "gen3", "schema", "fm-sol-control-v2.schema.json")
+GEN3_SCHEMA_PATH = os.path.join(CONTROL_DIR, "gen3", "schema", "fm-sol-control-v2.schema.json")
 GEN4_FREEZE = os.path.join(GEN4, "schema", "FREEZE.json")
+GEN4_SCHEMA = os.path.join(GEN4, "schema", "fm-sol-control-v2.schema.json")
 
 
 def sha_file(p):
     return hashlib.sha256(open(p, "rb").read()).hexdigest()
 
 
-def three_tuple_digest(refs):
-    """The gen-3 schema-declared evidence_digest law: sorted LF-terminated
-    kind\\tlocator\\tsha256 triples. Sol's gen-3 processor accepts this."""
-    rows = sorted("%s\t%s\t%s" % (r["kind"], r["locator"], r["sha256"]) for r in refs)
-    return hashlib.sha256(("\n".join(rows) + "\n").encode("utf-8")).hexdigest()
+def gen3_schema():
+    return json.loads(open(GEN3_SCHEMA_PATH, "rb").read())
 
 
-def transition_subject_line(from_vocab, to_vocab, manifest_digest):
-    return "generation_transition:%s->%s@%s" % (from_vocab, to_vocab, manifest_digest)
+def gen3_validate(kind, obj):
+    """Validate a gen-3 envelope against the frozen gen-3 schema-of-record."""
+    schema = gen3_schema()
+    errs = [e.message for e in Draft202012Validator(schema).iter_errors(obj)]
+    if obj.get("kind") != kind:
+        errs.append("kind is %r, expected %r" % (obj.get("kind"), kind))
+    return errs
 
 
-def build_request(evidence_refs, candidate_commit, active_gen=3):
-    gen3_vocab = sha_file(GEN3_SCHEMA)
-    gen4_vocab = sha_file(os.path.join(GEN4, "schema", "fm-sol-control-v2.schema.json"))
-    manifest_digest = sha_file(GEN4_FREEZE)
-    ccg, _cfg, _norm = fsc4_config.generation()
-    subject = transition_subject_line(gen3_vocab, gen4_vocab, manifest_digest)
-    req = {
-        "schema": "fm-sol-control/v2",
-        "kind": "generation_transition_request",
-        "protocol_generation": {"generation": active_gen, "vocabulary_digest": gen3_vocab},
-        "from_generation": {"generation": active_gen, "vocabulary_digest": gen3_vocab,
-                            "control_config_digest": ccg["digest"]},
-        "to_generation": {"generation": 4, "vocabulary_digest": gen4_vocab,
-                          "manifest_digest": manifest_digest, "candidate_commit": candidate_commit},
-        "subject_identity_line": subject,
-        "evidence_refs": evidence_refs,
-        "valid_while": {
-            "evidence_digest": three_tuple_digest(evidence_refs),
-            "evidence_digest_law": "gen3-schema-3-tuple",
-            "from_control_config_digest": ccg["digest"],
-            "to_manifest_digest": manifest_digest,
-        },
-        "effect": "atomic advance of the active control-tooling generation from 3 to 4; no other effect",
-    }
-    return req
+ACTIVATION_OPTION_ID = "A"
+
+# The exact applies_to bindings that must match, request-field -> ruling.applies_to-field.
+_APPLIES_BINDINGS = [
+    ("work_id", "work_id"),
+    ("work_generation", "work_generation"),
+    ("request_generation", "request_generation"),
+]
 
 
-def apply_transition(req, ruling, out_record, active_gen_file):
-    """Apply ONLY on an applicable ruling, with effect-boundary revalidation. Fails
-    closed (returns (False, reason)) on any staleness/mismatch. Writes the activation
-    record atomically iff every gate is green and it does not already exist (replay = no-op)."""
-    # gate: ruling applies to the exact transition subject
-    if ruling.get("directive") not in ("ACTIVATE", "ADOPT_OPTION", "APPROVE"):
-        return False, "REFUSED: ruling directive is not an activation"
-    if ruling.get("applies_to", {}).get("subject_identity_line") != req["subject_identity_line"]:
-        return False, "REFUSED_MISMATCH: ruling does not apply to this transition subject"
-    # REPLAY (checked BEFORE the old-config gate): if this exact target is already activated,
-    # the transition is idempotent and performs zero effects -- NOT an old-config-stale error.
-    if os.path.exists(out_record):
+def applicable(request, ruling):
+    """Full exact-applicability gate. Returns (True,'') or (False, reason). No effect."""
+    re_ = gen3_validate("request", request)
+    if re_:
+        return False, "REFUSED_MALFORMED: request not gen-3 schema-valid: %s" % "; ".join(re_[:2])
+    ru_ = gen3_validate("ruling", ruling)
+    if ru_:
+        return False, "REFUSED_MALFORMED: ruling not gen-3 schema-valid: %s" % "; ".join(ru_[:2])
+    if ruling.get("single_writer_assertion") is not True:
+        return False, "REFUSED_AMBIGUOUS: ruling.single_writer_assertion is not true"
+    if ruling.get("supersedes") not in (None,) and not isinstance(ruling.get("supersedes"), str):
+        return False, "REFUSED_AMBIGUOUS: ruling.supersedes malformed"
+    if ruling.get("directive") != "ADOPT_OPTION":
+        return False, "REFUSED_MISMATCH: directive is not ADOPT_OPTION"
+    if ruling.get("option_id") != ACTIVATION_OPTION_ID:
+        return False, "REFUSED_MISMATCH: adopted option is not the activation option A"
+    if ruling.get("in_reply_to") != request.get("request_id"):
+        return False, "REFUSED_MISMATCH: in_reply_to != request_id"
+    if ruling.get("correlation_id") != request.get("correlation_id"):
+        return False, "REFUSED_MISMATCH: correlation_id mismatch"
+    if ruling.get("vocabulary_digest") != request.get("vocabulary_digest"):
+        return False, "REFUSED_STALE: vocabulary_digest mismatch"
+    if ruling.get("control_config_generation_digest") != (request.get("control_config_generation") or {}).get("digest"):
+        return False, "REFUSED_STALE_CONFIG: control_config_generation_digest mismatch"
+    ap = ruling.get("applies_to") or {}
+    if ap.get("subject_identity_line") != (request.get("subject") or {}).get("identity_line"):
+        return False, "REFUSED_MISMATCH: subject_identity_line mismatch"
+    if ap.get("policy_digest") != (request.get("acceptance_policy") or {}).get("digest"):
+        return False, "REFUSED_STALE: policy_digest mismatch"
+    if ap.get("evidence_digest") != (request.get("valid_while") or {}).get("evidence_digest"):
+        return False, "REFUSED_STALE: evidence_digest mismatch"
+    for rq_field, ap_field in _APPLIES_BINDINGS:
+        if ap.get(ap_field) != request.get(rq_field):
+            return False, "REFUSED_MISMATCH: applies_to.%s mismatch" % ap_field
+    for vk in ("venue", "repo"):
+        if ap.get(vk) != request.get(vk):
+            return False, "REFUSED_MISMATCH: applies_to.%s mismatch" % vk
+    return True, ""
+
+
+def document_package_identity(members):
+    """The gen-3 document_package identity_line: sha256 over the sorted 'sha256  path' manifest."""
+    lines = sorted("%s  %s" % (m["sha256"], m["path"]) for m in members)
+    return "sha256:" + hashlib.sha256(("\n".join(lines) + "\n").encode("utf-8")).hexdigest()
+
+
+def _target_from_request(request):
+    """Read the target the request binds through ORDINARY gen-3 vocabulary: commit + source
+    config from valid_while; gen-4 vocabulary + manifest from the document_package members
+    (the member for schema/....json is the gen-4 vocabulary; for schema/FREEZE.json the manifest)."""
+    vw = request.get("valid_while") or {}
+    subj = request.get("subject") or {}
+    members = subj.get("members") or []
+    gen4_vocab = manifest = None
+    for m in members:
+        p = m.get("path", "")
+        if p.endswith("schema/fm-sol-control-v2.schema.json"):
+            gen4_vocab = m.get("sha256")
+        elif p.endswith("schema/FREEZE.json"):
+            manifest = m.get("sha256")
+    if not (gen4_vocab and manifest and vw.get("subject_head_sha")):
+        return None
+    return {"from_cfg": vw.get("control_config_generation_digest"),
+            "gen4_vocab": gen4_vocab, "manifest": manifest, "commit": vw.get("subject_head_sha"),
+            "subject_line": subj.get("identity_line"), "members": members}
+
+
+def apply_activation(request, ruling, universe, active_gen_file, record_out):
+    """Apply ONLY on an applicable ruling, complete universe, and green effect boundary."""
+    # complete, non-truncated universe + no ambiguity/lineage fork
+    if universe.get("truncated") is True:
+        return False, "CNO_TRUNCATED_RESPONSE: ruling universe not seen whole"
+    terminal = [r for r in universe.get("rulings", []) if isinstance(r, dict) and r.get("kind") == "ruling"]
+    applicable_here = [r for r in terminal if r.get("in_reply_to") == request.get("request_id")]
+    if len(applicable_here) > 1:
+        return False, "REFUSED_AMBIGUOUS: more than one ruling for this request (lineage fork)"
+    ok, reason = applicable(request, ruling)
+    if not ok:
+        return False, reason
+    tgt = _target_from_request(request)
+    if not tgt:
+        return False, "REFUSED_MALFORMED: activation target not bound in subject members + valid_while"
+    # subject integrity: the document_package identity_line recomputes from its members
+    if tgt["subject_line"] != document_package_identity(tgt["members"]):
+        return False, "REFUSED_MISMATCH: subject identity_line does not recompute from its members"
+    # REPLAY (before the old-config gate): exact target already activated -> zero effects
+    if os.path.exists(record_out):
         try:
-            existing = json.load(open(out_record))
-            if existing.get("active_generation") == 4 and existing.get("manifest_digest") == req["to_generation"]["manifest_digest"]:
-                return True, "REPLAY_NOOP: already activated for this exact manifest; zero effects"
+            ex = json.load(open(record_out))
+            if ex.get("active_generation") == 4 and ex.get("manifest_digest") == tgt["manifest"] and ex.get("candidate_commit") == tgt["commit"]:
+                return True, "REPLAY_NOOP: already activated for this exact target; zero effects"
         except (OSError, ValueError):
             pass
-    # gate: current active generation is still the request's from-generation (old-config not moved)
+    # effect boundary: source generation still 3
     try:
         active_now = json.load(open(active_gen_file)).get("active_generation") if os.path.exists(active_gen_file) else 3
     except (OSError, ValueError):
         return False, "CNO: active-generation record unreadable"
-    if active_now != req["from_generation"]["generation"]:
-        return False, "REFUSED_STALE: active generation moved since the request (old-config stale)"
-    # gate: target manifest still verifies byte-for-byte
-    if sha_file(GEN4_FREEZE) != req["to_generation"]["manifest_digest"]:
-        return False, "REFUSED_STALE: target gen-4 manifest moved (target-manifest stale)"
-    # gate: evidence_digest recomputes under the declared gen-3 law
-    if three_tuple_digest(req["evidence_refs"]) != req["valid_while"]["evidence_digest"]:
-        return False, "REFUSED_STALE: evidence set no longer digests to valid_while.evidence_digest"
-    record = {"active_generation": 4,
-              "manifest_digest": req["to_generation"]["manifest_digest"],
-              "vocabulary_digest": req["to_generation"]["vocabulary_digest"],
-              "candidate_commit": req["to_generation"]["candidate_commit"],
-              "consumes_ruling_id": ruling.get("ruling_id"),
-              "from_generation": req["from_generation"]["generation"]}
-    tmp = out_record + ".tmp"
+    if active_now != 3:
+        return False, "REFUSED_STALE: active generation moved off 3 (old-config stale)"
+    # source control-config digest still what the request bound
+    ccg, _c, _n = fsc4_config.generation()
+    if tgt["from_cfg"] != ccg["digest"]:
+        return False, "REFUSED_STALE_CONFIG: source control-config generation moved since the request"
+    # target manifest + vocabulary still verify byte-for-byte
+    if sha_file(GEN4_FREEZE) != tgt["manifest"]:
+        return False, "REFUSED_STALE: target gen-4 manifest moved"
+    if sha_file(GEN4_SCHEMA) != tgt["gen4_vocab"]:
+        return False, "REFUSED_STALE: target gen-4 vocabulary moved"
+    # whole target candidate byte-consistent (freeze-verify green)
+    import subprocess
+    vf = os.path.join(GEN4, "bin", "fsc4-verify-freeze.sh")
+    if subprocess.run(["bash", vf], capture_output=True).returncode != 0:
+        return False, "REFUSED_STALE: target gen-4 candidate failed freeze-verify"
+    # one atomic advance
+    record = {"active_generation": 4, "manifest_digest": tgt["manifest"],
+              "vocabulary_digest": tgt["gen4_vocab"], "candidate_commit": tgt["commit"],
+              "consumes_ruling_id": ruling.get("ruling_id"), "in_reply_to": request.get("request_id")}
+    tmp = record_out + ".tmp"
     with open(tmp, "w", encoding="utf-8") as fh:
         json.dump(record, fh, indent=2, sort_keys=True)
-    os.replace(tmp, out_record)
-    # advance the active-generation pointer atomically
+    os.replace(tmp, record_out)
     atmp = active_gen_file + ".tmp"
     with open(atmp, "w", encoding="utf-8") as fh:
-        json.dump({"active_generation": 4, "manifest_digest": record["manifest_digest"]}, fh, sort_keys=True)
+        json.dump({"active_generation": 4, "manifest_digest": tgt["manifest"]}, fh, sort_keys=True)
     os.replace(atmp, active_gen_file)
     return True, "ACTIVATED: active generation advanced 3 -> 4"
 
 
 # ---------------------------------------------------------------- fake-forge round trip
 def roundtrip():
+    import fsc4  # noqa: E402
+    sys.path.insert(0, os.path.join(CONTROL_DIR, "gen3", "bin"))
+    import fsc3  # gen-3 identity derivation + validation  # noqa: E402
     results = []
 
     def check(name, ok, detail):
         results.append((name, bool(ok), detail))
-        print("%-6s %-46s %s" % ("PASS" if ok else "FAIL", name, str(detail)[:80]))
+        print("%-6s %-50s %s" % ("PASS" if ok else "FAIL", name, str(detail)[:74]))
 
-    refs = [{"kind": "blob", "locator": "gh://gen4-candidate/schema/fm-sol-control-v2.schema.json@commit",
-             "sha256": sha_file(os.path.join(GEN4, "schema", "fm-sol-control-v2.schema.json")),
-             "digest_basis": "fetched_bytes"}]
-    req = build_request(refs, candidate_commit="a0ce8aab5e5f676ebfef9676a8a6b6667182501c")
-    subj = req["subject_identity_line"]
-    good_ruling = {"directive": "ACTIVATE", "ruling_id": "sol-ruling-gen4-activation-TEST",
-                   "applies_to": {"subject_identity_line": subj}}
+    # Build a REAL gen-3 request shape for the activation, with gen-3-admitted immutable locators.
+    commit = os.environ.get("FSC4_CANDIDATE_COMMIT", "24b5ab062b6fb0d6bf1b86b271ee50d07d4686e3")
+    gen3_vocab = sha_file(GEN3_SCHEMA_PATH)
+    gen4_vocab = sha_file(GEN4_SCHEMA)
+    manifest = sha_file(GEN4_FREEZE)
+    ccg, cfg, _n = fsc4_config.generation()
+    raw = lambda p: "https://raw.githubusercontent.com/sbracewell64/firstmate-cleanroom-control/%s/gen4-candidate/%s" % (commit, p)
+    three = lambda rs: hashlib.sha256(("\n".join(sorted("%s\t%s\t%s" % (r["kind"], r["locator"], r["sha256"]) for r in rs)) + "\n").encode()).hexdigest()
+    # document_package members: the gen-4 schema (binds the target vocabulary) and the frozen
+    # manifest (binds the target manifest). The applier reads the target from these + valid_while.
+    def member(relpath, localpath):
+        s = sha_file(localpath); n = os.path.getsize(localpath)
+        return {"path": "gen4-candidate/" + relpath, "sha256": s, "bytes": n,
+                "evidence_ref": {"kind": "blob", "locator": raw(relpath), "sha256": s, "bytes": n, "digest_basis": "fetched_bytes"}}
+    members = [member("schema/fm-sol-control-v2.schema.json", GEN4_SCHEMA),
+               member("schema/FREEZE.json", GEN4_FREEZE)]
+    subject_line = document_package_identity(members)
+    refs = [m["evidence_ref"] for m in members] + [
+        {"kind": "commit", "locator": "https://github.com/sbracewell64/firstmate-cleanroom-control/commit/%s" % commit,
+         "sha256": hashlib.sha256(("https://github.com/sbracewell64/firstmate-cleanroom-control/commit/%s" % commit).encode()).hexdigest(),
+         "digest_basis": "locator_identity"}]
+    policy_digest = hashlib.sha256(b"activation-policy-A/B-v1").hexdigest()
+    # Adapt the proven schema-valid gen-3 request (#15) into the activation shape: this is a REAL
+    # gen-3 request structure, retargeted to the activation decision. The recovery compiler builds
+    # the actual published request the same way; here we exercise the applier against a real shape.
+    req = json.loads(open(os.path.join(CONTROL_DIR, "gen3", "transaction-9", "evidence", "request.json")).read())
+    req["work_id"] = "cleanroom-gen4-activation-transition"
+    req["control_config_generation"]["digest"] = ccg["digest"]
+    req["subject"] = {"kind": "document_package", "identity_line": subject_line, "members": members}
+    req["acceptance_policy"] = {"generation": "cleanroom-gen4-activation-v1", "digest": policy_digest,
+                                "inputs": ["gen4-candidate/TRANSITION-CONTRACT.md"]}
+    req["question"] = {"key": "gen4-activation-transition-disposition", "title": "[FM->SOL] activate gen-4 candidate",
+                       "body_markdown": "Activate the successor gen-4 candidate (schema-visible 4T law) via the dedicated transition applier, or keep gen-3.",
+                       "options": [{"id": "A", "summary": "Activate exactly the successor frozen gen-4 candidate via the dedicated transition applier.",
+                                    "consequence": "one atomic gen3->gen4 advance", "reversibility": "reversible", "paths": []},
+                                   {"id": "B", "summary": "Keep generation 3 active; return the candidate for revision.",
+                                    "consequence": "no advance", "reversibility": "reversible", "paths": []}]}
+    req["evidence_refs"] = refs
+    req["valid_while"] = {"control_config_generation_digest": ccg["digest"], "policy_digest": policy_digest,
+                          "vocabulary_digest": gen3_vocab, "evidence_digest": three(refs),
+                          "subject_identity_line": subject_line, "subject_head_sha": commit, "subject_state": "published"}
+    req["correlation_id"] = fsc3.derive("correlation_id", req)
+    req["request_id"] = fsc3.derive("request_id", req)
+    req_errs = gen3_validate("request", req)
+    check("activation request is a schema-valid gen-3 request", not req_errs, "; ".join(req_errs[:2]) or "0 errors")
 
-    scratch = tempfile.mkdtemp(prefix="fsc4-transition-")
-    active = os.path.join(scratch, "active-generation.json")
-    rec = os.path.join(scratch, "activation-record.json")
+    # A REAL gen-3 ruling shape adopting Option A for this request.
+    def ruling_for(r, **over):
+        base = {"schema": "fm-sol-control/v2", "kind": "ruling", "ruling_id": "sol-ruling-gen4-activation-TEST",
+                "in_reply_to": r["request_id"], "correlation_id": r["correlation_id"], "vocabulary_digest": r["vocabulary_digest"],
+                "control_config_generation_digest": r["control_config_generation"]["digest"], "ruled_at": "2026-09-05T07:05:00Z",
+                "ruler": {"login": "browser-sol", "kind": "agent", "provenance_class": "self_asserted_descriptor", "session_ref": "test"},
+                "applies_to": {"venue": r["venue"], "repo": r["repo"], "work_id": r["work_id"], "work_generation": r["work_generation"],
+                               "request_generation": r["request_generation"], "subject_identity_line": r["subject"]["identity_line"],
+                               "policy_digest": r["acceptance_policy"]["digest"], "evidence_digest": r["valid_while"]["evidence_digest"]},
+                "inspection": {"evidence_refs_inspected": r["evidence_refs"],
+                               "observations": [{"predicate": "gen-4 candidate inspected and byte-verified at the bound commit",
+                                                 "value": "observed-good", "measured": "freeze-verify green"}]},
+                "directive": "ADOPT_OPTION", "option_id": "A", "single_writer_assertion": True, "supersedes": None}
+        base.update(over); return base
+    good = ruling_for(req)
+    universe = {"truncated": False, "rulings": [good]}
+    scratch = tempfile.mkdtemp(prefix="fsc4-activation-")
+    active = os.path.join(scratch, "active.json"); rec = os.path.join(scratch, "rec.json")
 
-    # 1. valid transition succeeds exactly once
-    ok, msg = apply_transition(req, good_ruling, rec, active)
-    check("valid transition succeeds", ok and "ACTIVATED" in msg, msg)
+    ok, msg = apply_activation(req, good, universe, active, rec); check("valid activation succeeds once", ok and "ACTIVATED" in msg, msg)
     check("active pointer now gen-4", json.load(open(active))["active_generation"] == 4, "active=4")
-
-    # 2. replay performs zero effects
-    ok2, msg2 = apply_transition(req, good_ruling, rec, active)
-    check("replay is a zero-effect no-op", ok2 and "REPLAY_NOOP" in msg2, msg2)
-
-    # 3. old-config movement -> stale  (active generation already moved off 3)
-    ok3, msg3 = apply_transition(req, good_ruling, rec + ".x", active)
-    check("old-config movement -> REFUSED_STALE", (not ok3) and "STALE" in msg3, msg3)
-
-    # 4. target-manifest movement -> stale  (tamper the request's expected manifest)
-    fresh_active = os.path.join(scratch, "active2.json")
-    req_bad_manifest = json.loads(json.dumps(req))
-    req_bad_manifest["to_generation"]["manifest_digest"] = "0" * 64
-    req_bad_manifest["valid_while"]["to_manifest_digest"] = "0" * 64
-    ok4, msg4 = apply_transition(req_bad_manifest, {"directive": "ACTIVATE", "ruling_id": "t",
-                 "applies_to": {"subject_identity_line": req_bad_manifest["subject_identity_line"]}},
-                 os.path.join(scratch, "r4.json"), fresh_active)
-    check("target-manifest movement -> REFUSED_STALE", (not ok4) and "STALE" in msg4, msg4)
-
-    # 5. ruling does not apply to this subject -> mismatch
-    ok5, msg5 = apply_transition(req, {"directive": "ACTIVATE", "ruling_id": "t",
-                 "applies_to": {"subject_identity_line": "generation_transition:wrong"}},
-                 os.path.join(scratch, "r5.json"), os.path.join(scratch, "a5.json"))
-    check("non-applicable ruling -> REFUSED_MISMATCH", (not ok5) and "MISMATCH" in msg5, msg5)
-
-    # 6. 3-tuple vs 4-tuple both ways: the request carries the 3-tuple (Sol-acceptable); a
-    #    4-tuple carried value is refused by the declared-law recompute.
-    four = fsc4.evidence_digest(refs)
-    check("request carries the gen-3 3-tuple (Sol-acceptable)", req["valid_while"]["evidence_digest"] == three_tuple_digest(refs), "3-tuple")
-    check("a 4-tuple carried digest is refused by the law recompute", four != three_tuple_digest(refs), "4tuple!=3tuple")
-
-    # 7. digest_basis-only mutation moves the gen-4 (4-tuple) digest
-    mut = [dict(refs[0], digest_basis="locator_identity")]
-    check("digest_basis-only mutation moves the 4-tuple digest", fsc4.evidence_digest(mut) != four, "observer 4.5")
-
-    # 8. historical generations still freeze-green, byte-unchanged
+    ok2, m2 = apply_activation(req, good, universe, active, rec); check("replay zero-effect no-op", ok2 and "REPLAY_NOOP" in m2, m2)
+    a2 = os.path.join(scratch, "a2.json")
+    ok3, m3 = apply_activation(req, ruling_for(req, in_reply_to="fscr2-"+"0"*32), universe, a2, os.path.join(scratch, "r3.json")); check("wrong in_reply_to -> MISMATCH", (not ok3) and "MISMATCH" in m3, m3)
+    ok4, m4 = apply_activation(req, ruling_for(req, correlation_id="fsc2-"+"0"*32), universe, a2, os.path.join(scratch, "r4.json")); check("wrong correlation_id -> MISMATCH", (not ok4) and "MISMATCH" in m4, m4)
+    badap = ruling_for(req); badap["applies_to"]["evidence_digest"] = "0"*64
+    ok5, m5 = apply_activation(req, badap, universe, a2, os.path.join(scratch, "r5.json")); check("mutated applies_to.evidence_digest -> STALE", (not ok5) and "STALE" in m5, m5)
+    badcfg = ruling_for(req); badcfg["control_config_generation_digest"] = "0"*64
+    ok6, m6 = apply_activation(req, badcfg, universe, a2, os.path.join(scratch, "r6.json")); check("mutated control-config digest -> STALE_CONFIG", (not ok6) and "STALE_CONFIG" in m6, m6)
+    badvoc = ruling_for(req); badvoc["vocabulary_digest"] = "0"*64
+    ok7, m7 = apply_activation(req, badvoc, universe, a2, os.path.join(scratch, "r7.json")); check("mutated vocabulary_digest -> STALE", (not ok7) and "STALE" in m7, m7)
+    ok8, m8 = apply_activation(req, ruling_for(req, single_writer_assertion=False), universe, a2, os.path.join(scratch, "r8.json")); check("single_writer_assertion false -> refused (fail closed)", (not ok8) and ("AMBIGUOUS" in m8 or "MALFORMED" in m8), m8)
+    ok9, m9 = apply_activation(req, ruling_for(req, option_id="B"), universe, a2, os.path.join(scratch, "r9.json")); check("non-activation option -> MISMATCH", (not ok9) and "MISMATCH" in m9, m9)
+    dup = {"truncated": False, "rulings": [good, ruling_for(req, ruling_id="dup")]}
+    okA, mA = apply_activation(req, good, dup, a2, os.path.join(scratch, "rA.json")); check("duplicate rulings (lineage fork) -> AMBIGUOUS", (not okA) and "AMBIGUOUS" in mA, mA)
+    okB, mB = apply_activation(req, good, {"truncated": True, "rulings": []}, a2, os.path.join(scratch, "rB.json")); check("truncated universe -> CNO_TRUNCATED", (not okB) and "TRUNCATED" in mB, mB)
+    # old-config movement: pre-move the active pointer to 4
+    json.dump({"active_generation": 4}, open(a2, "w"))
+    okC, mC = apply_activation(req, good, universe, a2, os.path.join(scratch, "rC.json")); check("old-config moved -> STALE", (not okC) and "STALE" in mC, mC)
+    # target-manifest movement: tamper the subject's manifest
+    req_badm = json.loads(json.dumps(req))
+    for m in req_badm["subject"]["members"]:
+        if m["path"].endswith("schema/FREEZE.json"):
+            m["sha256"] = "0" * 64  # bind a manifest that no longer matches the local candidate
+    req_badm["subject"]["identity_line"] = document_package_identity(req_badm["subject"]["members"])
+    req_badm["valid_while"]["subject_identity_line"] = req_badm["subject"]["identity_line"]
+    req_badm["correlation_id"] = fsc3.derive("correlation_id", req_badm); req_badm["request_id"] = fsc3.derive("request_id", req_badm)
+    okD, mD = apply_activation(req_badm, ruling_for(req_badm), {"truncated": False, "rulings": [ruling_for(req_badm)]}, os.path.join(scratch, "aD.json"), os.path.join(scratch, "rD.json")); check("target-manifest moved -> STALE", (not okD) and "STALE" in mD, mD)
+    # 3T vs 4T both ways
+    check("request carries the gen-3 3-tuple (Sol-acceptable)", req["valid_while"]["evidence_digest"] == three(refs), "3-tuple")
+    check("a 4-tuple digest differs from the carried 3-tuple", fsc4.evidence_digest(refs) != three(refs), "4tuple!=3tuple")
+    check("digest_basis-only mutation moves the 4-tuple digest", fsc4.evidence_digest([dict(refs[0], digest_basis="locator_identity")]+refs[1:]) != fsc4.evidence_digest(refs), "observer 4.5")
+    # historical freeze
     import subprocess
-    allgreen = True
-    for gen in ("gen2", "gen3"):
-        vf = os.path.join(CONTROL_DIR, gen, "bin", "fsc%s-verify-freeze.sh" % gen[-1])
-        rc = subprocess.run(["bash", vf], capture_output=True).returncode if os.path.exists(vf) else 1
-        allgreen = allgreen and rc == 0
-    check("gen-2 and gen-3 freeze-verify green, byte-unchanged", allgreen, "historical immutable")
+    allg = all(subprocess.run(["bash", os.path.join(CONTROL_DIR, g, "bin", "fsc%s-verify-freeze.sh" % g[-1])], capture_output=True).returncode == 0 for g in ("gen2", "gen3"))
+    check("gen-2 and gen-3 freeze-verify green, byte-unchanged", allg, "historical immutable")
 
-    import shutil
-    shutil.rmtree(scratch, ignore_errors=True)
+    import shutil; shutil.rmtree(scratch, ignore_errors=True)
     passed = sum(1 for _n, ok, _d in results if ok)
-    print("\n%d/%d transition-seam checks green" % (passed, len(results)))
+    print("\n%d/%d activation-seam checks green" % (passed, len(results)))
     return 0 if passed == len(results) else 1
 
 
 def main(argv):
-    if len(argv) < 2:
-        sys.stderr.write(__doc__)
-        return 2
-    if argv[1] == "roundtrip":
+    if len(argv) >= 2 and argv[1] == "roundtrip":
         return roundtrip()
-    sys.stderr.write("build/apply are library entry points; run 'roundtrip' for the seam proof\n")
+    sys.stderr.write("apply is a library entry point; run 'roundtrip' for the seam proof\n")
     return 2
 
 

@@ -16,7 +16,7 @@ regardless of the default.
   independent binding) **without moving** `evidence_digest`. The ruler would have been
   shown a materially weaker kind of binding under an unchanged aggregate.
 
-### Option 4T — four-tuple `kind\tlocator\tsha256\tdigest_basis`  (ADOPTED)
+### Option 4T — four-tuple `kind\tlocator\tsha256\tdigest_basis`  (RECOMMENDED)
 - Matches the generation-3 *code* (`fsc3.evidence_digest`, used at emit and at consume L3).
 - **Binds `digest_basis` into the aggregate**, closing observer 4.5: any change to a ref's
   basis moves `evidence_digest` (watched-red R2 proves this).
@@ -24,7 +24,7 @@ regardless of the default.
   makes explicit in `$defs.evidence_digest_derivation`, rather than leaving it hidden in
   code as generation 3 did.
 
-## Why 4T
+## Why 4T is recommended (Browser Sol dispositions)
 
 The generation-3 defect was **not** that the 4-tuple was wrong; it was that the 4-tuple
 lived only in code while the schema text still declared the 3-tuple, and `evidence_digest`

@@ -1,6 +1,6 @@
 {
   "gen3_sha256": "43c1faa9ff8485ac7392b363a4d83729cd84ae4c1ab1a606e128ca20781342a8",
-  "gen4_sha256": "baa9d2d0033a51131306308d7edc477dcece5b0a8798457578a35e02626950c3",
+  "gen4_sha256": "e722b5f4dd36d0cec6ba2e8c3614a9318b0f823c1e2c5e3c1b24d6292f3fe11f",
   "changes": [
     {
       "id": "G4-0",
@@ -9,7 +9,7 @@
     },
     {
       "id": "G4-1",
-      "source": "Browser Sol control#15 transport-recovery disposition",
+      "source": "control#15 recovery directive (candidate; activation pending a typed Browser Sol ruling)",
       "change": "evidence_digest declared as ONE canonical four-tuple law in $defs.evidence_digest_derivation; valid_while.$comment points at it; $defs.envelope_verifier covers evidence_digest recomputation; digest_basis made load-bearing and schema-visible"
     }
   ]

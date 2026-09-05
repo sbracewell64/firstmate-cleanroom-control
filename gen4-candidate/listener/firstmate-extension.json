@@ -1,0 +1,15 @@
+{
+  "schema": "firstmate.extension-manifest.v1",
+  "id": "org.firstmate.cleanroom.control-listener",
+  "version": "3.0.0",
+  "host_protocols": [1],
+  "entrypoint": "cleanroom-control-inbound.mjs",
+  "capabilities": [
+    {
+      "name": "process-event-adapter",
+      "versions": [1],
+      "adapter_names": ["cleanroom-control-v2-inbound"]
+    }
+  ],
+  "required_consents": ["network", "credential-store"]
+}

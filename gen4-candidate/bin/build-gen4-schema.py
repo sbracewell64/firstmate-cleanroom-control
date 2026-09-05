@@ -46,16 +46,17 @@ def change(cid, source, what):
 # CHANGE G4-0 -- self-describing lineage.
 # --------------------------------------------------------------------------
 d["$comment"] = (
-    "THE single source of truth for the clean-room control plane, SCHEMA GENERATION 4. "
-    "Producer validation, consumer validation, the envelope-as-fetched verifier and the human "
-    "reply-contract projection are all derived from THIS FILE and from nothing else. No field "
-    "name may be typed by a human or an agent anywhere. The PROTOCOL STRING IS UNCHANGED at "
-    "fm-sol-control/v2: a generation is distinguished by vocabulary_digest. Generation 4 "
-    "supersedes generation 3 (sha256 " + GEN3_SHA + ") under the Browser Sol transport-recovery "
-    "disposition of 2026-09-05 on control issue #15: it makes evidence_digest one explicit, "
-    "schema-visible, verifier-covered canonical law and resolves the 3-tuple/4-tuple divergence "
-    "in favour of the 4-tuple (digest_basis load-bearing). Generations 1, 2 and 3 remain frozen, "
-    "published and historical; nothing emitted under them is ever revalidated under this one."
+    "THE single source of truth for the clean-room control plane, SCHEMA GENERATION 4 -- an "
+    "UNACTIVATED CANDIDATE, not an active generation. Producer validation, consumer validation, the "
+    "envelope-as-fetched verifier and the human reply-contract projection are all derived from THIS "
+    "FILE and from nothing else. No field name may be typed by a human or an agent anywhere. The "
+    "PROTOCOL STRING IS UNCHANGED at fm-sol-control/v2: a generation is distinguished by "
+    "vocabulary_digest. This candidate is BUILT FROM generation 3 (sha256 " + GEN3_SHA + ") and is "
+    "PROPOSED for control issue #15: it makes evidence_digest one explicit, schema-visible, "
+    "verifier-covered canonical law and RECOMMENDS the 4-tuple (digest_basis load-bearing; observer "
+    "finding 4.5). Adoption of this candidate and of the 4-tuple choice is PENDING a typed Browser Sol "
+    "activation-transition ruling; no such authority has been asserted here. Generations 1, 2 and 3 "
+    "remain frozen, published and historical; nothing emitted under them is ever revalidated under this one."
 )
 D["schema_generation"] = {
     "const": {
@@ -74,7 +75,7 @@ change("G4-0", "lineage", "generation 4 declared, generation 3 digest recorded i
 
 # --------------------------------------------------------------------------
 # CHANGE G4-1 -- evidence_digest is ONE declared canonical law (the 4-tuple),
-# schema-visible and verifier-covered. Browser Sol control#15 disposition.
+# schema-visible and verifier-covered. Proposed under control#15 recovery; activation pending a typed ruling.
 # --------------------------------------------------------------------------
 # (a) The declared canonical derivation, analogous to $defs.id_derivation. This
 #     is now the SINGLE source every surface (producer, as-fetched verifier,
@@ -134,7 +135,7 @@ D["envelope_verifier"]["$comment"] += (
 #     differs).
 if "venue_publication" in D and "verifier" in D["venue_publication"].get("const", {}):
     D["venue_publication"]["const"]["verifier"] = "artifacts/control/gen4/bin/fsc4-verify-envelope.py"
-change("G4-1", "Browser Sol control#15 transport-recovery disposition",
+change("G4-1", "control#15 recovery directive (candidate; activation pending a typed Browser Sol ruling)",
        "evidence_digest declared as ONE canonical four-tuple law in $defs.evidence_digest_derivation; "
        "valid_while.$comment points at it; $defs.envelope_verifier covers evidence_digest recomputation; "
        "digest_basis made load-bearing and schema-visible")

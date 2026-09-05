@@ -1,49 +1,55 @@
 # Pre-activation generation-transition contract (gen-3 -> gen-4)
 
-Browser Sol control#15 required the smallest explicit typed contract that can authorize the
-atomic gen-3 -> gen-4 control-tooling transition WITHOUT pre-activating gen-4 or bootstrapping
-by prose. Implemented in `bin/fsc4-transition.py`; seam proven by
-`reds/TRANSITION-ROUNDTRIP-RESULTS.txt` (10/10 green).
+Corrected per Browser Sol's transition-contract review (control#15). The transition is an
+ORDINARY frozen-gen-3 `fm-sol-control/v2` request — NOT a custom envelope kind — authored by a
+quarantined one-use recovery compiler and applied by a dedicated full-applicability applier.
+Adoption of generation 4 and of the 4-tuple law is PENDING Browser Sol's typed ruling; nothing
+here asserts that authority.
 
-## The contract
-A gen-3-vocabulary transition request (no gen-4 vocabulary is used before activation) with:
-- `from_generation`: {generation 3, vocabulary_digest = gen-3 schema sha, control_config_digest = current}
-- `to_generation`: {generation 4, vocabulary_digest = gen-4 schema sha, manifest_digest = gen-4 FREEZE sha,
-  candidate_commit = the immutable control-repo commit that carries the published candidate}
-- `subject_identity_line`: `generation_transition:<gen3vocab>-><gen4vocab>@<manifest>`
-- `evidence_refs`: the published gen-4 candidate files; `evidence_digest` computed under the gen-3
-  SCHEMA law (the 3-tuple the gen-3 schema declares — the value Browser Sol's gen-3 processor
-  accepts, as it did for #15), NOT the gen-3 producer's 4-tuple.
-- **effect**: on an applicable Browser Sol ruling ONLY, atomically advance the active generation
-  to 4 by writing a digest-bound activation record; no other effect.
+## The activation request (ordinary gen-3 request; `bin/fsc4-activation-compiler.py`)
+- `kind` = `request`; validates against the UNCHANGED gen-3 schema (root `oneOf` request/ruling/receipt).
+- `work_id` = `cleanroom-gen4-activation-transition`; `question` options **A** = activate exactly this
+  successor gen-4 candidate via the dedicated applier, **B** = keep generation 3, return for revision.
+- `subject` = a `document_package` over the gen-4 candidate files. The member for
+  `schema/fm-sol-control-v2.schema.json` binds the target gen-4 **vocabulary**; the member for
+  `schema/FREEZE.json` binds the target **manifest**. `identity_line` is the sorted `sha256  path`
+  manifest digest and is verified to recompute from the members.
+- `evidence_refs` = the candidate files at immutable `raw.githubusercontent` locators at the exact
+  candidate commit, plus the commit locator. `valid_while.subject_head_sha` = that commit;
+  `valid_while.control_config_generation_digest` = the still-current source config digest.
+- `valid_while.evidence_digest` = the gen-3 SCHEMA 3-tuple (`kind\tlocator\tsha256`) — the value
+  Browser Sol's gen-3 processor accepts. This is the ONLY intentional correction relative to the
+  broken canonical gen-3 producer (which computes the 4-tuple); the differential proof shows every
+  other schema-derived identity is byte-identical.
 
-## Who validates / who applies
-- **Validates**: Browser Sol (rules on the transition request, gen-3 law).
-- **Applies**: the dedicated applier in `fsc4-transition.py apply` — NOT the deadlocked gen-3
-  consumer. It re-checks the effect boundary and writes the activation record atomically.
+## The recovery compiler is quarantined + effect-incapable
+`fsc4-activation-compiler.py` reads candidate bytes and writes only the request JSON + a differential
+proof. It changes no `control_config_generation`, applies no ruling, lands no code, and publishes to
+no venue. It is one-use: it exists only to author the authority request that breaks the emitter
+bootstrap.
 
-## Effect-boundary revalidation (apply time; any failure refuses, zero effect)
-- ruling `applies_to.subject_identity_line` equals the exact transition subject (else REFUSED_MISMATCH);
-- replay: an activation record for this exact target already exists -> REPLAY_NOOP, zero effects;
-- the current active generation is still 3 (else REFUSED_STALE: old-config moved);
-- the target gen-4 manifest still verifies byte-for-byte (else REFUSED_STALE: target-manifest moved);
-- evidence set still digests to `valid_while.evidence_digest` under the declared gen-3 law.
+## The applier requires FULL exact applicability (`fsc4-transition.py apply`)
+Accepts ONLY a full schema-valid gen-3 ruling with `directive=ADOPT_OPTION` and `option_id=A`, and
+requires exact equality on: `in_reply_to`==request_id, `correlation_id`, `vocabulary_digest`,
+`control_config_generation_digest`, `applies_to.{venue,repo,work_id,work_generation,request_generation,
+subject_identity_line,policy_digest,evidence_digest}`, and `single_writer_assertion==true`. It obtains
+the complete non-truncated ruling universe and refuses ambiguity / lineage forks (more than one ruling
+for the request). Then at the effect boundary it revalidates: source active generation still 3; source
+control-config digest unchanged; target manifest + vocabulary byte-match the bound members; the whole
+candidate freeze-verifies green; the subject identity recomputes from its members. Only then, ONE
+atomic advance of the active generation to 4. Replay (exact target already activated) is zero-effect.
 
-## THE OBSERVED BOOTSTRAP DEFECT (why step 5 holds rather than emits)
-The canonical gen-3 tooling cannot emit a Browser-Sol-acceptable activation request:
-1. A standard gen-3 `request` emitted by the canonical producer (`fsc3-emit-request.py`) carries the
-   4-tuple evidence_digest, which Browser Sol's gen-3 processor refuses. The canonical producer is
-   itself the broken component — it cannot author the request that would fix it.
-2. Representing the transition as a distinct envelope kind (`generation_transition_request`) is not
-   defined in the frozen gen-3 schema, so the gen-3 validator/processor does not know it — using it
-   is effectively introducing gen-4 semantics before activation.
+## Proven
+`reds/TRANSITION-ROUNDTRIP-RESULTS.txt`: 19/19 activation-seam checks green over the REAL gen-3
+request + REAL gen-3 ruling shapes, only schema-admitted immutable locators, and the exact successor
+candidate commit — including every mutated-binding negative (in_reply_to, correlation, applies_to
+bindings, config/vocabulary/policy/evidence mutation), duplicate rulings, truncated universe, replay,
+old-config movement, target-manifest movement, 3-tuple/4-tuple both ways, and historical gen-1/2/3
+freeze verification byte-unchanged.
 
-So a real activation request cannot be emitted without either a bespoke non-canonical builder (a
-bypass) or pre-activating gen-4 — both of which Browser Sol forbade. Per control#15 step 5, this is
-reported as an observed bootstrap defect and the system is KEPT HELD. This contract + its green seam
-round trip are the proposed resolution, offered for Browser Sol's disposition: if Browser Sol adopts
-the transition contract (its dedicated builder honors the gen-3 schema law; its applier revalidates
-the effect boundary), the activation request may then be emitted and ruled under that sanctioned
-mechanism, and only a consumed applicable ruling advances `control_config_generation`.
-
-Nothing here activates gen-4, moves `control_config_generation`, or modifies gen-1/2/3.
+## Bootstrap note
+The canonical gen-3 producer emits the 4-tuple Browser Sol refuses, so it cannot author this request;
+that is why a quarantined schema-law-honoring compiler exists. This is NOT a bypass by prose: the
+output is an ordinary gen-3 request, the correction is exactly the schema-mandated digest law, and the
+differential proof isolates it. Nothing activates gen-4 or moves `control_config_generation` until an
+applicable typed Browser Sol ruling on this request is consumed by the applier.

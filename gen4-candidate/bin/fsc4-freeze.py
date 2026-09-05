@@ -44,6 +44,8 @@ FROZEN = [
     ("watched_reds", "reds/watched-reds.py"),
     ("watched_reds_evidence_digest", "reds/gen4-evidence-digest-reds.py"),
     ("watched_reds_fake_forge", "reds/fixture-fake-gh.sh"),
+    ("transition_applier", "bin/fsc4-transition.py"),
+    ("activation_compiler", "bin/fsc4-activation-compiler.py"),
 ]
 
 
@@ -63,6 +65,10 @@ def main():
         artifacts[name] = {"path": "artifacts/control/gen4/" + rel,
                            "sha256": sha(p), "bytes": os.path.getsize(p)}
     gen, _cfg, _norm = fsc4_config.generation()
+    # redact operator-local user-profile paths in the recorded snapshot so the freeze record
+    # is publishable byte-for-byte (no redaction derivative), keeping local == published.
+    import re as _re
+    _redacted_owner = _re.sub(r"(?<![A-Za-z0-9_.-])/home/[A-Za-z0-9._-]+", "/home/OPERATOR", str(gen["owner_path"]))
     record = {
         "record": "fm-sol-control-v2-schema-freeze/v4",
         "protocol": "fm-sol-control/v2",
@@ -90,7 +96,7 @@ def main():
             "derivation), adopting the 4-tuple deliberately (digest_basis load-bearing; observer 4.5)."),
         "artifacts": artifacts,
         "control_config_generation_snapshot": {
-            "owner_path": gen["owner_path"],
+            "owner_path": _redacted_owner,
             "digest": gen["digest"],
             "resolver_digest": gen["resolver_digest"],
             "binding": "NON-BINDING SNAPSHOT",
