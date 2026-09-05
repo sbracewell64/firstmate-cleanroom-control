@@ -93,9 +93,11 @@ def build(commit):
          "not a security or privacy weakening, not a credential exposure, not a destructive or materially irreversible act, "
          "and not a personal or product preference",
          "value": "observed-good", "measured": "DELEGATED_ENGINEERING; captain_required=false; control#15 recovery"},
-        {"predicate": "consuming Option A advances control_config_generation exactly once, atomically, after effect-boundary "
-         "revalidation; generations 1/2/3 and all historical transactions are preserved unchanged",
-         "value": "observed-good", "measured": "single crash-safe activation record via the dedicated applier"},
+        {"predicate": "consuming Option A advances ONLY the active control-tooling/schema generation from 3 to 4, exactly once, "
+         "through the single atomic activation record; control_config_generation (the sha256 of the normalized control-plane "
+         "YAML) does NOT move and is not reinterpreted as the active tooling generation; generations 1/2/3 and all historical "
+         "transactions are preserved unchanged",
+         "value": "observed-good", "measured": "fsc4-transition.py's sole effect is one fsync+os.replace of the single active-tooling-generation record; the applier re-resolves control_config_generation at the effect boundary and REFUSES if it moved (it never moves it)"},
         {"predicate": "the target is exactly the unactivated frozen generation-4 candidate at the bound immutable commit",
          "value": "observed-good", "measured": "document_package subject binds the candidate schema + FREEZE members at commit %s" % commit},
         {"predicate": "maker/checker independence at the principal level on this venue",
@@ -110,10 +112,11 @@ def build(commit):
                        "body_markdown": ("Activate exactly the unactivated generation-4 candidate published at "
                                          "gen4-candidate/@%s (schema-visible 4-tuple evidence_digest law), via the dedicated "
                                          "transition applier, or keep generation 3 active and return the candidate for revision. "
-                                         "Consuming Option A advances control_config_generation once, atomically, after "
-                                         "effect-boundary revalidation." % commit),
+                                         "Consuming Option A advances ONLY the active control-tooling/schema generation 3 -> 4 "
+                                         "through the single atomic activation record, after effect-boundary revalidation; "
+                                         "control_config_generation (the normalized control-plane YAML digest) does NOT move." % commit),
                        "options": [{"id": "A", "summary": "Activate exactly the successor frozen generation-4 candidate via the dedicated transition applier.",
-                                    "consequence": "one atomic gen-3 -> gen-4 advance; the schema-visible 4-tuple law becomes active", "reversibility": "reversible", "paths": []},
+                                    "consequence": "one atomic advance of the ACTIVE control-tooling/schema generation 3 -> 4 via the single activation record; the schema-visible 4-tuple law becomes active; control_config_generation is unchanged", "reversibility": "reversible", "paths": []},
                                    {"id": "B", "summary": "Keep generation 3 active; return the candidate for revision.",
                                     "consequence": "no advance", "reversibility": "reversible", "paths": []}]}
     req["evidence_refs"] = refs

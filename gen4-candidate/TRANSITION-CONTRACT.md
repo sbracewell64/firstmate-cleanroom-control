@@ -39,13 +39,27 @@ control-config digest unchanged; target manifest + vocabulary byte-match the bou
 candidate freeze-verifies green; the subject identity recomputes from its members. Only then, ONE
 atomic advance of the active generation to 4. Replay (exact target already activated) is zero-effect.
 
-## Proven
-`reds/TRANSITION-ROUNDTRIP-RESULTS.txt`: 19/19 activation-seam checks green over the REAL gen-3
-request + REAL gen-3 ruling shapes, only schema-admitted immutable locators, and the exact successor
-candidate commit — including every mutated-binding negative (in_reply_to, correlation, applies_to
-bindings, config/vocabulary/policy/evidence mutation), duplicate rulings, truncated universe, replay,
-old-config movement, target-manifest movement, 3-tuple/4-tuple both ways, and historical gen-1/2/3
-freeze verification byte-unchanged.
+## Effect (exact)
+Consuming Option A advances ONLY the active control-tooling/schema generation from 3 to 4, through the
+single atomic activation record. `control_config_generation` — defined as the sha256 of the normalized
+control-plane YAML — does NOT move and is never reinterpreted as the active tooling generation; the
+applier re-resolves it at the effect boundary and refuses if it moved. A config-generation change would
+require a separate, explicit, authorized and proven config mutation, which this transition is not.
+
+## Proven — the exact 24-case activation-seam set
+`reds/TRANSITION-ROUNDTRIP-RESULTS.txt`: **24/24** activation-seam checks green, run against the exact
+final candidate bytes, over the REAL gen-3 request + REAL gen-3 ruling shapes with only schema-admitted
+immutable locators. The 24 cases are: schema-valid request; valid activation succeeds once; active
+generation derived as 4 from the one record; replay zero-effect no-op; wrong in_reply_to refused; wrong
+correlation_id MISMATCH; mutated applies_to.evidence_digest STALE; mutated control-config digest
+STALE_CONFIG; mutated vocabulary_digest STALE; single_writer_assertion=false refused;
+non-activation option MISMATCH; **zero-ruling universe refused**; **out-of-universe injected ruling
+MISMATCH**; duplicate rulings (lineage fork) AMBIGUOUS; truncated universe CNO_TRUNCATED;
+**partial/corrupt record derives gen-3 (no false activation)**; **apply over a partial record refused,
+not false replay**; **absent record derives gen-3**; source control-config moved STALE_CONFIG;
+target-manifest moved STALE; request carries the gen-3 3-tuple; a 4-tuple differs from the carried
+3-tuple; digest_basis-only mutation moves the 4-tuple digest; gen-2 and gen-3 freeze-verify green,
+byte-unchanged.
 
 ## Bootstrap note
 The canonical gen-3 producer emits the 4-tuple Browser Sol refuses, so it cannot author this request;
