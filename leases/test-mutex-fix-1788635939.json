@@ -1,1 +1,1 @@
-{"acquired_at": "2026-09-05T19:18:59Z", "correlation_id": "c", "expires_at": "2026-09-05T19:33:59Z", "holder_token": "alpha", "lease_generation": 1, "released_at": "2026-09-05T19:19:03Z", "request_id": "test-mutex-fix-1788635939", "schema": "fm-emission-lease/v1", "state": "released"}
+{"acquired_at": "2026-09-05T19:19:04Z", "correlation_id": "c", "expires_at": "2026-09-05T19:19:09Z", "holder_token": "beta", "lease_generation": 2, "request_id": "test-mutex-fix-1788635939", "schema": "fm-emission-lease/v1", "state": "held"}
