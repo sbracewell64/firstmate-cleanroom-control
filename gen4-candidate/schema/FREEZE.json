@@ -2,9 +2,9 @@
   "activated": false,
   "artifacts": {
     "activation_compiler": {
-      "bytes": 13923,
+      "bytes": 14168,
       "path": "artifacts/control/gen4/bin/fsc4-activation-compiler.py",
-      "sha256": "d38e32e3615f1f87ba02ad8188b7e768574365f5f324d802ece61ae99aa03298"
+      "sha256": "536bc68de6ce92ecd69404964220cd7e30745b0590922c839c20cca4977136f2"
     },
     "consumer": {
       "bytes": 28956,
@@ -106,7 +106,7 @@
   },
   "enforcement": "Enforcement is DIGEST COMPARISON ONLY -- detective, not preventive -- through bin/fsc4-verify-freeze.sh, which re-hashes every artifact above and refuses on any drift. The drvfs mount carries no file modes, so write-once cannot be enforced by permission; this is a real limit, recorded rather than assumed away.",
   "freeze_ordering": "FROZEN as an UNACTIVATED candidate. No fm-sol-control/v2 generation-4 envelope has been emitted; generation-3 authority-bearing delivery remains fail-closed until activation is separately dispositioned by Browser Sol (control#15). The gen4 evidence-digest watched-red suite was run green against these exact bytes.",
-  "frozen_at": "2026-09-05T09:02:05Z",
+  "frozen_at": "2026-09-05T10:00:23Z",
   "protocol": "fm-sol-control/v2",
   "record": "fm-sol-control-v2-schema-freeze/v4",
   "recovery_basis": "control#15: generation 3 carried two disagreeing evidence_digest definitions -- the schema text declared the 3-tuple while fsc3.evidence_digest computed the 4-tuple, and evidence_digest was not verifier-covered, so the disagreement was invisible at emit and only surfaced at consume (REFUSED_STALE on #15). Generation 4 makes evidence_digest ONE declared, schema-visible, verifier-covered canonical law ($defs.evidence_digest_derivation), adopting the 4-tuple deliberately (digest_basis load-bearing; observer 4.5).",

@@ -78,7 +78,9 @@ def build(commit):
     req = json.loads(open(os.path.join(CONTROL_DIR, "gen3", "transaction-9", "evidence", "request.json")).read())
     req["work_id"] = "cleanroom-gen4-activation-transition"
     req["work_generation"] = 1
-    req["request_generation"] = 2   # supersedes the prior #16 activation request (request_generation 1)
+    # request_generation + supersedes are re-ask parameters (a fresh generation supersedes the prior
+    # activation request when Browser Sol requires a re-ask). Defaults target the first re-ask.
+    req["request_generation"] = int(os.environ.get("FSC4_REQUEST_GENERATION", "2"))
     req["created_at"] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     req["expires_at"] = (now + datetime.timedelta(hours=48)).strftime("%Y-%m-%dT%H:%M:%SZ")
     req["requester"] = {"login": REPO.split("/")[0], "kind": "agent", "provenance_class": "self_asserted_descriptor",
@@ -120,7 +122,7 @@ def build(commit):
                           "subject_identity_line": subject_line, "subject_head_sha": commit, "subject_state": "published"}
     req["candidate"] = None
     req["candidate_state"] = "NOT_APPLICABLE"
-    req["supersedes_request_id"] = "fscr2-393b68835bed6dae9e1bbe525a0d9378"  # supersede the prior #16 activation request
+    req["supersedes_request_id"] = os.environ.get("FSC4_SUPERSEDES", "fscr2-393b68835bed6dae9e1bbe525a0d9378")
     req["correlation_id"] = fsc3.derive("correlation_id", req)
     req["request_id"] = fsc3.derive("request_id", req)
     return req, refs
@@ -149,7 +151,8 @@ def main():
                                             "value": yn(req["control_config_generation"]["digest"] == ccg_now["digest"] == req["valid_while"]["control_config_generation_digest"])},
         "work_and_request_generations": {"work_generation": req["work_generation"], "request_generation": req["request_generation"],
                                          "supersedes_request_id": req["supersedes_request_id"],
-                                         "value": yn(req["work_generation"] == 1 and req["request_generation"] == 2 and req["supersedes_request_id"] == "fscr2-393b68835bed6dae9e1bbe525a0d9378")},
+                                         "value": yn(req["work_generation"] == 1 and req["request_generation"] >= 2
+                                                     and isinstance(req["supersedes_request_id"], str) and req["supersedes_request_id"].startswith("fscr2-"))},
         "subject_identity_recomputes": {"carried": req["subject"]["identity_line"], "recomputed": doc_package_identity(members),
                                         "value": yn(req["subject"]["identity_line"] == doc_package_identity(members) == req["valid_while"]["subject_identity_line"])},
         "policy_digest_binds_cited_input": {"carried": req["acceptance_policy"]["digest"], "inputs": req["acceptance_policy"]["inputs"],
