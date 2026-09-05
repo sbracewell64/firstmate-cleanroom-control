@@ -1,0 +1,26 @@
+# Event-driven Browser Sol wake shim v1 (control#3, captain-authorized).
+# NON-AUTHORITATIVE doorbell only: it rings the permanent "Browser Sol Wake" sentinel PR (#22) when a
+# routed control issue is opened/labeled. It carries no authority, parses no envelope, and proves
+# nothing. Browser Sol re-reads and validates the canonical fm-sol-control/v2 issue before any ruling.
+name: Browser Sol Wake
+on:
+  issues:
+    types: [opened, labeled]
+permissions:
+  pull-requests: write   # least privilege: only to comment on the sentinel PR
+jobs:
+  ring:
+    runs-on: ubuntu-latest
+    # act ONLY when BOTH canonical routing labels are present (order-insensitive; duplicates harmless)
+    if: >-
+      contains(github.event.issue.labels.*.name, 'control/escalation') &&
+      contains(github.event.issue.labels.*.name, 'to/browser-sol')
+    steps:
+      - name: Ring the sentinel doorbell (non-authoritative)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          ISSUE: ${{ github.event.issue.number }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          gh api "repos/${REPO}/issues/22/comments" -f body="[WAKE] non-authoritative doorbell — repository=${REPO} issue=#${ISSUE} wake=wake:issue:${ISSUE} run_id=${RUN_ID}. Browser Sol: re-read and validate the canonical fm-sol-control/v2 issue #${ISSUE}; this wake carries NO authority, request, evidence, or ruling content."
