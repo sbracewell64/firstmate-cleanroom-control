@@ -1,0 +1,12 @@
+PASS   valid transition succeeds                      ACTIVATED: active generation advanced 3 -> 4
+PASS   active pointer now gen-4                       active=4
+PASS   replay is a zero-effect no-op                  REPLAY_NOOP: already activated for this exact manifest; zero effects
+PASS   old-config movement -> REFUSED_STALE           REFUSED_STALE: active generation moved since the request (old-config stale)
+PASS   target-manifest movement -> REFUSED_STALE      REFUSED_STALE: target gen-4 manifest moved (target-manifest stale)
+PASS   non-applicable ruling -> REFUSED_MISMATCH      REFUSED_MISMATCH: ruling does not apply to this transition subject
+PASS   request carries the gen-3 3-tuple (Sol-acceptable) 3-tuple
+PASS   a 4-tuple carried digest is refused by the law recompute 4tuple!=3tuple
+PASS   digest_basis-only mutation moves the 4-tuple digest observer 4.5
+PASS   gen-2 and gen-3 freeze-verify green, byte-unchanged historical immutable
+
+10/10 transition-seam checks green
