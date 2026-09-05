@@ -1,1 +1,1 @@
-{"acquired_at": "2026-09-05T19:18:12Z", "correlation_id": "test-corr", "expires_at": "2026-09-05T19:33:12Z", "holder_token": "racerX", "lease_generation": 1, "request_id": "test-race-1788635892", "schema": "fm-emission-lease/v1", "state": "held"}
+{"acquired_at": "2026-09-05T19:18:12Z", "correlation_id": "test-corr", "expires_at": "2026-09-05T19:33:12Z", "holder_token": "racerY", "lease_generation": 2, "request_id": "test-race-1788635892", "schema": "fm-emission-lease/v1", "state": "held"}
