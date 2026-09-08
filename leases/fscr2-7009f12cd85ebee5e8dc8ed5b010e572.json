@@ -6,5 +6,5 @@
   "holder_token": "scheduled:6a994844e49c81918f90313f15ae3123:2026-09-08T11:48:34Z:fscr2-7009f12cd85ebee5e8dc8ed5b010e572",
   "acquired_at": "2026-09-08T11:48:34Z",
   "expires_at": "2026-09-08T12:08:34Z",
-  "state": "HELD"
+  "state": "RELEASED"
 }
