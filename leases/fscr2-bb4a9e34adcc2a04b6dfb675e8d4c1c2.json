@@ -1,0 +1,10 @@
+{
+  "schema": "fm-emission-lease/v1",
+  "lease_generation": 1,
+  "request_id": "fscr2-bb4a9e34adcc2a04b6dfb675e8d4c1c2",
+  "correlation_id": "fsc2-f96247bee93f8477fc4c2fbe91705e9e",
+  "holder_token": "scheduled:6a994844e49c81918f90313f15ae3123:2026-09-08T07:49:09Z:fscr2-bb4a9e34adcc2a04b6dfb675e8d4c1c2",
+  "acquired_at": "2026-09-08T07:49:09Z",
+  "expires_at": "2026-09-08T08:09:09Z",
+  "state": "HELD"
+}
